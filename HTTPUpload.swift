@@ -31,18 +31,19 @@ class HTTPUpload: NSObject {
             }
         }
     }
+    //default init does nothing
+    init()  {
+    }
     ///upload a file with a fileUrl. The fileName and mimeType will be infered
-    class func uploadWithFile(fileUrl: NSURL) -> (HTTPUpload) {
-        var upload = HTTPUpload()
-        upload.fileUrl = fileUrl
-        return upload
+    convenience init(fileUrl: NSURL) {
+        self.init()
+        self.fileUrl = fileUrl
     }
     ///upload a file from a a data blob. Must add a filename and mimeType as that can't be infered from the data
-    class func uploadWithData(data: NSData, fileName: String, mimeType: String) -> (HTTPUpload) {
-        var upload = HTTPUpload()
-        upload.data = data
-        upload.fileName = fileName
-        upload.mimeType = mimeType
-        return upload
+    convenience init(data: NSData, fileName: String, mimeType: String) {
+        self.init()
+        self.data = data
+        self.fileName = fileName
+        self.mimeType = mimeType
     }
 }
