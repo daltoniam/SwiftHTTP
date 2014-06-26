@@ -53,6 +53,9 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
     var baseURL: String?
     var requestSerializer: HTTPRequestSerializer!
     var responseSerializer: HTTPResponseSerializer?
+    //this only get used for background download/upload since they have to be delegate methods
+    var backgroundSuccess:((AnyObject?) -> Void)?
+    var backgroundFailure:((NSError) -> Void)?
     
     init() {
     }
@@ -114,6 +117,42 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
             str += letters[start]
         }
         return "com.vluxe.swifthttp.request.\(str)"
+    }
+    
+    //the background download finished, don't have to really do anything
+    func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession!) {
+    }
+    
+    //the background task failed.
+    func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didCompleteWithError error: NSError!) {
+        if error {
+            if self.backgroundFailure { //Swift bug. Can't use && with block (radar: 17469794)
+                self.backgroundFailure!(error)
+                self.backgroundFailure = nil
+                self.backgroundSuccess = nil
+            }
+        }
+    }
+    
+    //the background download finished and reports the url the data was saved to
+    func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didFinishDownloadingToURL location: NSURL!) {
+        //add the download logic
+    }
+    //the background upload finished and reports the response data (if any)
+    func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, didReceiveData data: NSData!) {
+        //add upload finished logic
+    }
+    //will report progress of background download
+    func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        //add progress block logic
+    }
+    //will report progress of background upload
+    func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+        //add progress block logic
+    }
+    //just have to implement, does nothing
+    func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
+        
     }
     
     func GET(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
