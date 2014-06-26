@@ -43,9 +43,9 @@ request.PUT("http://domain.com/1", parameters: nil, success: {(response: AnyObje
 ```swift
 var request = HTTPTask()
 request.DELETE("http://domain.com/1", parameters: nil, success: {(response: AnyObject?) -> Void in
-    
+    	println("DELETE was successful!")
     },failure: {(error: NSError) -> Void in
-    
+    	println("print the error: \(error)")
     })
 ```
 
@@ -54,9 +54,9 @@ request.DELETE("http://domain.com/1", parameters: nil, success: {(response: AnyO
 ```swift
 var request = HTTPTask()
 request.HEAD("http://domain.com/image.png", parameters: nil, success: {(response: AnyObject?) -> Void in
-    	println("DELETE was successful!")
+    	
     },failure: {(error: NSError) -> Void in
-		println("print the error: \(error)")
+	
     })
 ```
 
