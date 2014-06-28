@@ -157,27 +157,25 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
     
     func GET(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         var task = HTTPTask()
-        task.run(url,method: .GET,parameters: parameters,success,failure)
+        self.run(url,method: .GET,parameters: parameters,success,failure)
     }
     
     func POST(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         var task = HTTPTask()
-        task.run(url,method: .POST,parameters: parameters,success,failure)
+        self.run(url,method: .POST,parameters: parameters,success,failure)
     }
     
     func PUT(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         var task = HTTPTask()
-        task.run(url,method: .PUT,parameters: parameters,success,failure)
+        self.run(url,method: .PUT,parameters: parameters,success,failure)
     }
     
     func DELETE(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
-        var task = HTTPTask()
-        task.run(url,method: .DELETE,parameters: parameters,success,failure)
+        self.run(url,method: .DELETE,parameters: parameters,success,failure)
     }
     
     func HEAD(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
-        var task = HTTPTask()
-        task.run(url,method: .DELETE,parameters: parameters,success,failure)
+        self.run(url,method: .DELETE,parameters: parameters,success,failure)
     }
     
     func download(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
