@@ -37,7 +37,7 @@ class HTTPRequestSerializer: NSObject {
         request.HTTPMethod = method.toRaw()
         request.allowsCellularAccess = self.allowsCellularAccess
         request.HTTPShouldHandleCookies = self.HTTPShouldHandleCookies
-        request.HTTPShouldHandleCookies = self.HTTPShouldUsePipelining
+        request.HTTPShouldUsePipelining = self.HTTPShouldUsePipelining
         request.networkServiceType = self.networkServiceType
         for (key,val) in self.headers {
             request.addValue(val, forHTTPHeaderField: key)
