@@ -136,7 +136,7 @@ request.requestSerializer = JSONRequestSerializer()
 request.responseSerializer = JSONResponseSerializer()
 request.GET("http://vluxe.io", parameters: nil, success: {(response: AnyObject?) -> Void in
     	if response {
-            let dict = response as Dictionary
+            let dict = response as Dictionary<String,AnyObject>
 			println("example of the JSON key: \(dict["key"])")
 			println("print the whole response: \(response)")
         }
