@@ -48,6 +48,14 @@ enum HTTPMethod: String {
     case DELETE = "DELETE"
 }
 
+//holds a collection of HTTP Response values
+class HTTPResponse {
+    var headers: Dictionary<String,String>?
+    var mimeType: String?
+    var suggestedFilename: String?
+    var responseObject: AnyObject?
+}
+
 class HTTPTask : NSObject, NSURLSessionDelegate {
     
     var baseURL: String?
@@ -61,7 +69,7 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
     }
     
     ///main method that does the HTTP request. Called by GET,POST,PUT,DELETE,HEAD methods.
-    func run(url: String,method: HTTPMethod,parameters: Dictionary<String,AnyObject>!, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) {
+    func run(url: String,method: HTTPMethod,parameters: Dictionary<String,AnyObject>!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         
         let serialReq = createRequest(url,method: method, parameters: parameters)
         if serialReq.error {
@@ -87,7 +95,14 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
                             responseObject = resObj.object!
                         }
                     }
-                    success(responseObject)
+                    var extraResponse = HTTPResponse()
+                    if let hresponse = response as? NSHTTPURLResponse {
+                        extraResponse.headers = hresponse.allHeaderFields as Dictionary<String,String>
+                        extraResponse.mimeType = hresponse.MIMEType
+                        extraResponse.suggestedFilename = hresponse.suggestedFilename
+                    }
+                    extraResponse.responseObject = responseObject
+                    success(extraResponse)
                 } else {
                     failure(error)
                 }
@@ -155,30 +170,30 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
         
     }
     
-    func GET(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
+    func GET(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         var task = HTTPTask()
         self.run(url,method: .GET,parameters: parameters,success,failure)
     }
     
-    func POST(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
+    func POST(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         var task = HTTPTask()
         self.run(url,method: .POST,parameters: parameters,success,failure)
     }
     
-    func PUT(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
+    func PUT(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         var task = HTTPTask()
         self.run(url,method: .PUT,parameters: parameters,success,failure)
     }
     
-    func DELETE(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
+    func DELETE(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         self.run(url,method: .DELETE,parameters: parameters,success,failure)
     }
     
-    func HEAD(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
+    func HEAD(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         self.run(url,method: .DELETE,parameters: parameters,success,failure)
     }
     
-    func download(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
+    func download(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         let serialReq = createRequest(url,method: .GET, parameters: parameters)
         if serialReq.error {
             failure(serialReq.error!)
