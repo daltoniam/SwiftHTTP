@@ -211,7 +211,7 @@ class JSONRequestSerializer: HTTPRequestSerializer {
             request.setValue(charset, forHTTPHeaderField: self.contentTypeKey)
             request.HTTPBody = NSJSONSerialization.dataWithJSONObject(parameters, options: NSJSONWritingOptions(), error:&error)
         }
-        return (request, error!)
+        return (request, error)
     }
     
 }

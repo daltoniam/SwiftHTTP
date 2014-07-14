@@ -17,7 +17,7 @@ protocol HTTPResponseSerializer {
 struct JSONResponseSerializer : HTTPResponseSerializer {
     func responseObjectFromResponse(response: NSURLResponse, data: NSData) -> (object: AnyObject?, error: NSError?) {
         var error: NSError?
-        let response: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(0), error: &error)
+        let response: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(), error: &error)
         return (response,error)
     }
 }
