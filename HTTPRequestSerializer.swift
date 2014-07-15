@@ -208,7 +208,7 @@ class JSONRequestSerializer: HTTPRequestSerializer {
         var error: NSError?
         if parameters {
             var charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
-            request.setValue(charset, forHTTPHeaderField: self.contentTypeKey)
+            request.setValue("application/json; charset=\(charset)", forHTTPHeaderField: self.contentTypeKey)
             request.HTTPBody = NSJSONSerialization.dataWithJSONObject(parameters, options: NSJSONWritingOptions(), error:&error)
         }
         return (request, error)
