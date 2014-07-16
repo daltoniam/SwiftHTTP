@@ -54,6 +54,7 @@ class HTTPResponse {
     var mimeType: String?
     var suggestedFilename: String?
     var responseObject: AnyObject?
+    var statusCode: Int?
 }
 
 class HTTPTask : NSObject, NSURLSessionDelegate {
@@ -100,6 +101,7 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
                         extraResponse.headers = hresponse.allHeaderFields as Dictionary<String,String>
                         extraResponse.mimeType = hresponse.MIMEType
                         extraResponse.suggestedFilename = hresponse.suggestedFilename
+                        extraResponse.statusCode = hresponse.statusCode
                     }
                     extraResponse.responseObject = responseObject
                     success(extraResponse)
