@@ -98,7 +98,7 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
                     }
                     var extraResponse = HTTPResponse()
                     if let hresponse = response as? NSHTTPURLResponse {
-                        extraResponse.headers = hresponse.allHeaderFields as Dictionary<String,String>
+                        extraResponse.headers = hresponse.allHeaderFields as? Dictionary<String,String>
                         extraResponse.mimeType = hresponse.MIMEType
                         extraResponse.suggestedFilename = hresponse.suggestedFilename
                         extraResponse.statusCode = hresponse.statusCode
