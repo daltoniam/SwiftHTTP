@@ -36,7 +36,7 @@ extension String {
     
     func substringFrom(start: Int, to: Int) -> String
     {
-        return (self.substringFromIndex(start)).substringToIndex(to - start + 1)
+        return (((self as NSString).substringFromIndex(start)) as NSString).substringToIndex(to - start + 1)
     }
 }
 

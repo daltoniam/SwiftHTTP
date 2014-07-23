@@ -22,12 +22,12 @@ class HTTPUpload: NSObject {
     //gets the mimeType from the fileUrl, if possible
     func updateMimeType() {
         if !mimeType && fileUrl {
-            var UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, fileUrl?.pathExtension, nil);
+            var UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, fileUrl?.pathExtension as NSString?, nil);
             var str = UTTypeCopyPreferredTagWithClass(UTI.takeUnretainedValue(), kUTTagClassMIMEType);
             if !str {
                 mimeType = "application/octet-stream";
             } else {
-                mimeType = str.takeUnretainedValue()
+                mimeType = str.takeUnretainedValue() as NSString
             }
         }
     }
