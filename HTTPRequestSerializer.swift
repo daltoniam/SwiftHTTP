@@ -14,7 +14,7 @@ extension String {
     func escapeStr() -> String {
         var raw: NSString = self
         var str = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,raw,"[].",":/?&=;+!@#$()',*",CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding))
-        return str
+        return str as NSString
     }
 }
 
