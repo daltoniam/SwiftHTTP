@@ -116,7 +116,7 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
         //probably should change the 'http' to something more generic
         if !url.hasPrefix("http") && self.baseURL {
             var split = url.hasPrefix("/") ? "" : "/"
-            urlVal = "\(self.baseURL)\(split)\(url)"
+            urlVal = "\(self.baseURL!)\(split)\(url)"
         }
         if !self.requestSerializer {
             self.requestSerializer = HTTPRequestSerializer()
