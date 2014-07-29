@@ -104,11 +104,11 @@ class HTTPRequestSerializer: NSObject {
         var collect = Array<HTTPPair>()
         if let array = object as? Array<AnyObject> {
             for nestedValue : AnyObject in array {
-                collect.extend(self.serializeObject(nestedValue,key: "\(key)[]"))
+                collect.extend(self.serializeObject(nestedValue,key: "\(key!)[]"))
             }
         } else if let dict = object as? Dictionary<String,AnyObject> {
             for (nestedKey, nestedObject: AnyObject) in dict {
-                var newKey = key ? "\(key)[\(nestedKey)]" : nestedKey
+                var newKey = key ? "\(key!)[\(nestedKey)]" : nestedKey
                 collect.extend(self.serializeObject(nestedObject,key: newKey))
             }
         } else {
