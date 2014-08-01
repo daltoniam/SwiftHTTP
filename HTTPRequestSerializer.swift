@@ -20,7 +20,7 @@ extension String {
 
 class HTTPRequestSerializer: NSObject {
     var headers = Dictionary<String,String>()
-    var stringEncoding = NSUTF8StringEncoding
+    var stringEncoding: UInt = NSUTF8StringEncoding
     var allowsCellularAccess = true
     var HTTPShouldHandleCookies = true
     var HTTPShouldUsePipelining = false
