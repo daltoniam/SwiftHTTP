@@ -81,11 +81,11 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(serialReq.request,
             completionHandler: {(data: NSData!, response: NSURLResponse!, error: NSError!) -> Void in
-                if error {
+                if error != nil {
                     failure(error)
                     return
                 }
-                if data {
+                if data != nil {
                     var responseObject: AnyObject = data
                     if self.responseSerializer != nil {
                         let resObj = self.responseSerializer!.responseObjectFromResponse(response, data: data)
@@ -119,7 +119,7 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
             var split = url.hasPrefix("/") ? "" : "/"
             urlVal = "\(self.baseURL!)\(split)\(url)"
         }
-        if !self.requestSerializer {
+        if self.requestSerializer == nil {
             self.requestSerializer = HTTPRequestSerializer()
         }
         return self.requestSerializer.createRequest(NSURL.URLWithString(urlVal),
@@ -143,7 +143,7 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
     
     //the background task failed.
     func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didCompleteWithError error: NSError!) {
-        if error {
+        if error != nil {
             if self.backgroundFailure != nil { //Swift bug. Can't use && with block (radar: 17469794)
                 self.backgroundFailure!(error)
                 self.backgroundFailure = nil
