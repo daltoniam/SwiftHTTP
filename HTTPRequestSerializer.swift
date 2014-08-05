@@ -29,7 +29,7 @@ class HTTPRequestSerializer: NSObject {
     var networkServiceType = NSURLRequestNetworkServiceType.NetworkServiceTypeDefault
     let contentTypeKey = "Content-Type"
     
-    init() {
+    override init() {
         super.init()
     }
     func newRequest(url: NSURL, method: HTTPMethod) -> NSMutableURLRequest {
@@ -59,16 +59,16 @@ class HTTPRequestSerializer: NSObject {
             }
         }
         if isMultiForm {
-            if(method != HTTPMethod.POST || method != HTTPMethod.PUT) {
+            if(method != .POST || method != .PUT) {
                 request.HTTPMethod = HTTPMethod.POST.toRaw() // you probably wanted a post
             }
-            if parameters {
+            if parameters != nil {
                 request.HTTPBody = dataFromParameters(parameters!)
             }
             return (request,nil)
         }
         var queryString = ""
-        if parameters {
+        if parameters != nil {
             queryString = self.stringFromParameters(parameters!)
         }
         if isURIParam(method) {
@@ -94,7 +94,7 @@ class HTTPRequestSerializer: NSObject {
     }
     ///check if enum is a HTTPMethod that requires the params in the URL
     func isURIParam(method: HTTPMethod) -> Bool {
-        if(method == HTTPMethod.GET || method == HTTPMethod.HEAD || method == HTTPMethod.DELETE) {
+        if(method == .GET || method == .HEAD || method == .DELETE) {
             return true
         }
         return false
@@ -108,7 +108,7 @@ class HTTPRequestSerializer: NSObject {
             }
         } else if let dict = object as? Dictionary<String,AnyObject> {
             for (nestedKey, nestedObject: AnyObject) in dict {
-                var newKey = key ? "\(key!)[\(nestedKey)]" : nestedKey
+                var newKey = key != nil ? "\(key!)[\(nestedKey)]" : nestedKey
                 collect.extend(self.serializeObject(nestedObject,key: newKey))
             }
         } else {
@@ -158,11 +158,11 @@ class HTTPRequestSerializer: NSObject {
     ///helper method to create the multi form headers
     func multiFormHeader(name: String, fileName: String?, type: String?, multiCRLF: String) -> String {
         var str = "Content-Disposition: form-data; name=\"\(name.escapeStr())\""
-        if fileName {
+        if fileName != nil {
             str += "; filename=\"\(fileName)\""
         }
         str += multiCRLF
-        if type {
+        if type != nil {
             str += "Content-Type: \"\(type)\"\(multiCRLF)"
         }
         str += multiCRLF
@@ -181,7 +181,7 @@ class HTTPRequestSerializer: NSObject {
             var val = ""
             if let str = self.value as? String {
                 val = str
-            } else if self.value.description {
+            } else if self.value.description != nil {
                 val = self.value.description
             }
             return val
@@ -206,7 +206,7 @@ class JSONRequestSerializer: HTTPRequestSerializer {
         }
         var request = newRequest(url, method: method)
         var error: NSError?
-        if parameters {
+        if parameters != nil {
             var charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
             request.setValue("application/json; charset=\(charset)", forHTTPHeaderField: self.contentTypeKey)
             request.HTTPBody = NSJSONSerialization.dataWithJSONObject(parameters, options: NSJSONWritingOptions(), error:&error)

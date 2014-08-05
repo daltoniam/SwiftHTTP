@@ -66,14 +66,15 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
     var backgroundSuccess:((AnyObject?) -> Void)?
     var backgroundFailure:((NSError) -> Void)?
     
-    init() {
+    override init() {
+        super.init()
     }
     
     ///main method that does the HTTP request. Called by GET,POST,PUT,DELETE,HEAD methods.
     func run(url: String,method: HTTPMethod,parameters: Dictionary<String,AnyObject>!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         
         let serialReq = createRequest(url,method: method, parameters: parameters)
-        if serialReq.error {
+        if serialReq.error != nil {
             failure(serialReq.error!)
             return
         }
@@ -86,13 +87,13 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
                 }
                 if data {
                     var responseObject: AnyObject = data
-                    if self.responseSerializer {
+                    if self.responseSerializer != nil {
                         let resObj = self.responseSerializer!.responseObjectFromResponse(response, data: data)
-                        if resObj.error {
+                        if resObj.error != nil {
                             failure(resObj.error!)
                             return
                         }
-                        if resObj.object {
+                        if resObj.object != nil {
                             responseObject = resObj.object!
                         }
                     }
@@ -114,7 +115,7 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
     func createRequest(url: String,method: HTTPMethod,parameters: Dictionary<String,AnyObject>!) -> (request: NSURLRequest, error: NSError?) {
         var urlVal = url
         //probably should change the 'http' to something more generic
-        if !url.hasPrefix("http") && self.baseURL {
+        if !url.hasPrefix("http") && self.baseURL != nil {
             var split = url.hasPrefix("/") ? "" : "/"
             urlVal = "\(self.baseURL!)\(split)\(url)"
         }
@@ -143,7 +144,7 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
     //the background task failed.
     func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didCompleteWithError error: NSError!) {
         if error {
-            if self.backgroundFailure { //Swift bug. Can't use && with block (radar: 17469794)
+            if self.backgroundFailure != nil { //Swift bug. Can't use && with block (radar: 17469794)
                 self.backgroundFailure!(error)
                 self.backgroundFailure = nil
                 self.backgroundSuccess = nil
@@ -197,7 +198,7 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
     
     func download(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         let serialReq = createRequest(url,method: .GET, parameters: parameters)
-        if serialReq.error {
+        if serialReq.error != nil {
             failure(serialReq.error!)
             return
         }
@@ -208,7 +209,7 @@ class HTTPTask : NSObject, NSURLSessionDelegate {
     
     func upload(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         let serialReq = createRequest(url,method: .GET, parameters: parameters)
-        if serialReq.error {
+        if serialReq.error != nil {
             failure(serialReq.error!)
             return
         }

@@ -21,7 +21,7 @@ class HTTPUpload: NSObject {
     var fileName: String?
     //gets the mimeType from the fileUrl, if possible
     func updateMimeType() {
-        if !mimeType && fileUrl {
+        if mimeType == nil && fileUrl != nil {
             var UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, fileUrl?.pathExtension as NSString?, nil);
             var str = UTTypeCopyPreferredTagWithClass(UTI.takeUnretainedValue(), kUTTagClassMIMEType);
             if !str {
@@ -32,7 +32,8 @@ class HTTPUpload: NSObject {
         }
     }
     //default init does nothing
-    init()  {
+    override init() {
+        super.init()
     }
     ///upload a file with a fileUrl. The fileName and mimeType will be infered
     convenience init(fileUrl: NSURL) {
