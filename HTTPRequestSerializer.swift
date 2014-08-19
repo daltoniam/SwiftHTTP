@@ -72,12 +72,12 @@ class HTTPRequestSerializer: NSObject {
             queryString = self.stringFromParameters(parameters!)
         }
         if isURIParam(method) {
-            var para = request.URL.query ? "&" : "?"
+            var para = (request.URL.query != nil) ? "&" : "?"
             var newUrl = "\(request.URL.absoluteString)\(para)\(queryString)"
             request.URL = NSURL.URLWithString(newUrl)
         } else {
             var charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(self.stringEncoding));
-            if !request.valueForHTTPHeaderField(contentTypeKey) {
+            if request.valueForHTTPHeaderField(contentTypeKey) == nil {
                 request.setValue("application/x-www-form-urlencoded; charset=\(charset)",
                     forHTTPHeaderField:contentTypeKey)
             }
@@ -131,7 +131,7 @@ class HTTPRequestSerializer: NSObject {
         var multiCRLF = "\r\n"
         var boundary = "Boundary+\(arc4random())\(arc4random())"
         var boundSplit = "\(multiCRLF)--\(boundary)\(multiCRLF)"
-        mutData.appendData("--\(boundary)\(multiCRLF)".dataUsingEncoding(self.stringEncoding))
+        mutData.appendData("--\(boundary)\(multiCRLF)".dataUsingEncoding(self.stringEncoding)!)
         var noParams = false
         if notFiles.count == 0 {
             noParams = true
@@ -139,20 +139,20 @@ class HTTPRequestSerializer: NSObject {
         var i = files.count
         for (key,upload) in files {
             mutData.appendData(multiFormHeader(key, fileName: upload.fileName,
-                type: upload.mimeType, multiCRLF: multiCRLF).dataUsingEncoding(self.stringEncoding))
-            mutData.appendData(upload.data)
+                type: upload.mimeType, multiCRLF: multiCRLF).dataUsingEncoding(self.stringEncoding)!)
+            mutData.appendData(upload.data!)
             if i == 1 && noParams {
             } else {
-                mutData.appendData(boundSplit.dataUsingEncoding(self.stringEncoding))
+                mutData.appendData(boundSplit.dataUsingEncoding(self.stringEncoding)!)
             }
         }
         if !noParams {
             let paramStr = join(boundSplit, map(serializeObject(notFiles, key: nil), {(pair) in
                 return "\(self.multiFormHeader(pair.key, fileName: nil, type: nil, multiCRLF: multiCRLF))\(pair.getValue())"
                 }))
-            mutData.appendData(paramStr.dataUsingEncoding(self.stringEncoding))
+            mutData.appendData(paramStr.dataUsingEncoding(self.stringEncoding)!)
         }
-        mutData.appendData("\(multiCRLF)--\(boundary)--\(multiCRLF)".dataUsingEncoding(self.stringEncoding))
+        mutData.appendData("\(multiCRLF)--\(boundary)--\(multiCRLF)".dataUsingEncoding(self.stringEncoding)!)
         return mutData
     }
     ///helper method to create the multi form headers
@@ -188,7 +188,7 @@ class HTTPRequestSerializer: NSObject {
         }
         func stringValue() -> String {
             var val = getValue()
-            if !self.key {
+            if self.key == nil {
                 return val.escapeStr()
             }
             return "\(self.key.escapeStr())=\(val.escapeStr())"
@@ -209,7 +209,7 @@ class JSONRequestSerializer: HTTPRequestSerializer {
         if parameters != nil {
             var charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
             request.setValue("application/json; charset=\(charset)", forHTTPHeaderField: self.contentTypeKey)
-            request.HTTPBody = NSJSONSerialization.dataWithJSONObject(parameters, options: NSJSONWritingOptions(), error:&error)
+            request.HTTPBody = NSJSONSerialization.dataWithJSONObject(parameters!, options: NSJSONWritingOptions(), error:&error)
         }
         return (request, error)
     }

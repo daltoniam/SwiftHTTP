@@ -24,7 +24,7 @@ class HTTPUpload: NSObject {
         if mimeType == nil && fileUrl != nil {
             var UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, fileUrl?.pathExtension as NSString?, nil);
             var str = UTTypeCopyPreferredTagWithClass(UTI.takeUnretainedValue(), kUTTagClassMIMEType);
-            if !str {
+            if (str == nil) {
                 mimeType = "application/octet-stream";
             } else {
                 mimeType = str.takeUnretainedValue() as NSString
