@@ -21,7 +21,7 @@ request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPRespons
     })
 ```
 
-We can also add parameters as with standard container objects.
+We can also add parameters as with standard container objects and they will be properly serialized to their respective HTTP equivalent.
 
 ```swift
 var request = HTTPTask()
@@ -145,6 +145,45 @@ request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPRespons
     },failure: {(error: NSError) -> Void in
     	println("error: \(error)")
     })
+```
+
+## Full Example
+
+This is a full example swiftHTTP in action. First here is a quick web server in Go.
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/http"
+)
+
+func main() {
+	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("got a web request")
+		fmt.Println("header: ", r.Header.Get("someKey"))
+		w.Write([]byte("{\"status\": \"ok\"}"))
+	})
+
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+```
+
+Now for the request:
+
+```swift
+var request = HTTPTask()
+request.requestSerializer = HTTPRequestSerializer()
+request.requestSerializer.headers["someKey"] = "SomeValue"
+request.responseSerializer = JSONResponseSerializer()
+request.GET("http://localhost:8080/bar", parameters: nil, success: {(response: HTTPResponse) -> Void in
+    if (response.responseObject != nil) {
+        println("got response: \(response.responseObject!)")
+    }
+    }, failure: {(error: NSError) -> Void in
+        println("got an error: \(error)")
+})
 ```
 
 ## Requirements
