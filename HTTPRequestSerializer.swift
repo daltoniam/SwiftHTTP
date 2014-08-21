@@ -73,7 +73,7 @@ class HTTPRequestSerializer: NSObject {
         }
         if isURIParam(method) {
             var para = (request.URL.query != nil) ? "&" : "?"
-            var newUrl = "\(request.URL.absoluteString)\(para)\(queryString)"
+            var newUrl = "\(request.URL.absoluteString!)\(para)\(queryString)"
             request.URL = NSURL.URLWithString(newUrl)
         } else {
             var charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(self.stringEncoding));
@@ -159,11 +159,11 @@ class HTTPRequestSerializer: NSObject {
     func multiFormHeader(name: String, fileName: String?, type: String?, multiCRLF: String) -> String {
         var str = "Content-Disposition: form-data; name=\"\(name.escapeStr())\""
         if fileName != nil {
-            str += "; filename=\"\(fileName)\""
+            str += "; filename=\"\(fileName!)\""
         }
         str += multiCRLF
         if type != nil {
-            str += "Content-Type: \"\(type)\"\(multiCRLF)"
+            str += "Content-Type: \"\(type!)\"\(multiCRLF)"
         }
         str += multiCRLF
         return str
