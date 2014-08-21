@@ -11,7 +11,7 @@ The most basic request. By default an NSData object will be returned for the res
 ```swift
 var request = HTTPTask()
 request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPResponse) -> Void in
-    	if response.responseObject {
+    	if response.responseObject != nil {
             let data = response.responseObject as NSData
             let str = NSString(data: data, encoding: NSUTF8StringEncoding)
             println("response: \(str)") //prints the HTML of the page
@@ -137,7 +137,7 @@ request.requestSerializer = JSONRequestSerializer()
 //The expected response will be JSON and be converted to an object return by NSJSONSerialization instead of a NSData.
 request.responseSerializer = JSONResponseSerializer()
 request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPResponse) -> Void in
-    	if response.responseObject {
+    	if response.responseObject != nil {
             let dict = response.responseObject as Dictionary<String,AnyObject>
 			println("example of the JSON key: \(dict["key"])")
 			println("print the whole response: \(response)")
