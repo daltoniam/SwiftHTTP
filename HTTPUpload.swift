@@ -10,7 +10,7 @@
 import Foundation
 import MobileCoreServices
 
-class HTTPUpload: NSObject {
+public class HTTPUpload: NSObject {
     var fileUrl: NSURL? {
     didSet {
         updateMimeType()
