@@ -1,7 +1,7 @@
 SwiftHTTP
 =========
 
-Thin wrapper around NSURLSession in swift. Simplifies HTTP requests.
+Thin wrapper around NSURLSession in swift. Simplifies HTTP requests, provides NSOperationQueue support, and simple HTTP API interaction.
 
 ##Example 
 
