@@ -32,6 +32,7 @@ class HTTPRequestSerializer: NSObject {
     override init() {
         super.init()
     }
+    ///creates a new URLRequest object and sets up the different options
     func newRequest(url: NSURL, method: HTTPMethod) -> NSMutableURLRequest {
         var request = NSMutableURLRequest(URL: url, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
         request.HTTPMethod = method.toRaw()
@@ -72,8 +73,11 @@ class HTTPRequestSerializer: NSObject {
             queryString = self.stringFromParameters(parameters!)
         }
         if isURIParam(method) {
-            var para = (request.URL?.query != nil) ? "&" : "?"
-            var newUrl = "\(request.URL?.absoluteString!)\(para)\(queryString)"
+            var para = (request.URL!.query != nil) ? "&" : "?"
+            var newUrl = "\(request.URL!.absoluteString!)"
+            if countElements(queryString) > 0 {
+                newUrl += "\(para)\(queryString)"
+            }
             request.URL = NSURL.URLWithString(newUrl)
         } else {
             var charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(self.stringEncoding));
@@ -197,7 +201,7 @@ class HTTPRequestSerializer: NSObject {
     }
    
 }
-
+///Does the JSON version
 class JSONRequestSerializer: HTTPRequestSerializer {
     
     override func createRequest(url: NSURL, method: HTTPMethod, parameters: Dictionary<String,AnyObject>?) -> (request: NSURLRequest, error: NSError?) {

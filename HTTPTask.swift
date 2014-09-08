@@ -57,12 +57,54 @@ public class HTTPResponse {
     var statusCode: Int?
 }
 
+public class HTTPOperation : NSOperation {
+    var task: NSURLSessionDataTask!
+    var stopped = false
+    var running = false
+    public var done = false
+    override public var asynchronous: Bool {
+        return false
+    }
+    override public var cancelled: Bool {
+        return self.stopped
+    }
+    override public var executing: Bool {
+        return self.running
+    }
+    override public var finished: Bool {
+        return self.done
+    }
+    override public var ready: Bool {
+        return !self.running
+    }
+    //start the task
+    override public func start() {
+        super.start()
+        self.stopped = false
+        self.running = true
+        self.done = false
+        self.task.resume()
+    }
+    override public func cancel() {
+        super.cancel()
+        self.running = false
+        self.stopped = true
+        self.done = true
+        self.task.cancel()
+    }
+    public func finish() {
+        self.running = false
+        self.done = true
+    }
+    
+}
+
 public class HTTPTask : NSObject, NSURLSessionDelegate {
     
     var baseURL: String?
     var requestSerializer: HTTPRequestSerializer!
     var responseSerializer: HTTPResponseSerializer?
-    //this only get used for background download/upload since they have to be delegate methods
+    //these 2 only get used for background download/upload since they have to be delegate methods
     var backgroundSuccess:((AnyObject?) -> Void)?
     var backgroundFailure:((NSError) -> Void)?
     
@@ -71,18 +113,24 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
     }
     
     ///main method that does the HTTP request. Called by GET,POST,PUT,DELETE,HEAD methods.
-    public func run(url: String,method: HTTPMethod,parameters: Dictionary<String,AnyObject>!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
+    public func create(url: String,method: HTTPMethod,parameters: Dictionary<String,AnyObject>!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) ->  HTTPOperation? {
         
         let serialReq = createRequest(url,method: method, parameters: parameters)
         if serialReq.error != nil {
-            failure(serialReq.error!)
-            return
+            if failure != nil {
+                failure(serialReq.error!)
+            }
+            return nil
         }
+        let opt = HTTPOperation()
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(serialReq.request,
             completionHandler: {(data: NSData!, response: NSURLResponse!, error: NSError!) -> Void in
+                opt.finish()
                 if error != nil {
-                    failure(error)
+                    if failure != nil {
+                        failure(error)
+                    }
                     return
                 }
                 if data != nil {
@@ -90,7 +138,9 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
                     if self.responseSerializer != nil {
                         let resObj = self.responseSerializer!.responseObjectFromResponse(response, data: data)
                         if resObj.error != nil {
-                            failure(resObj.error!)
+                            if failure != nil {
+                                failure(resObj.error!)
+                            }
                             return
                         }
                         if resObj.object != nil {
@@ -105,13 +155,77 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
                         extraResponse.statusCode = hresponse.statusCode
                     }
                     extraResponse.responseObject = responseObject
-                    success(extraResponse)
-                } else {
+                    if success != nil {
+                        success(extraResponse)
+                    }
+                } else if failure != nil {
                     failure(error)
                 }
             })
-        task.resume()
+        opt.task = task
+        return opt
     }
+    ///runs a GET request
+    public func GET(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
+        var opt = self.create(url, method:.GET, parameters: parameters,success,failure)
+        if opt != nil {
+            opt!.start()
+        }
+    }
+    ///runs a POST request
+    public func POST(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
+        var opt = self.create(url, method:.POST, parameters: parameters,success,failure)
+        if opt != nil {
+            opt!.start()
+        }
+    }
+    ///runs a PUT request
+    public func PUT(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
+        var opt = self.create(url, method:.PUT, parameters: parameters,success,failure)
+        if opt != nil {
+            opt!.start()
+        }
+    }
+    ///runs a DELETE request
+    public func DELETE(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!)  {
+        var opt = self.create(url, method:.DELETE, parameters: parameters,success,failure)
+        if opt != nil {
+            opt!.start()
+        }
+    }
+    ///runs a HEAD request
+    public func HEAD(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
+        var opt = self.create(url, method:.HEAD, parameters: parameters,success,failure)
+        if opt != nil {
+            opt!.start()
+        }
+    }
+    //Download a file in the background. The HTTPResponse responseObject object will be a fileURL.
+    public func downloadFile(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
+        let serialReq = createRequest(url,method: .GET, parameters: parameters)
+        if serialReq.error != nil {
+            failure(serialReq.error!)
+            return
+        }
+        let config = NSURLSessionConfiguration.backgroundSessionConfiguration(createBackgroundIdent())
+        let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
+        session.downloadTaskWithRequest(serialReq.request)
+    }
+    
+    public func uploadFile(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
+        let serialReq = createRequest(url,method: .GET, parameters: parameters)
+        if serialReq.error != nil {
+            failure(serialReq.error!)
+            return
+        }
+        let config = NSURLSessionConfiguration.backgroundSessionConfiguration(createBackgroundIdent())
+        let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
+        //session.uploadTaskWithRequest(serialReq.request, fromData: nil)
+    }
+    
+    //private methods below
+    
+    ///creates the request object.
     func createRequest(url: String,method: HTTPMethod,parameters: Dictionary<String,AnyObject>!) -> (request: NSURLRequest, error: NSError?) {
         var urlVal = url
         //probably should change the 'http' to something more generic
@@ -126,7 +240,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
             method: method, parameters: parameters)
         
     }
-    //creates a random string to use for the identifer of the background download/upload requests
+    ///creates a random string to use for the identifer of the background download/upload requests
     private func createBackgroundIdent() -> String {
         let letters = "abcdefghijklmnopqurstuvwxyz"
         var str = ""
@@ -138,11 +252,11 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
     }
     
     //the background download finished, don't have to really do anything
-    private func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession!) {
+    func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession!) {
     }
     
     //the background task failed.
-    private func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didCompleteWithError error: NSError!) {
+    func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didCompleteWithError error: NSError!) {
         if error != nil {
             if self.backgroundFailure != nil { //Swift bug. Can't use && with block (radar: 17469794)
                 self.backgroundFailure!(error)
@@ -153,69 +267,24 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
     }
     
     //the background download finished and reports the url the data was saved to
-    private func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didFinishDownloadingToURL location: NSURL!) {
+    func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didFinishDownloadingToURL location: NSURL!) {
         //add the download logic
     }
     //the background upload finished and reports the response data (if any)
-    private func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, didReceiveData data: NSData!) {
+    func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, didReceiveData data: NSData!) {
         //add upload finished logic
     }
     //will report progress of background download
-    private func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+    func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         //add progress block logic
     }
     //will report progress of background upload
-    private func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+    func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         //add progress block logic
     }
     //just have to implement, does nothing
-    private func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
+    func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
         
-    }
-    
-    public func GET(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
-        var task = HTTPTask()
-        self.run(url,method: .GET,parameters: parameters,success,failure)
-    }
-    
-    public func POST(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
-        var task = HTTPTask()
-        self.run(url,method: .POST,parameters: parameters,success,failure)
-    }
-    
-    public func PUT(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
-        var task = HTTPTask()
-        self.run(url,method: .PUT,parameters: parameters,success,failure)
-    }
-    
-    public func DELETE(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
-        self.run(url,method: .DELETE,parameters: parameters,success,failure)
-    }
-    
-    public func HEAD(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
-        self.run(url,method: .DELETE,parameters: parameters,success,failure)
-    }
-    
-    public func download(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
-        let serialReq = createRequest(url,method: .GET, parameters: parameters)
-        if serialReq.error != nil {
-            failure(serialReq.error!)
-            return
-        }
-        let config = NSURLSessionConfiguration.backgroundSessionConfiguration(createBackgroundIdent())
-        let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
-        session.downloadTaskWithRequest(serialReq.request)
-    }
-    
-    public func upload(url: String, parameters: Dictionary<String,AnyObject>?, success:((AnyObject?) -> Void)!, failure:((NSError) -> Void)!) -> Void {
-        let serialReq = createRequest(url,method: .GET, parameters: parameters)
-        if serialReq.error != nil {
-            failure(serialReq.error!)
-            return
-        }
-        let config = NSURLSessionConfiguration.backgroundSessionConfiguration(createBackgroundIdent())
-        let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
-        //session.uploadTaskWithRequest(serialReq.request, fromData: nil)
     }
    
 }

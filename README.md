@@ -126,6 +126,28 @@ request.GET("/resources", parameters: ["key": "value"], success: {(response: HTT
     })
 ```
 
+## Operation Queue
+
+Operation queues are also supported in SwiftHTTP.
+
+```swift
+let operationQueue = NSOperationQueue()
+operationQueue.maxConcurrentOperationCount = 2
+var request = HTTPTask()
+var opt = request.create("http://vluxe.io", method: .GET, parameters: nil, success: {(response: HTTPResponse) -> Void in
+    if response.responseObject != nil {
+        let data = response.responseObject as NSData
+        let str = NSString(data: data, encoding: NSUTF8StringEncoding)
+        println("response: \(str)") //prints the HTML of the page
+    }
+    },failure: {(error: NSError) -> Void in
+        println("error: \(error)")
+})
+if opt != nil {
+    operationQueue.addOperation(opt!)
+}
+```
+
 ## Serializers
 
 Request parameters and request responses can also be serialized as needed. By default request are serialized using standard HTTP form encoding. A JSON request and response serializer are provided as well. It is also very simple to create custom serializer by subclass a request or response serializer

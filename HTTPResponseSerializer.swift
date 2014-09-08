@@ -10,10 +10,10 @@
 import Foundation
 
 protocol HTTPResponseSerializer {
-    
+    //This can be used if you want to have your data parsed/serialized into something instead of just a NSData blob.
     func responseObjectFromResponse(response: NSURLResponse, data: NSData) -> (object: AnyObject?, error: NSError?)
 }
-
+//Serialize the data into a JSON object
 struct JSONResponseSerializer : HTTPResponseSerializer {
     func responseObjectFromResponse(response: NSURLResponse, data: NSData) -> (object: AnyObject?, error: NSError?) {
         var error: NSError?
