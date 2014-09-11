@@ -5,6 +5,8 @@ Thin wrapper around NSURLSession in swift. Simplifies HTTP requests, provides NS
 
 ##Example 
 
+Full article here: [http://vluxe.io/swifthttp.html](http://vluxe.io/swifthttp.html)
+
 ## GET
 
 The most basic request. By default an NSData object will be returned for the response.
