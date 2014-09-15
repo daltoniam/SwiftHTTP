@@ -102,7 +102,7 @@ public class HTTPOperation : NSOperation {
 public class HTTPTask : NSObject, NSURLSessionDelegate {
     
     var baseURL: String?
-    var requestSerializer: HTTPRequestSerializer!
+    var requestSerializer = HTTPRequestSerializer()
     var responseSerializer: HTTPResponseSerializer?
     //these 2 only get used for background download/upload since they have to be delegate methods
     var backgroundSuccess:((AnyObject?) -> Void)?
@@ -155,7 +155,11 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
                         extraResponse.statusCode = hresponse.statusCode
                     }
                     extraResponse.responseObject = responseObject
-                    if success != nil {
+                    if extraResponse.statusCode > 299 {
+                        if failure != nil {
+                            failure(self.createError(extraResponse.statusCode!))
+                        }
+                    } else if success != nil {
                         success(extraResponse)
                     }
                 } else if failure != nil {
@@ -233,9 +237,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
             var split = url.hasPrefix("/") ? "" : "/"
             urlVal = "\(self.baseURL!)\(split)\(url)"
         }
-        if self.requestSerializer == nil {
-            self.requestSerializer = HTTPRequestSerializer()
-        }
+        println("requestSerializer: \(self.requestSerializer)")
         return self.requestSerializer.createRequest(NSURL.URLWithString(urlVal),
             method: method, parameters: parameters)
         
@@ -249,6 +251,17 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
             str += letters[start]
         }
         return "com.vluxe.swifthttp.request.\(str)"
+    }
+    
+    ///creates a random string to use for the identifer of the background download/upload requests
+    private func createError(code: Int) -> NSError {
+        var text = "An error occured"
+        if code == 404 {
+            text = "page not found"
+        } else if code == 401 {
+            text = "accessed denied"
+        }
+        return NSError(domain: "HTTPTask", code: code, userInfo: [NSLocalizedDescriptionKey: text])
     }
     
     //the background download finished, don't have to really do anything
