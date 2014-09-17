@@ -50,11 +50,11 @@ public enum HTTPMethod: String {
 
 //holds a collection of HTTP Response values
 public class HTTPResponse {
-    var headers: Dictionary<String,String>?
-    var mimeType: String?
-    var suggestedFilename: String?
-    var responseObject: AnyObject?
-    var statusCode: Int?
+    public var headers: Dictionary<String,String>?
+    public var mimeType: String?
+    public var suggestedFilename: String?
+    public var responseObject: AnyObject?
+    public var statusCode: Int?
 }
 
 public class HTTPOperation : NSOperation {
@@ -108,7 +108,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
     var backgroundSuccess:((AnyObject?) -> Void)?
     var backgroundFailure:((NSError) -> Void)?
     
-    override init() {
+    public override init() {
         super.init()
     }
     
