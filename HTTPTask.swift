@@ -101,9 +101,9 @@ public class HTTPOperation : NSOperation {
 
 public class HTTPTask : NSObject, NSURLSessionDelegate {
     
-    var baseURL: String?
-    var requestSerializer = HTTPRequestSerializer()
-    var responseSerializer: HTTPResponseSerializer?
+    public var baseURL: String?
+    public var requestSerializer = HTTPRequestSerializer()
+    public var responseSerializer: HTTPResponseSerializer?
     //these 2 only get used for background download/upload since they have to be delegate methods
     var backgroundSuccess:((AnyObject?) -> Void)?
     var backgroundFailure:((NSError) -> Void)?
@@ -237,7 +237,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
             var split = url.hasPrefix("/") ? "" : "/"
             urlVal = "\(self.baseURL!)\(split)\(url)"
         }
-        println("requestSerializer: \(self.requestSerializer)")
+        //println("requestSerializer: \(self.requestSerializer)")
         return self.requestSerializer.createRequest(NSURL.URLWithString(urlVal),
             method: method, parameters: parameters)
         

@@ -18,18 +18,18 @@ extension String {
     }
 }
 
-class HTTPRequestSerializer: NSObject {
-    var headers = Dictionary<String,String>()
-    var stringEncoding: UInt = NSUTF8StringEncoding
-    var allowsCellularAccess = true
-    var HTTPShouldHandleCookies = true
-    var HTTPShouldUsePipelining = false
-    var timeoutInterval: NSTimeInterval = 60
-    var cachePolicy: NSURLRequestCachePolicy = NSURLRequestCachePolicy.UseProtocolCachePolicy
+public class HTTPRequestSerializer: NSObject {
+    public var headers = Dictionary<String,String>()
+    public var stringEncoding: UInt = NSUTF8StringEncoding
+    public var allowsCellularAccess = true
+    public var HTTPShouldHandleCookies = true
+    public var HTTPShouldUsePipelining = false
+    public var timeoutInterval: NSTimeInterval = 60
+    public var cachePolicy: NSURLRequestCachePolicy = NSURLRequestCachePolicy.UseProtocolCachePolicy
     var networkServiceType = NSURLRequestNetworkServiceType.NetworkServiceTypeDefault
     let contentTypeKey = "Content-Type"
     
-    override init() {
+    public override init() {
         super.init()
     }
     ///creates a new URLRequest object and sets up the different options
@@ -201,10 +201,11 @@ class HTTPRequestSerializer: NSObject {
     }
    
 }
+
 ///Does the JSON version
-class JSONRequestSerializer: HTTPRequestSerializer {
+public class JSONRequestSerializer: HTTPRequestSerializer {
     
-    override func createRequest(url: NSURL, method: HTTPMethod, parameters: Dictionary<String,AnyObject>?) -> (request: NSURLRequest, error: NSError?) {
+    public override func createRequest(url: NSURL, method: HTTPMethod, parameters: Dictionary<String,AnyObject>?) -> (request: NSURLRequest, error: NSError?) {
         if self.isURIParam(method) {
             return super.createRequest(url, method: method, parameters: parameters)
         }
