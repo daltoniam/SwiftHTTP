@@ -41,7 +41,9 @@ A POST request is just as easy as a GET.
 
 ```swift
 var request = HTTPTask()
-request.POST("http://domain.com/create", parameters: ["param": "hi", "something": "else", "key": "value"], success: {(response: HTTPResponse) -> Void in
+//we have to add the explicit type, else the wrong type is inferred. See the vluxe.io article for more info.
+let params: Dictionary<String,AnyObject> = ["param": "param1", "array": ["first array element","second","third"], "num": 23, "dict": ["someKey": "someVal"]]
+request.POST("http://domain.com/create", parameters: params, success: {(response: HTTPResponse) -> Void in
     
     },failure: {(error: NSError) -> Void in
     
