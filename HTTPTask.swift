@@ -57,6 +57,20 @@ public class HTTPResponse {
     public var statusCode: Int?
 }
 
+//holds blocks of background task
+public class BackgroundBlocks {
+    //these 2 only get used for background download/upload since they have to be delegate methods
+    var success:((HTTPResponse) -> Void)?
+    var failure:((NSError) -> Void)?
+    var progress:((Double) -> Void)?
+    
+    init(_ success: ((HTTPResponse) -> Void)?, _ failure: ((NSError) -> Void)?,_ progress: ((Double) -> Void)?) {
+        self.failure = failure
+        self.success = success
+        self.progress = progress
+    }
+}
+
 public class HTTPOperation : NSOperation {
     var task: NSURLSessionDataTask!
     var stopped = false
@@ -104,10 +118,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
     public var baseURL: String?
     public var requestSerializer = HTTPRequestSerializer()
     public var responseSerializer: HTTPResponseSerializer?
-    //these 2 only get used for background download/upload since they have to be delegate methods
-    var backgroundSuccess:((AnyObject?) -> Void)?
-    var backgroundFailure:((NSError) -> Void)?
-    
+    var backgroundTaskMap = Dictionary<String,BackgroundBlocks>()
     public override init() {
         super.init()
     }
@@ -205,24 +216,30 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
         }
     }
     //Download a file in the background. The HTTPResponse responseObject object will be a fileURL.
-    public func downloadFile(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
+    //You MUST copy the fileURL return in HTTPResponse.responseObject to a new location before using it (e.g. your documents directory).
+    //The progress returned in the progress block is between 0 and 1.
+    public func download(url: String, parameters: Dictionary<String,AnyObject>?,progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         let serialReq = createRequest(url,method: .GET, parameters: parameters)
         if serialReq.error != nil {
             failure(serialReq.error!)
             return
         }
-        let config = NSURLSessionConfiguration.backgroundSessionConfiguration(createBackgroundIdent())
+        let ident = createBackgroundIdent()
+        let config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(ident)
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
-        session.downloadTaskWithRequest(serialReq.request)
+        let task = session.downloadTaskWithRequest(serialReq.request)
+        self.backgroundTaskMap[ident] = BackgroundBlocks(success,failure,progress)
+        //this does not have to be queueable as Apple's background dameon *should* handle that.
+        task.resume()
     }
     
-    public func uploadFile(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
+    public func uploadFile(url: String, parameters: Dictionary<String,AnyObject>?, progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         let serialReq = createRequest(url,method: .GET, parameters: parameters)
         if serialReq.error != nil {
             failure(serialReq.error!)
             return
         }
-        let config = NSURLSessionConfiguration.backgroundSessionConfiguration(createBackgroundIdent())
+        let config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(createBackgroundIdent())
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         //session.uploadTaskWithRequest(serialReq.request, fromData: nil)
     }
@@ -271,17 +288,35 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
     //the background task failed.
     func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didCompleteWithError error: NSError!) {
         if error != nil {
-            if self.backgroundFailure != nil { //Swift bug. Can't use && with block (radar: 17469794)
-                self.backgroundFailure!(error)
-                self.backgroundFailure = nil
-                self.backgroundSuccess = nil
+            let blocks = self.backgroundTaskMap[session.configuration.identifier]
+            if blocks?.failure != nil { //Swift bug. Can't use && with block (radar: 17469794)
+                blocks?.failure!(error)
+                cleanupBackground(session.configuration.identifier)
             }
         }
     }
     
     //the background download finished and reports the url the data was saved to
     func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didFinishDownloadingToURL location: NSURL!) {
-        //add the download logic
+        let blocks = self.backgroundTaskMap[session.configuration.identifier]
+        if blocks?.success != nil {
+            var resp = HTTPResponse()
+            if let hresponse = downloadTask.response as? NSHTTPURLResponse {
+                resp.headers = hresponse.allHeaderFields as? Dictionary<String,String>
+                resp.mimeType = hresponse.MIMEType
+                resp.suggestedFilename = hresponse.suggestedFilename
+                resp.statusCode = hresponse.statusCode
+            }
+            resp.responseObject = location
+            if resp.statusCode > 299 {
+                if blocks?.failure != nil {
+                    blocks?.failure!(self.createError(resp.statusCode!))
+                }
+                return
+            }
+            blocks?.success!(resp)
+            cleanupBackground(session.configuration.identifier)
+        }
     }
     //the background upload finished and reports the response data (if any)
     func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, didReceiveData data: NSData!) {
@@ -289,7 +324,15 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
     }
     //will report progress of background download
     func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        //add progress block logic
+        let increment = 100.0/Double(totalBytesExpectedToWrite)
+        var current = (increment*Double(totalBytesWritten))*0.01
+        if current > 1 {
+            current = 1;
+        }
+        let blocks = self.backgroundTaskMap[session.configuration.identifier]
+        if blocks?.progress != nil {
+            blocks?.progress!(current)
+        }
     }
     //will report progress of background upload
     func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
@@ -298,6 +341,9 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
     //just have to implement, does nothing
     func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
         
+    }
+    func cleanupBackground(identifier: String) {
+        self.backgroundTaskMap.removeValueForKey(identifier)
     }
    
 }

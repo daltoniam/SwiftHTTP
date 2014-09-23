@@ -92,9 +92,26 @@ request.HEAD("http://domain.com/image.png", parameters: nil, success: {(response
 
 ## Download
 
+The download method uses the background download functionality of NSURLSession. It also has a progress closure to report the progress of the download.
+
 ```swift
-//Dalton, add the background download example.
-//still working on finishing it
+var request = HTTPTask()
+request.download("http://vluxe.io/assets/images/logo.png", parameters: nil, progress: {(complete: Double) -> Void in
+    println("percent complete: \(complete)")
+    }, success: {(response: HTTPResponse) -> Void in
+    println("download finished!")
+    if response.responseObject != nil {
+        //we MUST copy the file from its temp location to a permanent location.
+        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+        let newPath = NSURL(string:  "\(paths[0])/\(response.suggestedFilename!)")
+        let fileManager = NSFileManager.defaultManager()
+        fileManager.removeItemAtURL(newPath, error: nil)
+        fileManager.moveItemAtURL(response.responseObject! as NSURL, toURL: newPath, error: nil)
+    }
+    
+    } ,failure: {(error: NSError) -> Void in
+        println("failure")
+})
 ```
 
 ## Upload
@@ -214,7 +231,7 @@ request.GET("http://localhost:8080/bar", parameters: nil, success: {(response: H
 
 ## Requirements
 
-SwiftHTTP requires at least iOS 7/OSX 10.9 or above.
+SwiftHTTP requires at least iOS 8/OSX 10.10 or above.
 
 
 ### Dalton Cherry
