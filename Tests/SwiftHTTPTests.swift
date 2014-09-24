@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Vluxe. All rights reserved.
 //
 
-import UIKit
 import XCTest
+import SwiftHTTP
 
 class SwiftHTTPTests: XCTestCase {
     
@@ -21,16 +21,14 @@ class SwiftHTTPTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        XCTAssert(true, "Pass")
+    func testGetRequest() {
+        var request = HTTPTask()
+        request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPResponse) -> Void in
+            if response.responseObject != nil {
+                XCTAssert(true, "Pass")
+            }
+            },failure: {(error: NSError) -> Void in
+                XCTAssert(false, "Failure")
+        })
     }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock() {
-            // Put the code you want to measure the time of here.
-        }
-    }
-    
 }

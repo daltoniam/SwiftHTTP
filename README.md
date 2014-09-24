@@ -255,11 +255,14 @@ Add the `SwiftHTTP.xcodeproj` to your Xcode project. Once that is complete, in y
 
 - [ ] Complete Docs
 - [ ] Add Unit Tests
+- [ ] Add Example Project
 - [ ] Add Swallow Installation Docs
 
 ## License
 
 SwiftHTTP is licensed under the Apache v2 License.
+
+## Contact
 
 ### Dalton Cherry
 * https://github.com/daltoniam
