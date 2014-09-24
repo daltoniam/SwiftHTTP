@@ -1,13 +1,23 @@
 SwiftHTTP
 =========
 
-Thin wrapper around NSURLSession in swift. Simplifies HTTP requests, provides NSOperationQueue support, and simple HTTP API interaction.
+SwiftHTTP is a thin wrapper around NSURLSession in Swift to simplify HTTP requests.
 
-##Example 
+## Features
+
+- Convenient Closure APIs
+- NSOperationQueue Support
+- Parameter Encoding
+- Custom Response Serializer
+- Builtin JSON Response Serialization
+- Upload/Download with Progress Closure
+- Concise Codebase. Under 1000 LOC
 
 Full article here: [http://vluxe.io/swifthttp.html](http://vluxe.io/swifthttp.html)
 
-## GET
+## Examples
+
+### GET
 
 The most basic request. By default an NSData object will be returned for the response.
 ```swift
@@ -36,7 +46,8 @@ request.GET("http://google.com", parameters: ["param": "param1", "array": ["firs
 
 The `HTTPResponse` contains all the common HTTP response data, such as the responseObject of the data and the headers of the response.
 
-## POST
+### POST
+
 A POST request is just as easy as a GET.
 
 ```swift
@@ -44,13 +55,13 @@ var request = HTTPTask()
 //we have to add the explicit type, else the wrong type is inferred. See the vluxe.io article for more info.
 let params: Dictionary<String,AnyObject> = ["param": "param1", "array": ["first array element","second","third"], "num": 23, "dict": ["someKey": "someVal"]]
 request.POST("http://domain.com/create", parameters: params, success: {(response: HTTPResponse) -> Void in
-    
+
     },failure: {(error: NSError) -> Void in
-    
+
     })
 ```
 
-## PUT
+### PUT
 
 PUT works the same as post. The example also include a file upload to do a multi form request.
 
@@ -58,17 +69,18 @@ PUT works the same as post. The example also include a file upload to do a multi
 let fileUrl = NSURL.fileURLWithPath("/Users/dalton/Desktop/file")
 var request = HTTPTask()
 request.PUT("http://domain.com/1", parameters:  ["param": "hi", "something": "else", "key": "value","file": HTTPUpload(fileUrl: fileUrl)], success: {(response: HTTPResponse) -> Void in
-    
+
     },failure: {(error: NSError) -> Void in
-    
+
     })
 ```
 
 The HTTPUpload object is use to represent files on disk or in memory file as data.
 
-## DELETE
+### DELETE
 
 DELETE works the same as the GET.
+
 ```swift
 var request = HTTPTask()
 request.DELETE("http://domain.com/1", parameters: nil, success: {(response: HTTPResponse) -> Void in
@@ -78,9 +90,10 @@ request.DELETE("http://domain.com/1", parameters: nil, success: {(response: HTTP
     })
 ```
 
-## HEAD
+### HEAD
 
 HEAD works the same as the GET.
+
 ```swift
 var request = HTTPTask()
 request.HEAD("http://domain.com/image.png", parameters: nil, success: {(response: HTTPResponse) -> Void in
@@ -90,7 +103,7 @@ request.HEAD("http://domain.com/image.png", parameters: nil, success: {(response
     })
 ```
 
-## Download
+### Download
 
 The download method uses the background download functionality of NSURLSession. It also has a progress closure to report the progress of the download.
 
@@ -108,20 +121,20 @@ request.download("http://vluxe.io/assets/images/logo.png", parameters: nil, prog
         fileManager.removeItemAtURL(newPath, error: nil)
         fileManager.moveItemAtURL(response.responseObject! as NSURL, toURL: newPath, error: nil)
     }
-    
+
     } ,failure: {(error: NSError) -> Void in
         println("failure")
 })
 ```
 
-## Upload
+### Upload
 
 ```swift
 //Dalton, add the background upload example
 //still working on finishing it
 ```
 
-## BaseURL
+### BaseURL
 
 SwiftHTTP also supports use a request object with a baseURL. This is super handy for RESTFul API interaction.
 
@@ -147,7 +160,7 @@ request.GET("/resources", parameters: ["key": "value"], success: {(response: HTT
     })
 ```
 
-## Operation Queue
+### Operation Queue
 
 Operation queues are also supported in SwiftHTTP.
 
@@ -169,7 +182,7 @@ if opt != nil {
 }
 ```
 
-## Serializers
+### Serializers
 
 Request parameters and request responses can also be serialized as needed. By default request are serialized using standard HTTP form encoding. A JSON request and response serializer are provided as well. It is also very simple to create custom serializer by subclass a request or response serializer
 
@@ -190,9 +203,10 @@ request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPRespons
     })
 ```
 
-## Full Example
+## Client/Server Example
 
 This is a full example swiftHTTP in action. First here is a quick web server in Go.
+
 ```go
 package main
 
@@ -232,6 +246,16 @@ request.GET("http://localhost:8080/bar", parameters: nil, success: {(response: H
 ## Requirements
 
 SwiftHTTP requires at least iOS 8/OSX 10.10 or above.
+
+## Installation
+
+Add the `SwiftHTTP.xcodeproj` to your Xcode project. Once that is complete, in your "Build Phases" add the `SwiftHTTP.framework` to your "Link Binary with Libraries" phase.
+
+## TODOs
+
+- [ ] Complete Docs
+- [ ] Add Unit Tests
+- [ ] Add Swallow Installation Docs
 
 
 ### Dalton Cherry
