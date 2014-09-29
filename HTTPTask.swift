@@ -9,37 +9,6 @@
 
 import Foundation
 
-//this should go away at some point. Just a work around for poor swift substring support
-//http://openradar.appspot.com/radar?id=6373877630369792
-extension String {
-    
-    subscript (idx: Int) -> String
-        {
-        get
-        {
-            return self.substringWithRange(
-                Range( start: advance( self.startIndex, idx),
-                    end: advance( self.startIndex, idx + 1 )  )
-            )
-        }
-    }
-    
-    subscript (r: Range<Int>) -> String
-        {
-        get
-        {
-            return self.substringWithRange(
-                Range( start: advance( self.startIndex, r.startIndex),
-                    end: advance( self.startIndex, r.endIndex + 1 ))              )
-        }
-    }
-    
-    func substringFrom(start: Int, to: Int) -> String
-    {
-        return (((self as NSString).substringFromIndex(start)) as NSString).substringToIndex(to - start + 1)
-    }
-}
-
 public enum HTTPMethod: String {
     case GET = "GET"
     case POST = "POST"
@@ -265,7 +234,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
         var str = ""
         for var i = 0; i < 14; i++ {
             let start = Int(arc4random() % 14)
-            str += letters[start]
+            str.append(letters[advance(letters.startIndex,start)])
         }
         return "com.vluxe.swifthttp.request.\(str)"
     }
