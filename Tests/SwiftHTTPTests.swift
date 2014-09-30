@@ -23,7 +23,7 @@ class SwiftHTTPTests: XCTestCase {
     
     func testGetRequest() {
         var request = HTTPTask()
-        request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPResponse) -> Void in
+        request.GET("http://httpbin.org/basic-auth/user/passwd", parameters: nil, success: {(response: HTTPResponse) -> Void in
             if response.responseObject != nil {
                 XCTAssert(true, "Pass")
             }

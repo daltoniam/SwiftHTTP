@@ -9,6 +9,13 @@
 
 import Foundation
 
+/// HTTP Verbs.
+///
+/// - GET: For GET requests.
+/// - POST: For POST requests.
+/// - PUT: For PUT requests.
+/// - HEAD: For HEAD requests.
+/// - DELETE: For DELETE requests.
 public enum HTTPMethod: String {
     case GET = "GET"
     case POST = "POST"
@@ -17,22 +24,44 @@ public enum HTTPMethod: String {
     case DELETE = "DELETE"
 }
 
-//holds a collection of HTTP Response values
+/// Object representation of a HTTP Response.
 public class HTTPResponse {
+    /// The header values in HTTP response.
     public var headers: Dictionary<String,String>?
+    /// The mime type of the HTTP response.
     public var mimeType: String?
+    /// The suggested filename for a downloaded file.
     public var suggestedFilename: String?
+    /// The body or response data of the HTTP Response.
     public var responseObject: AnyObject?
+    /// The status code of the HTTP Response.
     public var statusCode: Int?
 }
 
-//holds blocks of background task
-public class BackgroundBlocks {
-    //these 2 only get used for background download/upload since they have to be delegate methods
+public struct HTTPAuth {
+    public var username: String
+    public var password: String
+    
+    init(username: String, password: String) {
+        self.username = username
+        self.password = password
+    }
+}
+
+/// Holds the blocks of the background task.
+class BackgroundBlocks {
+    // these 2 only get used for background download/upload since they have to be delegate methods
     var success:((HTTPResponse) -> Void)?
     var failure:((NSError) -> Void)?
     var progress:((Double) -> Void)?
     
+    /** 
+        Initializes a new Background Block
+        
+        :param: success The block that is run on a sucessful HTTP Request.
+        :param: failure The block that is run on a failed HTTP Request.
+        :param: progress The block that is run on the progress of a HTTP Upload or Download.
+    */
     init(_ success: ((HTTPResponse) -> Void)?, _ failure: ((NSError) -> Void)?,_ progress: ((Double) -> Void)?) {
         self.failure = failure
         self.success = success
@@ -40,61 +69,95 @@ public class BackgroundBlocks {
     }
 }
 
+/// Subclass of NSOperation for handling and scheduling HTTPTask on a NSOperationQueue.
 public class HTTPOperation : NSOperation {
-    var task: NSURLSessionDataTask!
-    var stopped = false
-    var running = false
+    private var task: NSURLSessionDataTask!
+    private var stopped = false
+    private var running = false
+    
+    /// Controls if the task is finished or not.
     public var done = false
+    
+    //MARK: Subclassed NSOperation methods.
+    
+    /// Returns if the task is asynchronous or not. This should always be false.
     override public var asynchronous: Bool {
         return false
     }
+    
+    /// Returns if the task has been cancelled or not.
     override public var cancelled: Bool {
-        return self.stopped
-    }
-    override public var executing: Bool {
-        return self.running
-    }
-    override public var finished: Bool {
-        return self.done
-    }
-    override public var ready: Bool {
-        return !self.running
-    }
-    //start the task
-    override public func start() {
-        super.start()
-        self.stopped = false
-        self.running = true
-        self.done = false
-        self.task.resume()
-    }
-    override public func cancel() {
-        super.cancel()
-        self.running = false
-        self.stopped = true
-        self.done = true
-        self.task.cancel()
-    }
-    public func finish() {
-        self.running = false
-        self.done = true
+        return stopped
     }
     
+    /// Returns if the task is current running.
+    override public var executing: Bool {
+        return running
+    }
+    
+    /// Returns if the task is finished.
+    override public var finished: Bool {
+        return done
+    }
+    
+    /// Returns if the task is ready to be run or not.
+    override public var ready: Bool {
+        return !running
+    }
+    
+    /// Starts the task.
+    override public func start() {
+        super.start()
+        stopped = false
+        running = true
+        done = false
+        task.resume()
+    }
+    
+    /// Cancels the running task.
+    override public func cancel() {
+        super.cancel()
+        running = false
+        stopped = true
+        done = true
+        task.cancel()
+    }
+    
+    /// Sets the task to finished.
+    public func finish() {
+        running = false
+        done = true
+    }
 }
 
-public class HTTPTask : NSObject, NSURLSessionDelegate {
+/// Configures NSURLSession Request for HTTPOperation. Also provides convenience methods for easily running HTTP Request.
+public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate {
+    var backgroundTaskMap = Dictionary<String,BackgroundBlocks>()
     
     public var baseURL: String?
     public var requestSerializer = HTTPRequestSerializer()
     public var responseSerializer: HTTPResponseSerializer?
-    var backgroundTaskMap = Dictionary<String,BackgroundBlocks>()
+    public var auth: HTTPAuth?
+    
+    //MARK: Public Methods
+    
+    /// A newly minted HTTPTask for your enjoyment.
     public override init() {
         super.init()
     }
     
-    ///main method that does the HTTP request. Called by GET,POST,PUT,DELETE,HEAD methods.
+    /** 
+        Creates a HTTPOperation that can be scheduled on a NSOperationQueue. Called by convenience HTTP verb methods below.
+    
+        :param: url The url you would like to make a request to.
+        :param: parameters The parameters are HTTP parameters you would like to send.
+        :param: success The block that is run on a sucessful HTTP Request.
+        :param: failure The block that is run on a failed HTTP Request.
+    
+        :returns: A freshly constructed HTTPOperation to add to your NSOperationQueue.
+    */
     public func create(url: String,method: HTTPMethod,parameters: Dictionary<String,AnyObject>!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) ->  HTTPOperation? {
-        
+
         let serialReq = createRequest(url,method: method, parameters: parameters)
         if serialReq.error != nil {
             if failure != nil {
@@ -103,7 +166,9 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
             return nil
         }
         let opt = HTTPOperation()
-        let session = NSURLSession.sharedSession()
+        //let session = NSURLSession.sharedSession()
+        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         let task = session.dataTaskWithRequest(serialReq.request,
             completionHandler: {(data: NSData!, response: NSURLResponse!, error: NSError!) -> Void in
                 opt.finish()
@@ -149,44 +214,97 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
         opt.task = task
         return opt
     }
-    ///runs a GET request
+    
+    /**
+    Creates a HTTPOperation as a HTTP GET request and starts it for you.
+    
+    :param: url The url you would like to make a request to.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: success The block that is run on a sucessful HTTP Request.
+    :param: failure The block that is run on a failed HTTP Request.
+    
+    */
     public func GET(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         var opt = self.create(url, method:.GET, parameters: parameters,success,failure)
         if opt != nil {
             opt!.start()
         }
     }
-    ///runs a POST request
+    
+    /**
+    Creates a HTTPOperation as a HTTP POST request and starts it for you.
+    
+    :param: url The url you would like to make a request to.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: success The block that is run on a sucessful HTTP Request.
+    :param: failure The block that is run on a failed HTTP Request.
+    
+    */
     public func POST(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         var opt = self.create(url, method:.POST, parameters: parameters,success,failure)
         if opt != nil {
             opt!.start()
         }
     }
-    ///runs a PUT request
+    
+    /**
+    Creates a HTTPOperation as a HTTP PUT request and starts it for you.
+    
+    :param: url The url you would like to make a request to.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: success The block that is run on a sucessful HTTP Request.
+    :param: failure The block that is run on a failed HTTP Request.
+    
+    */
     public func PUT(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         var opt = self.create(url, method:.PUT, parameters: parameters,success,failure)
         if opt != nil {
             opt!.start()
         }
     }
-    ///runs a DELETE request
+    
+    /**
+    Creates a HTTPOperation as a HTTP DELETE request and starts it for you.
+    
+    :param: url The url you would like to make a request to.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: success The block that is run on a sucessful HTTP Request.
+    :param: failure The block that is run on a failed HTTP Request.
+    
+    */
     public func DELETE(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!)  {
         var opt = self.create(url, method:.DELETE, parameters: parameters,success,failure)
         if opt != nil {
             opt!.start()
         }
     }
-    ///runs a HEAD request
+    
+    /**
+    Creates a HTTPOperation as a HTTP HEAD request and starts it for you.
+    
+    :param: url The url you would like to make a request to.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: success The block that is run on a sucessful HTTP Request.
+    :param: failure The block that is run on a failed HTTP Request.
+    
+    */
     public func HEAD(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         var opt = self.create(url, method:.HEAD, parameters: parameters,success,failure)
         if opt != nil {
             opt!.start()
         }
     }
-    //Download a file in the background. The HTTPResponse responseObject object will be a fileURL.
-    //You MUST copy the fileURL return in HTTPResponse.responseObject to a new location before using it (e.g. your documents directory).
-    //The progress returned in the progress block is between 0 and 1.
+    
+    /**
+    Creates and starts a HTTPOperation to download a file in the background.
+    
+    :param: url The url you would like to make a request to.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: progress The progress returned in the progress block is between 0 and 1.
+    :param: success The block that is run on a sucessful HTTP Request. The HTTPResponse responseObject object will be a fileURL. You MUST copy the fileURL return in HTTPResponse.responseObject to a new location before using it (e.g. your documents directory).
+    :param: failure The block that is run on a failed HTTP Request.
+    
+    */
     public func download(url: String, parameters: Dictionary<String,AnyObject>?,progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         let serialReq = createRequest(url,method: .GET, parameters: parameters)
         if serialReq.error != nil {
@@ -202,6 +320,8 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
         task.resume()
     }
     
+    //TODO: not implemented yet.
+    /// not implemented yet.
     public func uploadFile(url: String, parameters: Dictionary<String,AnyObject>?, progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
         let serialReq = createRequest(url,method: .GET, parameters: parameters)
         if serialReq.error != nil {
@@ -213,10 +333,10 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
         //session.uploadTaskWithRequest(serialReq.request, fromData: nil)
     }
     
-    //private methods below
+    //MARK: Private Helper Methods
     
-    ///creates the request object.
-    func createRequest(url: String,method: HTTPMethod,parameters: Dictionary<String,AnyObject>!) -> (request: NSURLRequest, error: NSError?) {
+    /// Creates the request object.
+   private func createRequest(url: String,method: HTTPMethod,parameters: Dictionary<String,AnyObject>!) -> (request: NSURLRequest, error: NSError?) {
         var urlVal = url
         //probably should change the 'http' to something more generic
         if !url.hasPrefix("http") && self.baseURL != nil {
@@ -226,8 +346,8 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
         //println("requestSerializer: \(self.requestSerializer)")
         return self.requestSerializer.createRequest(NSURL.URLWithString(urlVal),
             method: method, parameters: parameters)
-        
     }
+    
     ///creates a random string to use for the identifer of the background download/upload requests
     private func createBackgroundIdent() -> String {
         let letters = "abcdefghijklmnopqurstuvwxyz"
@@ -250,8 +370,24 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
         return NSError(domain: "HTTPTask", code: code, userInfo: [NSLocalizedDescriptionKey: text])
     }
     
-    //the background download finished, don't have to really do anything
-    func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession!) {
+    private func cleanupBackground(identifier: String) {
+        self.backgroundTaskMap.removeValueForKey(identifier)
+    }
+    
+    //MARK: NSURLSession Delegate Methods
+    
+    public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
+        println("basic authing")
+        if let a = auth {
+            let cred = NSURLCredential.credentialWithUser(a.username, password: a.username, persistence: .ForSession)
+            completionHandler(.UseCredential, cred)
+            return
+        }
+        completionHandler(.PerformDefaultHandling, nil)
+    }
+    
+    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
+        println("basic authing")
     }
     
     //the background task failed.
@@ -287,10 +423,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
             cleanupBackground(session.configuration.identifier)
         }
     }
-    //the background upload finished and reports the response data (if any)
-    func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, didReceiveData data: NSData!) {
-        //add upload finished logic
-    }
+    
     //will report progress of background download
     func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         let increment = 100.0/Double(totalBytesExpectedToWrite)
@@ -303,16 +436,26 @@ public class HTTPTask : NSObject, NSURLSessionDelegate {
             blocks?.progress!(current)
         }
     }
-    //will report progress of background upload
+    
+    /// The background download finished, don't have to really do anything.
+    func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession!) {
+    }
+    
+    //TODO: not implemented yet.
+    /// not implemented yet. The background upload finished and reports the response data (if any).
+    func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, didReceiveData data: NSData!) {
+        //add upload finished logic
+    }
+    
+    //TODO: not implemented yet.
+    /// not implemented yet.
     func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         //add progress block logic
     }
-    //just have to implement, does nothing
+    
+    //TODO: not implemented yet.
+    /// not implemented yet.
     func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
         
     }
-    func cleanupBackground(identifier: String) {
-        self.backgroundTaskMap.removeValueForKey(identifier)
-    }
-   
 }
