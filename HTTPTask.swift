@@ -359,7 +359,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             var split = url.hasPrefix("/") ? "" : "/"
             urlVal = "\(self.baseURL!)\(split)\(url)"
         }
-        return self.requestSerializer.createRequest(NSURL.URLWithString(urlVal),
+    return self.requestSerializer.createRequest(NSURL(string: urlVal)!,
             method: method, parameters: parameters)
     }
     
@@ -412,7 +412,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     /// Method for authentication challenge.
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
         if let a = auth {
-            let cred = NSURLCredential.credentialWithUser(a.username, password: a.password, persistence: a.persistence)
+            let cred = NSURLCredential(user: a.username, password: a.password, persistence: a.persistence)
             completionHandler(.UseCredential, cred)
             return
         }

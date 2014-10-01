@@ -59,7 +59,7 @@ public class HTTPRequestSerializer: NSObject {
     */
     func newRequest(url: NSURL, method: HTTPMethod) -> NSMutableURLRequest {
         var request = NSMutableURLRequest(URL: url, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
-        request.HTTPMethod = method.toRaw()
+        request.HTTPMethod = method.rawValue
         request.allowsCellularAccess = self.allowsCellularAccess
         request.HTTPShouldHandleCookies = self.HTTPShouldHandleCookies
         request.HTTPShouldUsePipelining = self.HTTPShouldUsePipelining
@@ -94,7 +94,7 @@ public class HTTPRequestSerializer: NSObject {
         }
         if isMultiForm {
             if(method != .POST || method != .PUT) {
-                request.HTTPMethod = HTTPMethod.POST.toRaw() // you probably wanted a post
+                request.HTTPMethod = HTTPMethod.POST.rawValue // you probably wanted a post
             }
             if parameters != nil {
                 request.HTTPBody = dataFromParameters(parameters!)
@@ -111,7 +111,7 @@ public class HTTPRequestSerializer: NSObject {
             if countElements(queryString) > 0 {
                 newUrl += "\(para)\(queryString)"
             }
-            request.URL = NSURL.URLWithString(newUrl)
+            request.URL = NSURL(fileURLWithPath: newUrl)
         } else {
             var charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(self.stringEncoding));
             if request.valueForHTTPHeaderField(contentTypeKey) == nil {
