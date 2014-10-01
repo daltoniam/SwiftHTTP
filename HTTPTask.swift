@@ -38,11 +38,21 @@ public class HTTPResponse {
     public var statusCode: Int?
 }
 
+/// Object representation of HTTP Basic Auth.
 public struct HTTPAuth {
+    /// Username for auth.
     public var username: String
+    /// Password for auth.
     public var password: String
     
-    init(username: String, password: String) {
+    /**
+        Initializes a new Auth Object.
+    
+        :param: username to provide for auth.
+        :param: password to provide for auth.
+
+    */
+    public init(username: String, password: String) {
         self.username = username
         self.password = password
     }
@@ -78,7 +88,7 @@ public class HTTPOperation : NSOperation {
     /// Controls if the task is finished or not.
     public var done = false
     
-    //MARK: Subclassed NSOperation methods.
+    //MARK: Subclassed NSOperation Methods
     
     /// Returns if the task is asynchronous or not. This should always be false.
     override public var asynchronous: Bool {
@@ -133,6 +143,7 @@ public class HTTPOperation : NSOperation {
 /// Configures NSURLSession Request for HTTPOperation. Also provides convenience methods for easily running HTTP Request.
 public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate {
     var backgroundTaskMap = Dictionary<String,BackgroundBlocks>()
+    //var sess: NSURLSession?
     
     public var baseURL: String?
     public var requestSerializer = HTTPRequestSerializer()
@@ -166,7 +177,6 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             return nil
         }
         let opt = HTTPOperation()
-        //let session = NSURLSession.sharedSession()
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         let task = session.dataTaskWithRequest(serialReq.request,
@@ -216,13 +226,12 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     }
     
     /**
-    Creates a HTTPOperation as a HTTP GET request and starts it for you.
-    
-    :param: url The url you would like to make a request to.
-    :param: parameters The parameters are HTTP parameters you would like to send.
-    :param: success The block that is run on a sucessful HTTP Request.
-    :param: failure The block that is run on a failed HTTP Request.
-    
+        Creates a HTTPOperation as a HTTP GET request and starts it for you.
+        
+        :param: url The url you would like to make a request to.
+        :param: parameters The parameters are HTTP parameters you would like to send.
+        :param: success The block that is run on a sucessful HTTP Request.
+        :param: failure The block that is run on a failed HTTP Request.
     */
     public func GET(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         var opt = self.create(url, method:.GET, parameters: parameters,success,failure)
@@ -232,13 +241,12 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     }
     
     /**
-    Creates a HTTPOperation as a HTTP POST request and starts it for you.
-    
-    :param: url The url you would like to make a request to.
-    :param: parameters The parameters are HTTP parameters you would like to send.
-    :param: success The block that is run on a sucessful HTTP Request.
-    :param: failure The block that is run on a failed HTTP Request.
-    
+        Creates a HTTPOperation as a HTTP POST request and starts it for you.
+        
+        :param: url The url you would like to make a request to.
+        :param: parameters The parameters are HTTP parameters you would like to send.
+        :param: success The block that is run on a sucessful HTTP Request.
+        :param: failure The block that is run on a failed HTTP Request.
     */
     public func POST(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         var opt = self.create(url, method:.POST, parameters: parameters,success,failure)
@@ -248,13 +256,12 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     }
     
     /**
-    Creates a HTTPOperation as a HTTP PUT request and starts it for you.
-    
-    :param: url The url you would like to make a request to.
-    :param: parameters The parameters are HTTP parameters you would like to send.
-    :param: success The block that is run on a sucessful HTTP Request.
-    :param: failure The block that is run on a failed HTTP Request.
-    
+        Creates a HTTPOperation as a HTTP PUT request and starts it for you.
+        
+        :param: url The url you would like to make a request to.
+        :param: parameters The parameters are HTTP parameters you would like to send.
+        :param: success The block that is run on a sucessful HTTP Request.
+        :param: failure The block that is run on a failed HTTP Request.
     */
     public func PUT(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         var opt = self.create(url, method:.PUT, parameters: parameters,success,failure)
@@ -264,13 +271,12 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     }
     
     /**
-    Creates a HTTPOperation as a HTTP DELETE request and starts it for you.
-    
-    :param: url The url you would like to make a request to.
-    :param: parameters The parameters are HTTP parameters you would like to send.
-    :param: success The block that is run on a sucessful HTTP Request.
-    :param: failure The block that is run on a failed HTTP Request.
-    
+        Creates a HTTPOperation as a HTTP DELETE request and starts it for you.
+        
+        :param: url The url you would like to make a request to.
+        :param: parameters The parameters are HTTP parameters you would like to send.
+        :param: success The block that is run on a sucessful HTTP Request.
+        :param: failure The block that is run on a failed HTTP Request.
     */
     public func DELETE(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!)  {
         var opt = self.create(url, method:.DELETE, parameters: parameters,success,failure)
@@ -280,13 +286,12 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     }
     
     /**
-    Creates a HTTPOperation as a HTTP HEAD request and starts it for you.
-    
-    :param: url The url you would like to make a request to.
-    :param: parameters The parameters are HTTP parameters you would like to send.
-    :param: success The block that is run on a sucessful HTTP Request.
-    :param: failure The block that is run on a failed HTTP Request.
-    
+        Creates a HTTPOperation as a HTTP HEAD request and starts it for you.
+        
+        :param: url The url you would like to make a request to.
+        :param: parameters The parameters are HTTP parameters you would like to send.
+        :param: success The block that is run on a sucessful HTTP Request.
+        :param: failure The block that is run on a failed HTTP Request.
     */
     public func HEAD(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         var opt = self.create(url, method:.HEAD, parameters: parameters,success,failure)
@@ -296,14 +301,13 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     }
     
     /**
-    Creates and starts a HTTPOperation to download a file in the background.
+        Creates and starts a HTTPOperation to download a file in the background.
     
-    :param: url The url you would like to make a request to.
-    :param: parameters The parameters are HTTP parameters you would like to send.
-    :param: progress The progress returned in the progress block is between 0 and 1.
-    :param: success The block that is run on a sucessful HTTP Request. The HTTPResponse responseObject object will be a fileURL. You MUST copy the fileURL return in HTTPResponse.responseObject to a new location before using it (e.g. your documents directory).
-    :param: failure The block that is run on a failed HTTP Request.
-    
+        :param: url The url you would like to make a request to.
+        :param: parameters The parameters are HTTP parameters you would like to send.
+        :param: progress The progress returned in the progress block is between 0 and 1.
+        :param: success The block that is run on a sucessful HTTP Request. The HTTPResponse responseObject object will be a fileURL. You MUST copy the fileURL return in HTTPResponse.responseObject to a new location before using it (e.g. your documents directory).
+        :param: failure The block that is run on a failed HTTP Request.
     */
     public func download(url: String, parameters: Dictionary<String,AnyObject>?,progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) {
         let serialReq = createRequest(url,method: .GET, parameters: parameters)
@@ -335,20 +339,31 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     
     //MARK: Private Helper Methods
     
-    /// Creates the request object.
-   private func createRequest(url: String,method: HTTPMethod,parameters: Dictionary<String,AnyObject>!) -> (request: NSURLRequest, error: NSError?) {
+    /**
+        Creates and starts a HTTPOperation to download a file in the background.
+    
+        :param: url The url you would like to make a request to.
+        :param: method The HTTP method/verb for the request.
+        :param: parameters The parameters are HTTP parameters you would like to send.
+    
+        :returns: A NSURLRequest from configured requestSerializer.
+    */
+   private func createRequest(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!) -> (request: NSURLRequest, error: NSError?) {
         var urlVal = url
         //probably should change the 'http' to something more generic
         if !url.hasPrefix("http") && self.baseURL != nil {
             var split = url.hasPrefix("/") ? "" : "/"
             urlVal = "\(self.baseURL!)\(split)\(url)"
         }
-        //println("requestSerializer: \(self.requestSerializer)")
         return self.requestSerializer.createRequest(NSURL.URLWithString(urlVal),
             method: method, parameters: parameters)
     }
     
-    ///creates a random string to use for the identifer of the background download/upload requests
+    /**
+        Creates a random string to use for the identifier of the background download/upload requests.
+    
+        :returns: Identifier String.
+    */
     private func createBackgroundIdent() -> String {
         let letters = "abcdefghijklmnopqurstuvwxyz"
         var str = ""
@@ -359,7 +374,13 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         return "com.vluxe.swifthttp.request.\(str)"
     }
     
-    ///creates a random string to use for the identifer of the background download/upload requests
+    /**
+        Creates a random string to use for the identifier of the background download/upload requests.
+        
+        :param: code Code for error.
+        
+        :returns: An NSError.
+    */
     private func createError(code: Int) -> NSError {
         var text = "An error occured"
         if code == 404 {
@@ -370,27 +391,31 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         return NSError(domain: "HTTPTask", code: code, userInfo: [NSLocalizedDescriptionKey: text])
     }
     
+    
+    /**
+        Creates a random string to use for the identifier of the background download/upload requests.
+        
+        :param: identifier The identifier string.
+        
+        :returns: An NSError.
+    */
     private func cleanupBackground(identifier: String) {
         self.backgroundTaskMap.removeValueForKey(identifier)
     }
     
     //MARK: NSURLSession Delegate Methods
     
-    public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
-        println("basic authing")
+    /// Method for authentication challenge.
+    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
         if let a = auth {
-            let cred = NSURLCredential.credentialWithUser(a.username, password: a.username, persistence: .ForSession)
+            let cred = NSURLCredential.credentialWithUser(a.username, password: a.password, persistence: .Permanent)
             completionHandler(.UseCredential, cred)
             return
         }
         completionHandler(.PerformDefaultHandling, nil)
     }
     
-    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
-        println("basic authing")
-    }
-    
-    //the background task failed.
+    /// Called when the background task failed.
     func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didCompleteWithError error: NSError!) {
         if error != nil {
             let blocks = self.backgroundTaskMap[session.configuration.identifier]
@@ -401,7 +426,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         }
     }
     
-    //the background download finished and reports the url the data was saved to
+    /// The background download finished and reports the url the data was saved to.
     func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didFinishDownloadingToURL location: NSURL!) {
         let blocks = self.backgroundTaskMap[session.configuration.identifier]
         if blocks?.success != nil {
@@ -424,7 +449,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         }
     }
     
-    //will report progress of background download
+    /// Will report progress of background download
     func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         let increment = 100.0/Double(totalBytesExpectedToWrite)
         var current = (increment*Double(totalBytesWritten))*0.01
