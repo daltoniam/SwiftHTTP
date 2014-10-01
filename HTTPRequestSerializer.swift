@@ -25,7 +25,6 @@ extension String {
 
 /// Default Serializer for serializing an object to an HTTP request. This applies to form serialization, parameter encoding, etc.
 public class HTTPRequestSerializer: NSObject {
-    var networkServiceType = NSURLRequestNetworkServiceType.NetworkServiceTypeDefault
     let contentTypeKey = "Content-Type"
     
     /// headers for the request.
@@ -42,6 +41,8 @@ public class HTTPRequestSerializer: NSObject {
     public var timeoutInterval: NSTimeInterval = 60
     /// Set the request cache policy. Defaults to UseProtocolCachePolicy.
     public var cachePolicy: NSURLRequestCachePolicy = NSURLRequestCachePolicy.UseProtocolCachePolicy
+    /// Set the network service. Defaults to NetworkServiceTypeDefault.
+    public var networkServiceType = NSURLRequestNetworkServiceType.NetworkServiceTypeDefault
     
     /// Initializes a new HTTPRequestSerializer Object.
     public override init() {
