@@ -10,6 +10,7 @@
 import Foundation
 import MobileCoreServices
 
+/// Object representation of a HTTP File Upload.
 public class HTTPUpload: NSObject {
     var fileUrl: NSURL? {
     didSet {
@@ -19,7 +20,8 @@ public class HTTPUpload: NSObject {
     var mimeType: String?
     var data: NSData?
     var fileName: String?
-    //gets the mimeType from the fileUrl, if possible
+    
+    /// Tries to determine the mime type from the fileUrl extension.
     func updateMimeType() {
         if mimeType == nil && fileUrl != nil {
             var UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, fileUrl?.pathExtension as NSString?, nil);
@@ -31,15 +33,29 @@ public class HTTPUpload: NSObject {
             }
         }
     }
-    //default init does nothing
+    
+    /// Initializes a new HTTPUpload Object.
     override init() {
         super.init()
     }
-    ///upload a file with a fileUrl. The fileName and mimeType will be infered
+    
+    /** 
+        Initializes a new HTTPUpload Object with a fileUrl. The fileName and mimeType will be infered.
+    
+        :param: fileUrl The fileUrl is a standard url path to a file.
+    */
     convenience init(fileUrl: NSURL) {
         self.init()
         self.fileUrl = fileUrl
     }
+    
+    /**
+    Initializes a new HTTPUpload Object with a data blob of a file. The fileName and mimeType will be infered if none are provided.
+    
+        :param: data The data is a NSData representation of a file's data.
+        :param: fileName The fileName is just that. The file's name.
+        :param: mimeType The mimeType is just that. The mime type you would like the file to uploaded as.
+    */
     ///upload a file from a a data blob. Must add a filename and mimeType as that can't be infered from the data
     convenience init(data: NSData, fileName: String, mimeType: String) {
         self.init()

@@ -134,6 +134,24 @@ request.download("http://vluxe.io/assets/images/logo.png", parameters: nil, prog
 //still working on finishing it
 ```
 
+### Authentication
+
+SwiftHTTP supports authentication through [NSURLCredential](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLCredential_Class/Reference/Reference.html). Currently only Basic Auth and Digest Auth have been tested.
+
+```swift
+var request = HTTPTask()
+request.auth = HTTPAuth(username: "user", password: "passwd")
+request.persistence = .Permanent
+request.GET("http://httpbin.org/digest-auth/:qop/user/passwd", parameters: nil, success: {(response: HTTPResponse) in
+    if response.responseObject != nil {
+        println("winning!")
+    }
+
+    }, failure: {(error: NSError) in
+        println("failure.")
+})
+```
+
 ### BaseURL
 
 SwiftHTTP also supports use a request object with a baseURL. This is super handy for RESTFul API interaction.

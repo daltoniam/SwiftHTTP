@@ -44,6 +44,8 @@ public struct HTTPAuth {
     public var username: String
     /// Password for auth.
     public var password: String
+    /// Control for how long credentials should last. Default is ForSession.
+    public var persistence: NSURLCredentialPersistence
     
     /**
         Initializes a new Auth Object.
@@ -55,6 +57,7 @@ public struct HTTPAuth {
     public init(username: String, password: String) {
         self.username = username
         self.password = password
+        self.persistence = .ForSession
     }
 }
 
@@ -161,13 +164,14 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         Creates a HTTPOperation that can be scheduled on a NSOperationQueue. Called by convenience HTTP verb methods below.
     
         :param: url The url you would like to make a request to.
+        :param: method The HTTP method/verb for the request.
         :param: parameters The parameters are HTTP parameters you would like to send.
         :param: success The block that is run on a sucessful HTTP Request.
         :param: failure The block that is run on a failed HTTP Request.
     
         :returns: A freshly constructed HTTPOperation to add to your NSOperationQueue.
     */
-    public func create(url: String,method: HTTPMethod,parameters: Dictionary<String,AnyObject>!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) ->  HTTPOperation? {
+    public func create(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) ->  HTTPOperation? {
 
         let serialReq = createRequest(url,method: method, parameters: parameters)
         if serialReq.error != nil {
@@ -408,7 +412,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     /// Method for authentication challenge.
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
         if let a = auth {
-            let cred = NSURLCredential.credentialWithUser(a.username, password: a.password, persistence: .Permanent)
+            let cred = NSURLCredential.credentialWithUser(a.username, password: a.password, persistence: a.persistence)
             completionHandler(.UseCredential, cred)
             return
         }
