@@ -31,4 +31,16 @@ class SwiftHTTPTests: XCTestCase {
                 XCTAssert(false, "Failure")
         })
     }
+    
+    func testAuthRequest() {
+        var request = HTTPTask()
+        request.auth = HTTPAuth(username: "user", password: "passwd")
+        request.GET("http://httpbin.org/basic-auth/user/passwd", parameters: nil, success: {(response: HTTPResponse) -> Void in
+            if response.responseObject != nil {
+                XCTAssert(true, "Pass")
+            }
+            },failure: {(error: NSError) -> Void in
+                XCTAssert(false, "Failure")
+        })
+    }
 }

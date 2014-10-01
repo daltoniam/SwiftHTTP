@@ -9,8 +9,13 @@
 
 import Foundation
 
+
 extension String {
+    /**
+        A simple extension to the String object to encode it for web request.
     
+        :returns: Encoded version of of string it was called as.
+    */
     func escapeStr() -> String {
         var raw: NSString = self
         var str = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,raw,"[].",":/?&=;+!@#$()',*",CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding))
@@ -18,21 +23,40 @@ extension String {
     }
 }
 
+/// Default Serializer for serializing an object to an HTTP request. This applies to form serialization, parameter encoding, etc.
 public class HTTPRequestSerializer: NSObject {
-    public var headers = Dictionary<String,String>()
-    public var stringEncoding: UInt = NSUTF8StringEncoding
-    public var allowsCellularAccess = true
-    public var HTTPShouldHandleCookies = true
-    public var HTTPShouldUsePipelining = false
-    public var timeoutInterval: NSTimeInterval = 60
-    public var cachePolicy: NSURLRequestCachePolicy = NSURLRequestCachePolicy.UseProtocolCachePolicy
-    var networkServiceType = NSURLRequestNetworkServiceType.NetworkServiceTypeDefault
     let contentTypeKey = "Content-Type"
     
+    /// headers for the request.
+    public var headers = Dictionary<String,String>()
+    /// encoding for the request.
+    public var stringEncoding: UInt = NSUTF8StringEncoding
+    /// Send request if using cellular network or not. Defaults to true.
+    public var allowsCellularAccess = true
+    /// If the request should handle cookies of not. Defaults to true.
+    public var HTTPShouldHandleCookies = true
+    /// If the request should use piplining or not. Defaults to false.
+    public var HTTPShouldUsePipelining = false
+    /// How long the timeout interval is. Defaults to 60 seconds.
+    public var timeoutInterval: NSTimeInterval = 60
+    /// Set the request cache policy. Defaults to UseProtocolCachePolicy.
+    public var cachePolicy: NSURLRequestCachePolicy = NSURLRequestCachePolicy.UseProtocolCachePolicy
+    /// Set the network service. Defaults to NetworkServiceTypeDefault.
+    public var networkServiceType = NSURLRequestNetworkServiceType.NetworkServiceTypeDefault
+    
+    /// Initializes a new HTTPRequestSerializer Object.
     public override init() {
         super.init()
     }
-    ///creates a new URLRequest object and sets up the different options
+    
+    /**
+        Creates a new NSMutableURLRequest object with configured options.
+        
+        :param: url The url you would like to make a request to.
+        :param: method The HTTP method/verb for the request.
+    
+        :returns: A new NSMutableURLRequest with said options.
+    */
     func newRequest(url: NSURL, method: HTTPMethod) -> NSMutableURLRequest {
         var request = NSMutableURLRequest(URL: url, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
         request.HTTPMethod = method.toRaw()
@@ -45,7 +69,16 @@ public class HTTPRequestSerializer: NSObject {
         }
         return request
     }
-    ///creates a request from the url, HTTPMethod, and parameters
+    
+    /**
+        Creates a new NSMutableURLRequest object with configured options.
+        
+        :param: url The url you would like to make a request to.
+        :param: method The HTTP method/verb for the request.
+        :param: parameters The parameters are HTTP parameters you would like to send.
+        
+        :returns: A new NSMutableURLRequest with said options or an error.
+    */
     func createRequest(url: NSURL, method: HTTPMethod, parameters: Dictionary<String,AnyObject>?) -> (request: NSURLRequest, error: NSError?) {
         
         var request = newRequest(url, method: method)
@@ -96,6 +129,7 @@ public class HTTPRequestSerializer: NSObject {
             return pair.stringValue()
             }))
     }
+    
     ///check if enum is a HTTPMethod that requires the params in the URL
     func isURIParam(method: HTTPMethod) -> Bool {
         if(method == .GET || method == .HEAD || method == .DELETE) {
@@ -103,6 +137,7 @@ public class HTTPRequestSerializer: NSObject {
         }
         return false
     }
+    
     ///the method to serialized all the objects
     func serializeObject(object: AnyObject,key: String?) -> Array<HTTPPair> {
         var collect = Array<HTTPPair>()
@@ -120,6 +155,7 @@ public class HTTPRequestSerializer: NSObject {
         }
         return collect
     }
+    
     //create a multi form data object of the parameters
     func dataFromParameters(parameters: Dictionary<String,AnyObject>) -> NSData {
         var mutData = NSMutableData()
@@ -159,6 +195,7 @@ public class HTTPRequestSerializer: NSObject {
         mutData.appendData("\(multiCRLF)--\(boundary)--\(multiCRLF)".dataUsingEncoding(self.stringEncoding)!)
         return mutData
     }
+    
     ///helper method to create the multi form headers
     func multiFormHeader(name: String, fileName: String?, type: String?, multiCRLF: String) -> String {
         var str = "Content-Disposition: form-data; name=\"\(name.escapeStr())\""
@@ -172,7 +209,8 @@ public class HTTPRequestSerializer: NSObject {
         str += multiCRLF
         return str
     }
-    ///Local class to create key/pair of the parameters
+    
+    /// Creates key/pair of the parameters.
     class HTTPPair: NSObject {
         var value: AnyObject
         var key: String!
@@ -181,6 +219,7 @@ public class HTTPRequestSerializer: NSObject {
             self.value = value
             self.key = key
         }
+        
         func getValue() -> String {
             var val = ""
             if let str = self.value as? String {
@@ -190,6 +229,7 @@ public class HTTPRequestSerializer: NSObject {
             }
             return val
         }
+        
         func stringValue() -> String {
             var val = getValue()
             if self.key == nil {
@@ -202,9 +242,18 @@ public class HTTPRequestSerializer: NSObject {
    
 }
 
-///Does the JSON version
+/// JSON Serializer for serializing an object to an HTTP request. Same as HTTPRequestSerializer, expect instead of HTTP form encoding it does JSON.
 public class JSONRequestSerializer: HTTPRequestSerializer {
     
+    /**
+        Creates a new NSMutableURLRequest object with configured options.
+        
+        :param: url The url you would like to make a request to.
+        :param: method The HTTP method/verb for the request.
+        :param: parameters The parameters are HTTP parameters you would like to send.
+        
+        :returns: A new NSMutableURLRequest with said options or an error.
+    */
     public override func createRequest(url: NSURL, method: HTTPMethod, parameters: Dictionary<String,AnyObject>?) -> (request: NSURLRequest, error: NSError?) {
         if self.isURIParam(method) {
             return super.createRequest(url, method: method, parameters: parameters)
