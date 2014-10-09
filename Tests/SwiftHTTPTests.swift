@@ -7,7 +7,11 @@
 //
 
 import XCTest
-import SwiftHTTP
+#if os(iOS)
+    import SwiftHTTP
+    #elseif os(OSX)
+    import SwiftHTTPOSX
+#endif
 
 class SwiftHTTPTests: XCTestCase {
     

@@ -8,7 +8,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 import Foundation
-import MobileCoreServices
+
+#if os(iOS)
+    import MobileCoreServices
+#endif
+
 
 /// Object representation of a HTTP File Upload.
 public class HTTPUpload: NSObject {
