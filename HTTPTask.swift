@@ -173,7 +173,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     */
     public func create(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) ->  HTTPOperation? {
 
-        let serialReq = createRequest(url,method: method, parameters: parameters)
+        let serialReq = createRequest(url, method: method, parameters: parameters)
         if serialReq.error != nil {
             if failure != nil {
                 failure(serialReq.error!)

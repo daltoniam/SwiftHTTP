@@ -111,7 +111,7 @@ public class HTTPRequestSerializer: NSObject {
             if countElements(queryString) > 0 {
                 newUrl += "\(para)\(queryString)"
             }
-            request.URL = NSURL(fileURLWithPath: newUrl)
+            request.URL = NSURL(string: newUrl)
         } else {
             var charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(self.stringEncoding));
             if request.valueForHTTPHeaderField(contentTypeKey) == nil {
