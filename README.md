@@ -292,7 +292,7 @@ Add the `SwiftHTTP.xcodeproj` to your Xcode project. Once that is complete, in y
 - [ ] Complete Docs
 - [ ] Add Unit Tests
 - [ ] Add Example Project
-- [ ] Add Rouge Installation Docs
+- [ ] Add [Rouge](https://github.com/acmacalister/Rouge) Installation Docs
 
 ## License
 
