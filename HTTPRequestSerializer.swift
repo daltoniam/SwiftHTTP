@@ -183,9 +183,6 @@ public class HTTPRequestSerializer: NSObject {
         var i = files.count
         for (key,upload) in files {
             if let data = upload.data {
-                println("key is: \(key)")
-                println("fileName is: \(upload.fileName)")
-                println("mimeType is: \(upload.mimeType)")
                 mutData.appendData(multiFormHeader(key, fileName: upload.fileName,
                     type: upload.mimeType, multiCRLF: multiCRLF).dataUsingEncoding(self.stringEncoding)!)
                 mutData.appendData(data)
