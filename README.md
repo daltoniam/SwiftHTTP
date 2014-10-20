@@ -68,10 +68,10 @@ PUT works the same as post. The example also include a file upload to do a multi
 ```swift
 let fileUrl = NSURL.fileURLWithPath("/Users/dalton/Desktop/file")
 var request = HTTPTask()
-request.PUT("http://domain.com/1", parameters:  ["param": "hi", "something": "else", "key": "value","file": HTTPUpload(fileUrl: fileUrl)], success: {(response: HTTPResponse) in
-
+request.PUT("http://domain.com/1", parameters:  ["param": "hi", "something": "else", "key": "value","file": HTTPUpload(fileUrl: fileUrl!)], success: {(response: HTTPResponse) in
+	//do stuff
     },failure: {(error: NSError) in
-
+	//error out on stuff
     })
 ```
 
