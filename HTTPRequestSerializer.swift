@@ -96,8 +96,13 @@ public class HTTPRequestSerializer: NSObject {
             if(method != .POST || method != .PUT) {
                 request.HTTPMethod = HTTPMethod.POST.rawValue // you probably wanted a post
             }
+            var boundary = "Boundary+\(arc4random())\(arc4random())"
             if parameters != nil {
-                request.HTTPBody = dataFromParameters(parameters!)
+                request.HTTPBody = dataFromParameters(parameters!,boundary: boundary)
+            }
+            if request.valueForHTTPHeaderField(contentTypeKey) == nil {
+                request.setValue("multipart/form-data; boundary=\(boundary)",
+                    forHTTPHeaderField:contentTypeKey)
             }
             return (request,nil)
         }
@@ -157,7 +162,7 @@ public class HTTPRequestSerializer: NSObject {
     }
     
     //create a multi form data object of the parameters
-    func dataFromParameters(parameters: Dictionary<String,AnyObject>) -> NSData {
+    func dataFromParameters(parameters: Dictionary<String,AnyObject>,boundary: String) -> NSData {
         var mutData = NSMutableData()
         var files = Dictionary<String,HTTPUpload>()
         var notFiles = Dictionary<String,AnyObject>()
@@ -169,7 +174,6 @@ public class HTTPRequestSerializer: NSObject {
             }
         }
         var multiCRLF = "\r\n"
-        var boundary = "Boundary+\(arc4random())\(arc4random())"
         var boundSplit = "\(multiCRLF)--\(boundary)\(multiCRLF)"
         mutData.appendData("--\(boundary)\(multiCRLF)".dataUsingEncoding(self.stringEncoding)!)
         var noParams = false
@@ -178,12 +182,17 @@ public class HTTPRequestSerializer: NSObject {
         }
         var i = files.count
         for (key,upload) in files {
-            mutData.appendData(multiFormHeader(key, fileName: upload.fileName,
-                type: upload.mimeType, multiCRLF: multiCRLF).dataUsingEncoding(self.stringEncoding)!)
-            mutData.appendData(upload.data!)
-            if i == 1 && noParams {
-            } else {
-                mutData.appendData(boundSplit.dataUsingEncoding(self.stringEncoding)!)
+            if let data = upload.data {
+                println("key is: \(key)")
+                println("fileName is: \(upload.fileName)")
+                println("mimeType is: \(upload.mimeType)")
+                mutData.appendData(multiFormHeader(key, fileName: upload.fileName,
+                    type: upload.mimeType, multiCRLF: multiCRLF).dataUsingEncoding(self.stringEncoding)!)
+                mutData.appendData(data)
+                if i == 1 && noParams {
+                } else {
+                    mutData.appendData(boundSplit.dataUsingEncoding(self.stringEncoding)!)
+                }
             }
         }
         if !noParams {

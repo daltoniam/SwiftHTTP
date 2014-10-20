@@ -19,6 +19,7 @@ public class HTTPUpload: NSObject {
     var fileUrl: NSURL? {
     didSet {
         updateMimeType()
+        loadData()
     }
     }
     var mimeType: String?
@@ -38,8 +39,16 @@ public class HTTPUpload: NSObject {
         }
     }
     
+    /// loads the fileUrl into memory.
+    func loadData() {
+        if let url = fileUrl {
+            self.fileName = url.lastPathComponent
+            self.data = NSData.dataWithContentsOfMappedFile(url.path!) as? NSData
+        }
+    }
+    
     /// Initializes a new HTTPUpload Object.
-    override init() {
+    public override init() {
         super.init()
     }
     
@@ -48,9 +57,11 @@ public class HTTPUpload: NSObject {
     
         :param: fileUrl The fileUrl is a standard url path to a file.
     */
-    convenience init(fileUrl: NSURL) {
+    public convenience init(fileUrl: NSURL) {
         self.init()
         self.fileUrl = fileUrl
+        updateMimeType()
+        loadData()
     }
     
     /**
@@ -61,7 +72,7 @@ public class HTTPUpload: NSObject {
         :param: mimeType The mimeType is just that. The mime type you would like the file to uploaded as.
     */
     ///upload a file from a a data blob. Must add a filename and mimeType as that can't be infered from the data
-    convenience init(data: NSData, fileName: String, mimeType: String) {
+    public convenience init(data: NSData, fileName: String, mimeType: String) {
         self.init()
         self.data = data
         self.fileName = fileName
