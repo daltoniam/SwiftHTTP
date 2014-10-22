@@ -16,10 +16,8 @@ extension String {
     
         :returns: Encoded version of of string it was called as.
     */
-    func escapeStr() -> String {
-        var raw: NSString = self
-        var str = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,raw,"[].",":/?&=;+!@#$()',*",CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding))
-        return str as NSString
+    var escaped: String {
+        return CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,self,"[].",":/?&=;+!@#$()',*",CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding))
     }
 }
 
@@ -204,7 +202,7 @@ public class HTTPRequestSerializer: NSObject {
     
     ///helper method to create the multi form headers
     func multiFormHeader(name: String, fileName: String?, type: String?, multiCRLF: String) -> String {
-        var str = "Content-Disposition: form-data; name=\"\(name.escapeStr())\""
+        var str = "Content-Disposition: form-data; name=\"\(name.escaped)\""
         if fileName != nil {
             str += "; filename=\"\(fileName!)\""
         }
@@ -239,9 +237,9 @@ public class HTTPRequestSerializer: NSObject {
         func stringValue() -> String {
             var val = getValue()
             if self.key == nil {
-                return val.escapeStr()
+                return val.escaped
             }
-            return "\(self.key.escapeStr())=\(val.escapeStr())"
+            return "\(self.key.escaped)=\(val.escaped)"
         }
         
     }
