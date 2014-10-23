@@ -28,7 +28,7 @@ request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPRespons
             let str = NSString(data: data, encoding: NSUTF8StringEncoding)
             println("response: \(str)") //prints the HTML of the page
         }
-    },failure: {(error: NSError) in
+    },failure: {(error: NSError, response: HTTPResponse?) in
     	println("error: \(error)")
     })
 ```
@@ -39,7 +39,7 @@ We can also add parameters as with standard container objects and they will be p
 var request = HTTPTask()
 request.GET("http://google.com", parameters: ["param": "param1", "array": ["first array element","second","third"], "num": 23], success: {(response: HTTPResponse) in
     println("response: \(response.responseObject!)")
-    },failure: {(error: NSError) in
+    },failure: {(error: NSError, response: HTTPResponse?) in
         println("error: \(error)")
     })
 ```
@@ -56,7 +56,7 @@ var request = HTTPTask()
 let params: Dictionary<String,AnyObject> = ["param": "param1", "array": ["first array element","second","third"], "num": 23, "dict": ["someKey": "someVal"]]
 request.POST("http://domain.com/create", parameters: params, success: {(response: HTTPResponse) in
 
-    },failure: {(error: NSError) in
+    },failure: {(error: NSError, response: HTTPResponse?) in
 
     })
 ```
@@ -70,7 +70,7 @@ let fileUrl = NSURL.fileURLWithPath("/Users/dalton/Desktop/file")
 var request = HTTPTask()
 request.PUT("http://domain.com/1", parameters:  ["param": "hi", "something": "else", "key": "value","file": HTTPUpload(fileUrl: fileUrl!)], success: {(response: HTTPResponse) in
 	//do stuff
-    },failure: {(error: NSError) in
+    },failure: {(error: NSError, response: HTTPResponse?) in
 	//error out on stuff
     })
 ```
@@ -85,7 +85,7 @@ DELETE works the same as the GET.
 var request = HTTPTask()
 request.DELETE("http://domain.com/1", parameters: nil, success: {(response: HTTPResponse) in
     	println("DELETE was successful!")
-    },failure: {(error: NSError) in
+    },failure: {(error: NSError, response: HTTPResponse?) in
     	 println("print the error: \(error)")
     })
 ```
@@ -98,7 +98,7 @@ HEAD works the same as the GET.
 var request = HTTPTask()
 request.HEAD("http://domain.com/image.png", parameters: nil, success: {(response: HTTPResponse) in
     	println("The file does exist!")
-    },failure: {(error: NSError) in
+    },failure: {(error: NSError, response: HTTPResponse?) in
 		println("File not found: \(error)")
     })
 ```
@@ -122,7 +122,7 @@ request.download("http://vluxe.io/assets/images/logo.png", parameters: nil, prog
         fileManager.moveItemAtURL(response.responseObject! as NSURL, toURL: newPath, error: nil)
     }
 
-    } ,failure: {(error: NSError) in
+    } ,failure: {(error: NSError, response: HTTPResponse?) in
         println("failure")
 })
 ```
@@ -147,7 +147,7 @@ request.GET("http://httpbin.org/digest-auth/:qop/user/passwd", parameters: nil, 
         println("winning!")
     }
 
-    }, failure: {(error: NSError) in
+    }, failure: {(error: NSError, response: HTTPResponse?) in
         println("failure.")
 })
 ```
@@ -161,19 +161,19 @@ var request = HTTPTask()
 request.baseURL = "http://api.someserver.com/1"
 request.GET("/users", parameters: ["key": "value"], success: {(response: HTTPResponse) in
     println("Got data from http://api.someserver.com/1/users")
-    },failure: {(error: NSError) in
+    },failure: {(error: NSError, response: HTTPResponse?) in
         println("print the error: \(error)")
     })
 
 request.POST("/users", parameters: ["key": "updatedVale"], success: {(response: HTTPResponse) in
     println("Got data from http://api.someserver.com/1/users")
-    },failure: {(error: NSError) in
+    },failure: {(error: NSError, response: HTTPResponse?) in
         println("print the error: \(error)")
     })
 
 request.GET("/resources", parameters: ["key": "value"], success: {(response: HTTPResponse) in
     println("Got data from http://api.someserver.com/1/resources")
-    },failure: {(error: NSError) in
+    },failure: {(error: NSError, response: HTTPResponse?) in
         println("print the error: \(error)")
     })
 ```
@@ -192,7 +192,7 @@ var opt = request.create("http://vluxe.io", method: .GET, parameters: nil, succe
         let str = NSString(data: data, encoding: NSUTF8StringEncoding)
         println("response: \(str)") //prints the HTML of the page
     }
-    },failure: {(error: NSError) in
+    },failure: {(error: NSError, response: HTTPResponse?) in
         println("error: \(error)")
 })
 if opt != nil {
@@ -216,7 +216,7 @@ request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPRespons
 			println("example of the JSON key: \(dict["key"])")
 			println("print the whole response: \(response)")
         }
-    },failure: {(error: NSError) in
+    },failure: {(error: NSError, response: HTTPResponse?) in
     	println("error: \(error)")
     })
 ```
@@ -268,7 +268,7 @@ request.GET("http://localhost:8080/bar", parameters: nil, success: {(response: H
 		let resp = Status(JSONDecoder(response.responseObject!))
         println("status is: \(resp.status)")
     }
-    }, failure: {(error: NSError) in
+    }, failure: {(error: NSError, response: HTTPResponse?) in
         println("got an error: \(error)")
 })
 ```
