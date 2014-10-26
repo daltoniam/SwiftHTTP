@@ -36,6 +36,12 @@ public class HTTPResponse {
     public var responseObject: AnyObject?
     /// The status code of the HTTP Response.
     public var statusCode: Int?
+    ///Returns the response as a string
+    public func text() -> String? {
+        var d = self.responseObject? as NSData
+        var s = NSString(data: d, encoding: NSUTF8StringEncoding)
+        return s
+    }
 }
 
 /// Object representation of HTTP Basic Auth.
