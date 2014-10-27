@@ -38,9 +38,10 @@ public class HTTPResponse {
     public var statusCode: Int?
     ///Returns the response as a string
     public func text() -> String? {
-        var d = self.responseObject? as NSData
-        var s = NSString(data: d, encoding: NSUTF8StringEncoding)
-        return s
+        if let d = self.responseObject as? NSData {
+            return  NSString(data: d, encoding: NSUTF8StringEncoding)
+        }
+        return nil
     }
 }
 
