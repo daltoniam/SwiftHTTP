@@ -36,6 +36,8 @@ public class HTTPResponse {
     public var responseObject: AnyObject?
     /// The status code of the HTTP Response.
     public var statusCode: Int?
+    /// The URL of the HTTP Response.
+    public var URL: NSURL?
 }
 
 /// Object representation of HTTP Basic Auth.
@@ -212,6 +214,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                         extraResponse.mimeType = hresponse.MIMEType
                         extraResponse.suggestedFilename = hresponse.suggestedFilename
                         extraResponse.statusCode = hresponse.statusCode
+                        extraResponse.URL = hresponse.URL
                     }
                     extraResponse.responseObject = responseObject
                     if extraResponse.statusCode > 299 {
@@ -440,6 +443,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                 resp.mimeType = hresponse.MIMEType
                 resp.suggestedFilename = hresponse.suggestedFilename
                 resp.statusCode = hresponse.statusCode
+                resp.URL = hresponse.URL
             }
             resp.responseObject = location
             if resp.statusCode > 299 {
