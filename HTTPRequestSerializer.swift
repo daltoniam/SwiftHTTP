@@ -58,6 +58,8 @@ public class HTTPRequestSerializer: NSObject {
     func newRequest(url: NSURL, method: HTTPMethod) -> NSMutableURLRequest {
         var request = NSMutableURLRequest(URL: url, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
         request.HTTPMethod = method.rawValue
+        request.cachePolicy = self.cachePolicy
+        request.timeoutInterval = self.timeoutInterval
         request.allowsCellularAccess = self.allowsCellularAccess
         request.HTTPShouldHandleCookies = self.HTTPShouldHandleCookies
         request.HTTPShouldUsePipelining = self.HTTPShouldUsePipelining
