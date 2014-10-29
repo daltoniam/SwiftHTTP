@@ -140,9 +140,10 @@ SwiftHTTP supports authentication through [NSURLCredential](https://developer.ap
 
 ```swift
 var request = HTTPTask()
-request.auth = HTTPAuth(username: "user", password: "passwd")
-request.auth.persistence = .Permanent
-request.GET("http://httpbin.org/digest-auth/:qop/user/passwd", parameters: nil, success: {(response: HTTPResponse) in
+var auth = HTTPAuth(username: "user", password: "passwd")
+auth.persistence = .Permanent
+request.auth = auth
+request.GET("http://httpbin.org/basic-auth/user/passwd", parameters: nil, success: {(response: HTTPResponse) in
     if response.responseObject != nil {
         println("winning!")
     }
