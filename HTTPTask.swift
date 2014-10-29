@@ -36,6 +36,13 @@ public class HTTPResponse {
     public var responseObject: AnyObject?
     /// The status code of the HTTP Response.
     public var statusCode: Int?
+    ///Returns the response as a string
+    public func text() -> String? {
+        if let d = self.responseObject as? NSData {
+            return  NSString(data: d, encoding: NSUTF8StringEncoding)
+        }
+        return nil
+    }
     /// The URL of the HTTP Response.
     public var URL: NSURL?
 }
