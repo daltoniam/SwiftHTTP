@@ -82,17 +82,12 @@ public class HTTPRequestSerializer: NSObject {
     func createRequest(url: NSURL, method: HTTPMethod, parameters: Dictionary<String,AnyObject>?) -> (request: NSURLRequest, error: NSError?) {
         
         var request = newRequest(url, method: method)
-        var isMultiForm = false
+        var isMulti = false
         //do a check for upload objects to see if we are multi form
         if let params = parameters {
-            for (name,object: AnyObject) in params {
-                if object is HTTPUpload {
-                    isMultiForm = true
-                    break
-                }
-            }
+            isMulti = isMultiForm(params)
         }
-        if isMultiForm {
+        if isMulti {
             if(method != .POST || method != .PUT) {
                 request.HTTPMethod = HTTPMethod.POST.rawValue // you probably wanted a post
             }
@@ -128,6 +123,19 @@ public class HTTPRequestSerializer: NSObject {
         return (request,nil)
     }
     
+    ///check for multi form objects
+    func isMultiForm(params: Dictionary<String,AnyObject>) -> Bool {
+        for (name,object: AnyObject) in params {
+            if object is HTTPUpload {
+                return true
+            } else if let subParams = object as? Dictionary<String,AnyObject> {
+                if isMultiForm(subParams) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
     ///convert the parameter dict to its HTTP string representation
     func stringFromParameters(parameters: Dictionary<String,AnyObject>) -> String {
         return join("&", map(serializeObject(parameters, key: nil), {(pair) in
@@ -164,41 +172,37 @@ public class HTTPRequestSerializer: NSObject {
     //create a multi form data object of the parameters
     func dataFromParameters(parameters: Dictionary<String,AnyObject>,boundary: String) -> NSData {
         var mutData = NSMutableData()
-        var files = Dictionary<String,HTTPUpload>()
-        var notFiles = Dictionary<String,AnyObject>()
-        for (key, object: AnyObject) in parameters {
-            if let upload = object as? HTTPUpload {
-                files[key] = upload
-            } else {
-                notFiles[key] = object
-            }
-        }
         var multiCRLF = "\r\n"
-        var boundSplit = "\(multiCRLF)--\(boundary)\(multiCRLF)"
+        var boundSplit =  "\(multiCRLF)--\(boundary)\(multiCRLF)".dataUsingEncoding(self.stringEncoding)!
+        var lastBound =  "\(multiCRLF)--\(boundary)--\(multiCRLF)".dataUsingEncoding(self.stringEncoding)!
         mutData.appendData("--\(boundary)\(multiCRLF)".dataUsingEncoding(self.stringEncoding)!)
-        var noParams = false
-        if notFiles.count == 0 {
-            noParams = true
-        }
-        var i = files.count
-        for (key,upload) in files {
-            if let data = upload.data {
-                mutData.appendData(multiFormHeader(key, fileName: upload.fileName,
-                    type: upload.mimeType, multiCRLF: multiCRLF).dataUsingEncoding(self.stringEncoding)!)
-                mutData.appendData(data)
-                if i == 1 && noParams {
+        
+        let pairs = serializeObject(parameters, key: nil)
+        let count = pairs.count-1
+        var i = 0
+        for pair in pairs {
+            var append = true
+            if let upload = pair.getUpload() {
+                 if let data = upload.data {
+                    mutData.appendData(multiFormHeader(pair.key, fileName: upload.fileName,
+                        type: upload.mimeType, multiCRLF: multiCRLF).dataUsingEncoding(self.stringEncoding)!)
+                    mutData.appendData(data)
                 } else {
-                    mutData.appendData(boundSplit.dataUsingEncoding(self.stringEncoding)!)
+                    append = false
+                }
+            } else {
+                let str = "\(self.multiFormHeader(pair.key, fileName: nil, type: nil, multiCRLF: multiCRLF))\(pair.getValue())"
+                mutData.appendData(str.dataUsingEncoding(self.stringEncoding)!)
+            }
+            if append {
+                if i == count {
+                    mutData.appendData(lastBound)
+                } else {
+                    mutData.appendData(boundSplit)
                 }
             }
+            i++
         }
-        if !noParams {
-            let paramStr = join(boundSplit, map(serializeObject(notFiles, key: nil), {(pair) in
-                return "\(self.multiFormHeader(pair.key, fileName: nil, type: nil, multiCRLF: multiCRLF))\(pair.getValue())"
-                }))
-            mutData.appendData(paramStr.dataUsingEncoding(self.stringEncoding)!)
-        }
-        mutData.appendData("\(multiCRLF)--\(boundary)--\(multiCRLF)".dataUsingEncoding(self.stringEncoding)!)
         return mutData
     }
     
@@ -224,6 +228,10 @@ public class HTTPRequestSerializer: NSObject {
         init(value: AnyObject, key: String?) {
             self.value = value
             self.key = key
+        }
+        
+        func getUpload() -> HTTPUpload? {
+            return self.value as? HTTPUpload
         }
         
         func getValue() -> String {
