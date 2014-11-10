@@ -23,8 +23,7 @@ The most basic request. By default an NSData object will be returned for the res
 ```swift
 var request = HTTPTask()
 request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPResponse) in
-    	if response.responseObject != nil {
-            let data = response.responseObject as NSData
+    	if let data = response.responseObject as? NSData {
             let str = NSString(data: data, encoding: NSUTF8StringEncoding)
             println("response: \(str)") //prints the HTML of the page
         }
@@ -66,7 +65,7 @@ request.POST("http://domain.com/create", parameters: params, success: {(response
 PUT works the same as post. The example also include a file upload to do a multi form request.
 
 ```swift
-let fileUrl = NSURL.fileURLWithPath("/Users/dalton/Desktop/file")
+let fileUrl = NSURL.fileURLWithPath("/Users/dalton/Desktop/file")!
 var request = HTTPTask()
 request.PUT("http://domain.com/1", parameters:  ["param": "hi", "something": "else", "key": "value","file": HTTPUpload(fileUrl: fileUrl!)], success: {(response: HTTPResponse) in
 	//do stuff
@@ -116,7 +115,7 @@ let downloadTask = request.download("http://vluxe.io/assets/images/logo.png", pa
     if response.responseObject != nil {
         //we MUST copy the file from its temp location to a permanent location.
         let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-        let newPath = NSURL(string:  "\(paths[0])/\(response.suggestedFilename!)")
+        let newPath = NSURL(string:  "\(paths[0])/\(response.suggestedFilename!)")!
         let fileManager = NSFileManager.defaultManager()
         fileManager.removeItemAtURL(newPath, error: nil)
         fileManager.moveItemAtURL(response.responseObject! as NSURL, toURL: newPath, error: nil)
@@ -130,7 +129,7 @@ let downloadTask = request.download("http://vluxe.io/assets/images/logo.png", pa
 Cancel the download.
 
 ```swift
-if let t = downloadTask != nil {
+if let t = downloadTask {
     t.cancel()
 }
 ```
@@ -203,7 +202,7 @@ var opt = request.create("http://vluxe.io", method: .GET, parameters: nil, succe
     },failure: {(error: NSError, response: HTTPResponse?) in
         println("error: \(error)")
 })
-if let o = opt != nil {
+if let o = opt {
     operationQueue.addOperation(o)
 }
 ```
@@ -213,7 +212,7 @@ if let o = opt != nil {
 Let's say you want to cancel this request a little later, simple use the operationQueue cancel.
 
 ```swift
-if let o = opt != nil {
+if let o = opt {
     o.cancel()
 }
 ```
@@ -229,8 +228,7 @@ request.requestSerializer = JSONRequestSerializer()
 //The expected response will be JSON and be converted to an object return by NSJSONSerialization instead of a NSData.
 request.responseSerializer = JSONResponseSerializer()
 request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPResponse) in
-    	if response.responseObject != nil {
-            let dict = response.responseObject as Dictionary<String,AnyObject>
+    	if let dict = response.responseObject as? Dictionary<String,AnyObject> {
 			println("example of the JSON key: \(dict["key"])")
 			println("print the whole response: \(response)")
         }
@@ -282,7 +280,7 @@ request.requestSerializer = HTTPRequestSerializer()
 request.requestSerializer.headers["someKey"] = "SomeValue" //example of adding a header value
 request.responseSerializer = JSONResponseSerializer()
 request.GET("http://localhost:8080/bar", parameters: nil, success: {(response: HTTPResponse) in
-    if (response.responseObject != nil) {
+    if response.responseObject != nil {
 		let resp = Status(JSONDecoder(response.responseObject!))
         println("status is: \(resp.status)")
     }
