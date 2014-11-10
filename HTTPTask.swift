@@ -323,11 +323,11 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         :param: success The block that is run on a sucessful HTTP Request. The HTTPResponse responseObject object will be a fileURL. You MUST copy the fileURL return in HTTPResponse.responseObject to a new location before using it (e.g. your documents directory).
         :param: failure The block that is run on a failed HTTP Request.
     */
-    public func download(url: String, parameters: Dictionary<String,AnyObject>?,progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) {
+    public func download(url: String, parameters: Dictionary<String,AnyObject>?,progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) -> NSURLSessionDownloadTask? {
         let serialReq = createRequest(url,method: .GET, parameters: parameters)
         if serialReq.error != nil {
             failure(serialReq.error!, nil)
-            return
+            return nil
         }
         let ident = createBackgroundIdent()
         let config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(ident)
@@ -336,6 +336,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         self.backgroundTaskMap[ident] = BackgroundBlocks(success,failure,progress)
         //this does not have to be queueable as Apple's background dameon *should* handle that.
         task.resume()
+        return task
     }
     
     //TODO: not implemented yet.

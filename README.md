@@ -109,7 +109,7 @@ The download method uses the background download functionality of NSURLSession. 
 
 ```swift
 var request = HTTPTask()
-request.download("http://vluxe.io/assets/images/logo.png", parameters: nil, progress: {(complete: Double) in
+let downloadTask = request.download("http://vluxe.io/assets/images/logo.png", parameters: nil, progress: {(complete: Double) in
     println("percent complete: \(complete)")
     }, success: {(response: HTTPResponse) in
     println("download finished!")
@@ -125,6 +125,14 @@ request.download("http://vluxe.io/assets/images/logo.png", parameters: nil, prog
     } ,failure: {(error: NSError, response: HTTPResponse?) in
         println("failure")
 })
+```
+
+Cancel the download.
+
+```swift
+if let t = downloadTask != nil {
+    t.cancel()
+}
 ```
 
 ### Upload
@@ -188,16 +196,25 @@ let operationQueue = NSOperationQueue()
 operationQueue.maxConcurrentOperationCount = 2
 var request = HTTPTask()
 var opt = request.create("http://vluxe.io", method: .GET, parameters: nil, success: {(response: HTTPResponse) in
-    if response.responseObject != nil {
-        let data = response.responseObject as NSData
+    if let data = response.responseObject as? NSData {
         let str = NSString(data: data, encoding: NSUTF8StringEncoding)
         println("response: \(str)") //prints the HTML of the page
     }
     },failure: {(error: NSError, response: HTTPResponse?) in
         println("error: \(error)")
 })
-if opt != nil {
-    operationQueue.addOperation(opt!)
+if let o = opt != nil {
+    operationQueue.addOperation(o)
+}
+```
+
+### Cancel
+
+Let's say you want to cancel this request a little later, simple use the operationQueue cancel.
+
+```swift
+if let o = opt != nil {
+    o.cancel()
 }
 ```
 
