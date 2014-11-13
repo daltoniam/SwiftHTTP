@@ -214,7 +214,7 @@ public class HTTPRequestSerializer: NSObject {
         }
         str += multiCRLF
         if type != nil {
-            str += "Content-Type: \"\(type!)\"\(multiCRLF)"
+            str += "Content-Type: \(type!)\(multiCRLF)"
         }
         str += multiCRLF
         return str
