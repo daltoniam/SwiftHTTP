@@ -88,7 +88,7 @@ public class HTTPRequestSerializer: NSObject {
             isMulti = isMultiForm(params)
         }
         if isMulti {
-            if(method != .POST || method != .PUT) {
+            if(method != .POST && method != .PUT) {
                 request.HTTPMethod = HTTPMethod.POST.rawValue // you probably wanted a post
             }
             var boundary = "Boundary+\(arc4random())\(arc4random())"
