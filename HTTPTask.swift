@@ -147,8 +147,14 @@ public class HTTPOperation : NSOperation {
     
     /// Sets the task to finished.
     public func finish() {
+        self.willChangeValueForKey("isExecuting")
+        self.willChangeValueForKey("isFinished")
+        
         running = false
         done = true
+        
+        self.didChangeValueForKey("isExecuting")
+        self.didChangeValueForKey("isFinished")
     }
 }
 
