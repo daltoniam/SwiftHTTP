@@ -47,29 +47,6 @@ public class HTTPResponse {
     public var URL: NSURL?
 }
 
-/// Object representation of HTTP Basic Auth.
-public struct HTTPAuth {
-    /// Username for auth.
-    public var username: String
-    /// Password for auth.
-    public var password: String
-    /// Control for how long credentials should last. Default is ForSession.
-    public var persistence: NSURLCredentialPersistence
-    
-    /**
-        Initializes a new Auth Object.
-    
-        :param: username to provide for auth.
-        :param: password to provide for auth.
-
-    */
-    public init(username: String, password: String) {
-        self.username = username
-        self.password = password
-        self.persistence = .ForSession
-    }
-}
-
 /// Holds the blocks of the background task.
 class BackgroundBlocks {
     // these 2 only get used for background download/upload since they have to be delegate methods
@@ -166,7 +143,9 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     public var baseURL: String?
     public var requestSerializer = HTTPRequestSerializer()
     public var responseSerializer: HTTPResponseSerializer?
-    public var auth: HTTPAuth?
+    //This gets called on auth challenges. If nil, default handling is use.
+    //Returning nil from this method will cause the request to be rejected and cancelled
+    public var auth:((NSURLAuthenticationChallenge) -> NSURLCredential?)?
     
     //MARK: Public Methods
     
@@ -429,8 +408,11 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     /// Method for authentication challenge.
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
         if let a = auth {
-            let cred = NSURLCredential(user: a.username, password: a.password, persistence: a.persistence)
-            completionHandler(.UseCredential, cred)
+            let cred = a(challenge)
+            if let c = cred {
+                completionHandler(.UseCredential, c)
+            }
+            completionHandler(.RejectProtectionSpace, nil)
             return
         }
         completionHandler(.PerformDefaultHandling, nil)

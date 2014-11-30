@@ -147,9 +147,15 @@ SwiftHTTP supports authentication through [NSURLCredential](https://developer.ap
 
 ```swift
 var request = HTTPTask()
-var auth = HTTPAuth(username: "user", password: "passwd")
-auth.persistence = .Permanent
-request.auth = auth
+//the auth closures will continually be called until a successful auth or rejection
+var attempted = false
+request.auth = {(challenge: NSURLAuthenticationChallenge) in
+    if !attempted {
+        attempted = true
+        return NSURLCredential(user: "user", password: "passwd", persistence: .ForSession)
+    }
+    return nil //auth failed, nil causes the request to be properly cancelled.
+}
 request.GET("http://httpbin.org/basic-auth/user/passwd", parameters: nil, success: {(response: HTTPResponse) in
     if response.responseObject != nil {
         println("winning!")
@@ -159,6 +165,29 @@ request.GET("http://httpbin.org/basic-auth/user/passwd", parameters: nil, succes
         println("failure.")
 })
 ```
+
+Self-Signed Certificate example:
+
+```swift
+var request = HTTPTask()
+var attempted = false
+request.auth = {(challenge: NSURLAuthenticationChallenge) in
+    if !attempted {
+        attempted = true
+        return NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
+    }
+    return nil
+}
+request.GET("https://somedomain.com", parameters: nil, success: {(response: HTTPResponse) in
+    if response.responseObject != nil {
+        println("winning!")
+    }
+
+    }, failure: {(error: NSError, response: HTTPResponse?) in
+        println("failure.")
+})
+```
+
 
 ### BaseURL
 
