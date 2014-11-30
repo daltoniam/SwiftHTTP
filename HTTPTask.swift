@@ -165,8 +165,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     
         :returns: A freshly constructed HTTPOperation to add to your NSOperationQueue.
     */
-    public func create(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!, success:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) ->  HTTPOperation? {
-
+        public func create(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!, success:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) ->  HTTPOperation? {
         let serialReq = createRequest(url, method: method, parameters: parameters)
         if serialReq.error != nil {
             if failure != nil {
@@ -176,6 +175,11 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         }
         let opt = HTTPOperation()
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let userPasswordString = auth!.username+":"+auth!.password
+        let userPasswordData = userPasswordString.dataUsingEncoding(NSUTF8StringEncoding)
+        let base64EncodedCredential = userPasswordData!.base64EncodedStringWithOptions(nil)
+        let authString = "Basic \(base64EncodedCredential)"
+        config.HTTPAdditionalHeaders = ["Authorization" : authString]
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         let task = session.dataTaskWithRequest(serialReq.request,
             completionHandler: {(data: NSData!, response: NSURLResponse!, error: NSError!) -> Void in
@@ -219,10 +223,11 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                 } else if failure != nil {
                     failure(error, nil)
                 }
-            })
+        })
         opt.task = task
         return opt
     }
+
     
     /**
         Creates a HTTPOperation as a HTTP GET request and starts it for you.
