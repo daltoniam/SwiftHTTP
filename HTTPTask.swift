@@ -167,6 +167,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     public var requestSerializer = HTTPRequestSerializer()
     public var responseSerializer: HTTPResponseSerializer?
     public var auth: HTTPAuth?
+    public var acceptSelfSignedSSL = false
     
     //MARK: Public Methods
     
@@ -433,6 +434,12 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             completionHandler(.UseCredential, cred)
             return
         }
+        else if acceptSelfSignedSSL {
+            let cred = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
+            completionHandler(.UseCredential, cred)
+            return
+        }
+        
         completionHandler(.PerformDefaultHandling, nil)
     }
     
