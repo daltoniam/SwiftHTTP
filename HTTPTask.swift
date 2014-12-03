@@ -146,6 +146,8 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     //This gets called on auth challenges. If nil, default handling is use.
     //Returning nil from this method will cause the request to be rejected and cancelled
     public var auth:((NSURLAuthenticationChallenge) -> NSURLCredential?)?
+    //Additional Headers add to config got from NSURLSessionConfiguration.defaultSessionConfiguration
+    public var additionalHeaders: [NSObject: AnyObject]?
     
     //MARK: Public Methods
     
@@ -176,6 +178,9 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         }
         let opt = HTTPOperation()
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+        if (additionalHeaders != nil) {
+            config.HTTPAdditionalHeaders = additionalHeaders;
+        }
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         let task = session.dataTaskWithRequest(serialReq.request,
             completionHandler: {(data: NSData!, response: NSURLResponse!, error: NSError!) -> Void in
