@@ -15,6 +15,15 @@ SwiftHTTP is a thin wrapper around NSURLSession in Swift to simplify HTTP reques
 
 Full article here: [http://vluxe.io/swifthttp.html](http://vluxe.io/swifthttp.html)
 
+First thing is to import the framework. See the Installation instructions on how to add the framework to your project.
+
+```swift
+//iOS
+import SwiftHTTP
+//OS X
+import SwiftHTTPOSX
+```
+
 ## Examples
 
 ### GET
