@@ -339,6 +339,34 @@ SwiftHTTP requires at least iOS 8/OSX 10.10 or above.
 
 ## Installation
 
+### Cocoapods
+
+```
+Coming soon...(Hopefully!)
+```
+
+### Carthage
+
+Check out the [Carthage](https://github.com/Carthage/Carthage) docs on how to add a install. The `SwiftHTTP` framework is already setup with shared schemes.
+
+[Carthage Install](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application)
+
+### Rogue
+
+First see the [installation docs](https://github.com/acmacalister/Rogue) for how to install Rogue.
+
+To install SwiftLog run the command below in the directory you created the rogue file.
+
+```
+rogue add https://github.com/daltoniam/SwiftHTTP
+```
+
+Next open the `libs` folder and add the `SwiftHTTP.xcodeproj` to your Xcode project. Once that is complete, in your "Build Phases" add the `SwiftHTTP.framework` to your "Link Binary with Libraries" phase. Make sure to add the `libs` folder to your `.gitignore` file.
+
+### Other
+
+Simply grab the framework (either via git submodule or another package manager).
+
 Add the `SwiftHTTP.xcodeproj` to your Xcode project. Once that is complete, in your "Build Phases" add the `SwiftHTTP.framework` to your "Link Binary with Libraries" phase.
 
 ## TODOs
@@ -346,7 +374,6 @@ Add the `SwiftHTTP.xcodeproj` to your Xcode project. Once that is complete, in y
 - [ ] Complete Docs
 - [ ] Add Unit Tests
 - [ ] Add Example Project
-- [ ] Add [Rouge](https://github.com/acmacalister/Rouge) Installation Docs
 
 ## License
 
