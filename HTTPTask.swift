@@ -384,9 +384,9 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     private func createError(code: Int) -> NSError {
         var text = "An error occured"
         if code == 404 {
-            text = "page not found"
+            text = "Page not found"
         } else if code == 401 {
-            text = "accessed denied"
+            text = "Access denied"
         }
         return NSError(domain: "HTTPTask", code: code, userInfo: [NSLocalizedDescriptionKey: text])
     }
