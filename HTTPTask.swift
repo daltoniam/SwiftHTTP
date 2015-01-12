@@ -411,6 +411,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             let cred = a(challenge)
             if let c = cred {
                 completionHandler(.UseCredential, c)
+                return
             }
             completionHandler(.RejectProtectionSpace, nil)
             return
