@@ -351,10 +351,10 @@ To use SwiftHTTP in your project add the following 'Podfile' to your project
     xcodeproj 'YourProjectName.xcodeproj'
     platform :ios, '8.0'
 
-    pod 'SwiftHTTP', :git => "https://github.com/daltoniam/SwiftHTTP.git", :branch => "cocoapods"
+    pod 'SwiftHTTP', :git => "https://github.com/daltoniam/SwiftHTTP.git", :tag => "0.9.1"
 
     target 'YourProjectNameTests' do
-        pod 'SwiftHTTP', :git => "https://github.com/daltoniam/SwiftHTTP.git", :branch => "cocoapods"
+        pod 'SwiftHTTP', :git => "https://github.com/daltoniam/SwiftHTTP.git", :tag => "0.9.1"
     end
 
 Then run:
