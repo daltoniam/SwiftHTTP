@@ -341,7 +341,7 @@ SwiftHTTP requires at least iOS 8/OSX 10.10 or above.
 
 ### Cocoapods
 
-### [CocoaPods](http://cocoapods.org/) 
+### [CocoaPods](http://cocoapods.org/)
 At this time, Cocoapods support for Swift frameworks is supported in a [pre-release](http://blog.cocoapods.org/Pod-Authors-Guide-to-CocoaPods-Frameworks/).
 
 To use SwiftHTTP in your project add the following 'Podfile' to your project
@@ -367,11 +367,11 @@ You can validate SwiftHTTP.podspec using:
     pod spec lint SwiftHTTP.podspec
 
 This should be tested with a sample project before releasing it. This can be done by adding the following line to a ```Podfile```:
-    
+
     pod 'SwiftHTTP', :git => 'https://github.com/username/SwiftHTTP.git'
 
 Then run:
-    
+
     pod install
 
 If all goes well you are ready to release. First, create a tag and push:
@@ -408,6 +408,10 @@ Next open the `libs` folder and add the `SwiftHTTP.xcodeproj` to your Xcode proj
 Simply grab the framework (either via git submodule or another package manager).
 
 Add the `SwiftHTTP.xcodeproj` to your Xcode project. Once that is complete, in your "Build Phases" add the `SwiftHTTP.framework` to your "Link Binary with Libraries" phase.
+
+### Add Copy Frameworks Phase
+
+If you are running this in an OSX app or on a physical iOS device you will need to make sure you add the `SwiftHTTP.framework` or `SwiftHTTPOSX.framework` to be included in your app bundle. To do this, in Xcode, navigate to the target configuration window by clicking on the blue project icon, and selecting the application target under the "Targets" heading in the sidebar. In the tab bar at the top of that window, open the "Build Phases" panel. Expand the "Link Binary with Libraries" group, and add `SwiftHTTP.framework` or `SwiftHTTPOSX.framework` depending on if you are building an iOS or OSX app. Click on the + button at the top left of the panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `SwiftHTTP.framework` or `SwiftHTTPOSX.framework` respectively.
 
 ## TODOs
 
