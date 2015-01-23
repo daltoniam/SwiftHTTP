@@ -31,7 +31,7 @@ class SwiftHTTPTests: XCTestCase {
             if response.responseObject != nil {
                 XCTAssert(true, "Pass")
             }
-            },failure: {(error: NSError) -> Void in
+            },failure: {(error: NSError, _) -> Void in
                 XCTAssert(false, "Failure")
         })
     }
@@ -51,7 +51,7 @@ class SwiftHTTPTests: XCTestCase {
             if response.responseObject != nil {
                 XCTAssert(true, "Pass")
             }
-            },failure: {(error: NSError) -> Void in
+            },failure: {(error: NSError, _) -> Void in
                 XCTAssert(false, "Failure")
         })
     }
