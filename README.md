@@ -122,12 +122,18 @@ let downloadTask = request.download("http://vluxe.io/assets/images/logo.png", pa
     }, success: {(response: HTTPResponse) in
     println("download finished!")
     if response.responseObject != nil {
-        //we MUST copy the file from its temp location to a permanent location.
-        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-        let newPath = NSURL(string:  "\(paths[0])/\(response.suggestedFilename!)")!
-        let fileManager = NSFileManager.defaultManager()
-        fileManager.removeItemAtURL(newPath, error: nil)
-        fileManager.moveItemAtURL(response.responseObject! as NSURL, toURL: newPath, error: nil)
+	    //we MUST copy the file from its temp location to a permanent location.
+        if let url = response.responseObject as? NSURL {
+            if let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first as? String {
+                if let fileName = response.suggestedFilename {
+                    if let newPath = NSURL(fileURLWithPath: "\(path)/\(fileName)") {
+                        let fileManager = NSFileManager.defaultManager()
+                        fileManager.removeItemAtURL(newPath, error: nil)
+                        fileManager.moveItemAtURL(url, toURL: newPath, error:nil)
+                    }
+                }
+            }
+        }
     }
 
     } ,failure: {(error: NSError, response: HTTPResponse?) in
