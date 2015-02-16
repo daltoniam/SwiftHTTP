@@ -17,7 +17,7 @@ extension String {
         :returns: Encoded version of of string it was called as.
     */
     var escaped: String {
-        return CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,self,"[].",":/?&=;+!@#$()',*",CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding))
+        return CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,self,"[].",":/?&=;+!@#$()',*",CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) as! String
     }
 }
 
@@ -108,7 +108,7 @@ public class HTTPRequestSerializer: NSObject {
         if isURIParam(method) {
             var para = (request.URL!.query != nil) ? "&" : "?"
             var newUrl = "\(request.URL!.absoluteString!)"
-            if countElements(queryString) > 0 {
+            if count(queryString) > 0 {
                 newUrl += "\(para)\(queryString)"
             }
             request.URL = NSURL(string: newUrl)

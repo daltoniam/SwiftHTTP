@@ -34,7 +34,7 @@ public class HTTPUpload: NSObject {
             if (str == nil) {
                 mimeType = "application/octet-stream";
             } else {
-                mimeType = str.takeUnretainedValue() as NSString
+                mimeType = str.takeUnretainedValue() as String
             }
         }
     }
