@@ -39,7 +39,7 @@ public class HTTPResponse {
     ///Returns the response as a string
     public func text() -> String? {
         if let d = self.responseObject as? NSData {
-            return  NSString(data: d, encoding: NSUTF8StringEncoding) as! String
+            return  NSString(data: d, encoding: NSUTF8StringEncoding) as? String
         }
         return nil
     }
@@ -424,11 +424,11 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     }
     
     /// Called when the background task failed.
-    public func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didCompleteWithError error: NSError!) {
-        if error != nil {
+    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+        if let err = error {
             let blocks = self.backgroundTaskMap[session.configuration.identifier]
             if blocks?.failure != nil { //Swift bug. Can't use && with block (radar: 17469794)
-                blocks?.failure!(error, nil)
+                blocks?.failure!(err, nil)
                 cleanupBackground(session.configuration.identifier)
             }
         }
@@ -472,7 +472,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     }
     
     /// The background download finished, don't have to really do anything.
-    public func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession!) {
+    public func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
     }
     
     //TODO: not implemented yet.
@@ -483,7 +483,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     
     //TODO: not implemented yet.
     /// not implemented yet.
-    public func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         //add progress block logic
     }
     
