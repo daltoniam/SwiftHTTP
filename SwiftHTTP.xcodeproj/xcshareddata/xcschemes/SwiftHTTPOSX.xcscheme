@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D958025819E6EEEB003C8218"
-               BuildableName = "SwiftHTTPOSX.framework"
+               BuildableName = "SwiftHTTP.framework"
                BlueprintName = "SwiftHTTPOSX"
                ReferencedContainer = "container:SwiftHTTP.xcodeproj">
             </BuildableReference>
@@ -57,7 +57,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D958025819E6EEEB003C8218"
-            BuildableName = "SwiftHTTPOSX.framework"
+            BuildableName = "SwiftHTTP.framework"
             BlueprintName = "SwiftHTTPOSX"
             ReferencedContainer = "container:SwiftHTTP.xcodeproj">
          </BuildableReference>
@@ -76,7 +76,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D958025819E6EEEB003C8218"
-            BuildableName = "SwiftHTTPOSX.framework"
+            BuildableName = "SwiftHTTP.framework"
             BlueprintName = "SwiftHTTPOSX"
             ReferencedContainer = "container:SwiftHTTP.xcodeproj">
          </BuildableReference>
@@ -94,7 +94,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D958025819E6EEEB003C8218"
-            BuildableName = "SwiftHTTPOSX.framework"
+            BuildableName = "SwiftHTTP.framework"
             BlueprintName = "SwiftHTTPOSX"
             ReferencedContainer = "container:SwiftHTTP.xcodeproj">
          </BuildableReference>

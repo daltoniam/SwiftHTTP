@@ -13,7 +13,7 @@
 		6BFD904319C928D900DD99B6 /* HTTPRequestSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD902F19C8D95C00DD99B6 /* HTTPRequestSerializer.swift */; };
 		6BFD904419C928D900DD99B6 /* HTTPResponseSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD903019C8D95C00DD99B6 /* HTTPResponseSerializer.swift */; };
 		6BFD904519C928D900DD99B6 /* HTTPTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD903119C8D95C00DD99B6 /* HTTPTask.swift */; };
-		D958026419E6EEEB003C8218 /* SwiftHTTPOSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D958025919E6EEEB003C8218 /* SwiftHTTPOSX.framework */; };
+		D958026419E6EEEB003C8218 /* SwiftHTTP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D958025919E6EEEB003C8218 /* SwiftHTTP.framework */; };
 		D958027219E6EF2B003C8218 /* SwiftHTTPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD903D19C8D98000DD99B6 /* SwiftHTTPTests.swift */; };
 		D958027319E6EF4B003C8218 /* HTTPRequestSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD902F19C8D95C00DD99B6 /* HTTPRequestSerializer.swift */; };
 		D958027419E6EF4B003C8218 /* HTTPResponseSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD903019C8D95C00DD99B6 /* HTTPResponseSerializer.swift */; };
@@ -43,7 +43,7 @@
 		6BFD903919C8D96500DD99B6 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		6BFD903C19C8D98000DD99B6 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Tests/Info.plist; sourceTree = "<group>"; };
 		6BFD903D19C8D98000DD99B6 /* SwiftHTTPTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftHTTPTests.swift; path = Tests/SwiftHTTPTests.swift; sourceTree = "<group>"; };
-		D958025919E6EEEB003C8218 /* SwiftHTTPOSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftHTTPOSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D958025919E6EEEB003C8218 /* SwiftHTTP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftHTTP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D958026319E6EEEB003C8218 /* SwiftHTTPOSXTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftHTTPOSXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -73,7 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D958026419E6EEEB003C8218 /* SwiftHTTPOSX.framework in Frameworks */,
+				D958026419E6EEEB003C8218 /* SwiftHTTP.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,7 +94,7 @@
 			children = (
 				6BFD901619C8D8B500DD99B6 /* SwiftHTTP.framework */,
 				6BFD902119C8D8B500DD99B6 /* SwiftHTTPTests.xctest */,
-				D958025919E6EEEB003C8218 /* SwiftHTTPOSX.framework */,
+				D958025919E6EEEB003C8218 /* SwiftHTTP.framework */,
 				D958026319E6EEEB003C8218 /* SwiftHTTPOSXTests.xctest */,
 			);
 			name = Products;
@@ -202,7 +202,7 @@
 			);
 			name = SwiftHTTPOSX;
 			productName = SwiftHTTPOSX;
-			productReference = D958025919E6EEEB003C8218 /* SwiftHTTPOSX.framework */;
+			productReference = D958025919E6EEEB003C8218 /* SwiftHTTP.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		D958026219E6EEEB003C8218 /* SwiftHTTPOSXTests */ = {
@@ -518,7 +518,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = SwiftHTTP;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
@@ -538,7 +538,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = SwiftHTTP;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
