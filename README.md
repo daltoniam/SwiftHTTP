@@ -278,6 +278,17 @@ request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPRespons
     })
 ```
 
+### Custom Headers
+
+Internally, SwiftHTTP uses [NSURLSessionConfiguration](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSURLSessionConfiguration_class/index.html) to configure the [NSURLSession](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSURLSession_class/index.html).
+
+HTTPTask has `public var headers = [String:AnyObject]()` which you can assign to the task object and will be set on the session.
+
+```swift
+var request = HTTPTask()
+request.headers = ["x-custom-header": "foo"]
+```
+
 ## Client/Server Example
 
 This is a full example swiftHTTP in action. First here is a quick web server in Go.
