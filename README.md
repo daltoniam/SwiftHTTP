@@ -153,6 +153,16 @@ if let t = downloadTask {
 //still working on finishing it
 ```
 
+### Custom Headers
+
+Custom HTTP headers can be add to a request via the requestSerializer.
+
+```swift
+var request = HTTPTask()
+request.requestSerializer = HTTPRequestSerializer()
+request.requestSerializer.headers["someKey"] = "SomeValue" //example of adding a header value
+```
+
 ### Authentication
 
 SwiftHTTP supports authentication through [NSURLCredential](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLCredential_Class/Reference/Reference.html). Currently only Basic Auth and Digest Auth have been tested.
