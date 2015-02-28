@@ -148,10 +148,18 @@ if let t = downloadTask {
 
 ### Upload
 
+File uploads can be done using the `HTTPUpload` object. All files to upload should be wrapped in a HTTPUpload object and added as a parameter.
+
 ```swift
-//Dalton, add the background upload example
-//still working on finishing it
+let fileUrl = NSURL.fileURLWithPath("/Users/dalton/Desktop/file")!
+var request = HTTPTask()
+request.POST("http://domain.com/1/upload", parameters:  ["aParam": "aValue","file": HTTPUpload(fileUrl: fileUrl!)], success: {(response: HTTPResponse) in
+	//do stuff
+    },failure: {(error: NSError, response: HTTPResponse?) in
+	//error out on stuff
+    })
 ```
+`HTTPUpload` comes in both a on disk fileUrl version and a NSData version.
 
 ### Custom Headers
 
