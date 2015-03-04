@@ -139,6 +139,7 @@ public class HTTPOperation : NSOperation {
 public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate {
     var backgroundTaskMap = Dictionary<String,BackgroundBlocks>()
     //var sess: NSURLSession?
+    var currentSessionTasks = Dictionary<Int,NSURLSessionDownloadTask>()
     
     public var baseURL: String?
     public var requestSerializer = HTTPRequestSerializer()
@@ -324,6 +325,41 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         return task
     }
     
+    /** 
+    Creates and starts a HTTPOperation to download multiple files in the background using a shared Background session.
+    
+    :param: [urls] The urls of the files you would like to make a request to.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: progress The progress returned in the progress block is between 0 and 1.
+    :param: success The block that is run on a sucessful HTTP Request. The HTTPResponse responseObject object will be a fileURL. You MUST copy the fileURL return in HTTPResponse.responseObject to a new location before using it (e.g. your documents directory).
+    :param: failure The block that is run on a failed HTTP Request.
+    */
+    
+    public func downloadMultiple(urls: Array<String>, parameters: Dictionary<String,AnyObject>?,progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) -> [Int:NSURLSessionDownloadTask?] {
+        
+        let ident = createBackgroundIdent()
+        let config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(ident)
+        let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
+         self.backgroundTaskMap[ident] = BackgroundBlocks(success,failure,progress)
+        
+        for url in urls {
+            
+            let serialReq = createRequest(url,method: .GET, parameters: parameters)
+            if serialReq.error != nil {
+                failure(serialReq.error!, nil)
+                continue
+            }
+            
+            let task = session.downloadTaskWithRequest(serialReq.request)
+            let taskId = task.taskIdentifier
+           
+            task.resume()
+            self.currentSessionTasks[taskId] = task
+        }
+        
+        return self.currentSessionTasks
+    }
+    
     //TODO: not implemented yet.
     /// not implemented yet.
     public func uploadFile(url: String, parameters: Dictionary<String,AnyObject>?, progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError) -> Void)!) -> Void {
@@ -395,6 +431,19 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         return NSError(domain: "HTTPTask", code: code, userInfo: [NSLocalizedDescriptionKey: text])
     }
     
+    /** 
+        cleans up the background tasks collected from multiple downloads
+        in self.currentSessionTasks
+        return FALSE when the currentSessionTasks is empty
+     **/
+    private func cleanupBackgroundTasks(identifier: Int) -> Bool {
+        self.currentSessionTasks.removeValueForKey(identifier)
+        if self.currentSessionTasks.isEmpty {
+            return false
+        } else {
+            return true
+        }
+    }
     
     /**
         Creates a random string to use for the identifier of the background download/upload requests.
@@ -429,13 +478,16 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             let blocks = self.backgroundTaskMap[session.configuration.identifier]
             if blocks?.failure != nil { //Swift bug. Can't use && with block (radar: 17469794)
                 blocks?.failure!(error, nil)
-                cleanupBackground(session.configuration.identifier)
+                if !cleanupBackgroundTasks(task.taskIdentifier) {
+                    cleanupBackground(session.configuration.identifier)
+                }
             }
         }
     }
     
     /// The background download finished and reports the url the data was saved to.
     func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didFinishDownloadingToURL location: NSURL!) {
+        NSLog("Finished Downloading Task:" + String(downloadTask.taskIdentifier))
         let blocks = self.backgroundTaskMap[session.configuration.identifier]
         if blocks?.success != nil {
             var resp = HTTPResponse()
@@ -454,7 +506,10 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                 return
             }
             blocks?.success!(resp)
-            cleanupBackground(session.configuration.identifier)
+
+            if !cleanupBackgroundTasks(downloadTask.taskIdentifier) {
+                cleanupBackground(session.configuration.identifier)
+            }
         }
     }
     
