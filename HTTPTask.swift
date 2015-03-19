@@ -22,6 +22,7 @@ public enum HTTPMethod: String {
     case PUT = "PUT"
     case HEAD = "HEAD"
     case DELETE = "DELETE"
+    case PATCH = "PATCH"
 }
 
 /// Object representation of a HTTP Response.
