@@ -16,12 +16,14 @@ import Foundation
 /// - PUT: For PUT requests.
 /// - HEAD: For HEAD requests.
 /// - DELETE: For DELETE requests.
+/// - PATCH: For PATCH requests.
 public enum HTTPMethod: String {
     case GET = "GET"
     case POST = "POST"
     case PUT = "PUT"
     case HEAD = "HEAD"
     case DELETE = "DELETE"
+    case PATCH = "PATCH"
 }
 
 /// Object representation of a HTTP Response.
@@ -253,6 +255,22 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             opt!.start()
         }
     }
+    
+    /**
+    Creates a HTTPOperation as a HTTP PATCH request and starts it for you.
+    
+    :param: url The url you would like to make a request to.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: success The block that is run on a sucessful HTTP Request.
+    :param: failure The block that is run on a failed HTTP Request.
+    */
+    public func PATCH(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) {
+        var opt = self.create(url, method:.PATCH, parameters: parameters,success,failure)
+        if opt != nil {
+            opt!.start()
+        }
+    }
+    
     
     /**
         Creates a HTTPOperation as a HTTP PUT request and starts it for you.
