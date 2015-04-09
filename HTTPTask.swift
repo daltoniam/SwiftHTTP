@@ -265,7 +265,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     :param: failure The block that is run on a failed HTTP Request.
     */
     public func PATCH(url: String, parameters: Dictionary<String,AnyObject>?, success:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) {
-        var opt = self.create(url, method:.PATCH, parameters: parameters,success,failure)
+        var opt = self.create(url, method:.PATCH, parameters: parameters,success: success,failure: failure)
         if opt != nil {
             opt!.start()
         }
