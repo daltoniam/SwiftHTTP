@@ -55,7 +55,7 @@ public class HTTPRequestSerializer: NSObject {
     
         :returns: A new NSMutableURLRequest with said options.
     */
-    func newRequest(url: NSURL, method: HTTPMethod) -> NSMutableURLRequest {
+    public func newRequest(url: NSURL, method: HTTPMethod) -> NSMutableURLRequest {
         var request = NSMutableURLRequest(URL: url, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
         request.HTTPMethod = method.rawValue
         request.cachePolicy = self.cachePolicy
@@ -79,7 +79,7 @@ public class HTTPRequestSerializer: NSObject {
         
         :returns: A new NSMutableURLRequest with said options or an error.
     */
-    func createRequest(url: NSURL, method: HTTPMethod, parameters: Dictionary<String,AnyObject>?) -> (request: NSURLRequest, error: NSError?) {
+    public func createRequest(url: NSURL, method: HTTPMethod, parameters: Dictionary<String,AnyObject>?) -> (request: NSURLRequest, error: NSError?) {
         
         var request = newRequest(url, method: method)
         var isMulti = false
