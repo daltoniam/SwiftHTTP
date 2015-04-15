@@ -320,14 +320,15 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     /**
         Creates and starts a HTTPOperation to download a file in the background.
     
-        :param: url The url you would like to make a request to.
+    :param: url The url you would like to make a request to.
+    :param: method The HTTP method/verb for the request.
         :param: parameters The parameters are HTTP parameters you would like to send.
         :param: progress The progress returned in the progress block is between 0 and 1.
         :param: success The block that is run on a sucessful HTTP Request. The HTTPResponse responseObject object will be a fileURL. You MUST copy the fileURL return in HTTPResponse.responseObject to a new location before using it (e.g. your documents directory).
         :param: failure The block that is run on a failed HTTP Request.
     */
-    public func download(url: String, parameters: Dictionary<String,AnyObject>?,progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) -> NSURLSessionDownloadTask? {
-        let serialReq = createRequest(url,method: .GET, parameters: parameters)
+    public func download(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>?,progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) -> NSURLSessionDownloadTask? {
+        let serialReq = createRequest(url,method: method, parameters: parameters)
         if serialReq.error != nil {
             failure(serialReq.error!, nil)
             return nil
