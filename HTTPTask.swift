@@ -38,15 +38,35 @@ public class HTTPResponse {
     public var responseObject: AnyObject?
     /// The status code of the HTTP Response.
     public var statusCode: Int?
+    /// The URL of the HTTP Response.
+    public var URL: NSURL?
     ///Returns the response as a string
     public func text() -> String? {
         if let d = self.responseObject as? NSData {
             return  NSString(data: d, encoding: NSUTF8StringEncoding) as? String
+        } else if let val: AnyObject = self.responseObject {
+            return  "\(val)"
         }
         return nil
     }
-    /// The URL of the HTTP Response.
-    public var URL: NSURL?
+    //get the description of the response
+    public func description() -> String {
+        var buffer = ""
+        if let u = self.URL {
+            buffer += "URL:\n\(u)\n\n"
+        }
+        if let heads = self.headers {
+            buffer += "Headers:\n"
+            for (key, value) in heads {
+                buffer += "\(key): \(value)\n"
+            }
+            buffer += "\n"
+        }
+        if let s = self.text() {
+            buffer += "Payload:\n\(s)\n"
+        }
+        return buffer
+    }
 }
 
 /// Holds the blocks of the background task.
@@ -326,8 +346,8 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         :param: success The block that is run on a sucessful HTTP Request. The HTTPResponse responseObject object will be a fileURL. You MUST copy the fileURL return in HTTPResponse.responseObject to a new location before using it (e.g. your documents directory).
         :param: failure The block that is run on a failed HTTP Request.
     */
-    public func download(url: String, parameters: Dictionary<String,AnyObject>?,progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) -> NSURLSessionDownloadTask? {
-        let serialReq = createRequest(url,method: .GET, parameters: parameters)
+    public func download(url: String, method: HTTPMethod = .GET, parameters: Dictionary<String,AnyObject>?,progress:((Double) -> Void)!, success:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) -> NSURLSessionDownloadTask? {
+        let serialReq = createRequest(url,method: method, parameters: parameters)
         if serialReq.error != nil {
             failure(serialReq.error!, nil)
             return nil
