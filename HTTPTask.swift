@@ -41,7 +41,7 @@ public class HTTPResponse {
     /// The URL of the HTTP Response.
     public var URL: NSURL?
     ///Returns the response as a string
-    public func text() -> String? {
+    public var text: String? {
         if let d = self.responseObject as? NSData {
             return  NSString(data: d, encoding: NSUTF8StringEncoding) as? String
         } else if let val: AnyObject = self.responseObject {
@@ -50,7 +50,7 @@ public class HTTPResponse {
         return nil
     }
     //get the description of the response
-    public func description() -> String {
+    public var description: String {
         var buffer = ""
         if let u = self.URL {
             buffer += "URL:\n\(u)\n\n"
@@ -62,7 +62,7 @@ public class HTTPResponse {
             }
             buffer += "\n"
         }
-        if let s = self.text() {
+        if let s = self.text {
             buffer += "Payload:\n\(s)\n"
         }
         return buffer
