@@ -55,6 +55,9 @@ public class HTTPResponse {
         if let u = self.URL {
             buffer += "URL:\n\(u)\n\n"
         }
+        if let code = self.statusCode {
+            buffer += "Status Code:\n\(code)\n\n"
+        }
         if let heads = self.headers {
             buffer += "Headers:\n"
             for (key, value) in heads {
@@ -202,9 +205,17 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         let task = session.dataTaskWithRequest(serialReq.request,
             completionHandler: {(data: NSData!, response: NSURLResponse!, error: NSError!) -> Void in
                 opt.finish()
+                var extraResponse = HTTPResponse()
+                if let hresponse = response as? NSHTTPURLResponse {
+                    extraResponse.headers = hresponse.allHeaderFields as? Dictionary<String,String>
+                    extraResponse.mimeType = hresponse.MIMEType
+                    extraResponse.suggestedFilename = hresponse.suggestedFilename
+                    extraResponse.statusCode = hresponse.statusCode
+                    extraResponse.URL = hresponse.URL
+                }
                 if error != nil {
                     if failure != nil {
-                        failure(error, nil)
+                        failure(error, extraResponse)
                     }
                     return
                 }
@@ -214,21 +225,13 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                         let resObj = self.responseSerializer!.responseObjectFromResponse(response, data: data)
                         if resObj.error != nil {
                             if failure != nil {
-                                failure(resObj.error!, nil)
+                                failure(resObj.error!, extraResponse)
                             }
                             return
                         }
                         if resObj.object != nil {
                             responseObject = resObj.object!
                         }
-                    }
-                    var extraResponse = HTTPResponse()
-                    if let hresponse = response as? NSHTTPURLResponse {
-                        extraResponse.headers = hresponse.allHeaderFields as? Dictionary<String,String>
-                        extraResponse.mimeType = hresponse.MIMEType
-                        extraResponse.suggestedFilename = hresponse.suggestedFilename
-                        extraResponse.statusCode = hresponse.statusCode
-                        extraResponse.URL = hresponse.URL
                     }
                     extraResponse.responseObject = responseObject
                     if extraResponse.statusCode > 299 {
@@ -239,7 +242,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                         success(extraResponse)
                     }
                 } else if failure != nil {
-                    failure(error, nil)
+                    failure(error, extraResponse)
                 }
             })
         opt.task = task
