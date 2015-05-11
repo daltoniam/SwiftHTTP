@@ -22,19 +22,26 @@ class SwiftHTTPTests: XCTestCase {
     }
     
     func testGetRequest() {
-        var request = HTTPTask()
+        let expectation = expectationWithDescription("testGetRequest")
+        
+        let request = HTTPTask()
         request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPResponse) -> Void in
             if response.responseObject != nil {
                 XCTAssert(true, "Pass")
             }
-            },failure: {(error: NSError, _) -> Void in
-                XCTAssert(false, "Failure")
+            expectation.fulfill()
+        },failure: {(error: NSError, _) -> Void in
+            XCTAssert(false, "Failure")
+            expectation.fulfill()
         })
+        
+        waitForExpectationsWithTimeout(30, handler: nil)
     }
     
     func testAuthRequest() {
-        
-        var request = HTTPTask()
+        let expectation = expectationWithDescription("testAuthRequest")
+
+        let request = HTTPTask()
         var attempted = false
         request.auth = {(challenge: NSURLAuthenticationChallenge) in
             if !attempted {
@@ -47,8 +54,10 @@ class SwiftHTTPTests: XCTestCase {
             if response.responseObject != nil {
                 XCTAssert(true, "Pass")
             }
-            },failure: {(error: NSError, _) -> Void in
-                XCTAssert(false, "Failure")
+            expectation.fulfill()
+        },failure: {(error: NSError, _) -> Void in
+            XCTAssert(false, "Failure")
+            expectation.fulfill()
         })
     }
 }
