@@ -202,7 +202,6 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         let task = session.dataTaskWithRequest(serialReq.request,
             completionHandler: {(data: NSData!, response: NSURLResponse!, error: NSError!) -> Void in
-                opt.finish()
                 var extraResponse = HTTPResponse()
                 if let hresponse = response as? NSHTTPURLResponse {
                     extraResponse.headers = hresponse.allHeaderFields as? Dictionary<String,String>
@@ -215,6 +214,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                     if failure != nil {
                         failure(error, extraResponse)
                     }
+                    opt.finish()
                     return
                 }
                 if data != nil {
@@ -225,6 +225,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                             if failure != nil {
                                 failure(resObj.error!, extraResponse)
                             }
+                            opt.finish()
                             return
                         }
                         if resObj.object != nil {
@@ -242,6 +243,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                 } else if failure != nil {
                     failure(error, extraResponse)
                 }
+                opt.finish()
             })
         opt.task = task
         return opt
