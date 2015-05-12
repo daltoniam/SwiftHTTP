@@ -96,22 +96,16 @@ class BackgroundBlocks {
 /// Subclass of NSOperation for handling and scheduling HTTPTask on a NSOperationQueue.
 public class HTTPOperation : NSOperation {
     private var task: NSURLSessionDataTask!
-    private var stopped = false
     private var running = false
     
     /// Controls if the task is finished or not.
-    public var done = false
+    private var done = false
     
     //MARK: Subclassed NSOperation Methods
     
-    /// Returns if the task is asynchronous or not. This should always be false.
+    /// Returns if the task is asynchronous or not. NSURLSessionTask requests are asynchronous.
     override public var asynchronous: Bool {
-        return false
-    }
-    
-    /// Returns if the task has been cancelled or not.
-    override public var cancelled: Bool {
-        return stopped
+        return true
     }
     
     /// Returns if the task is current running.
@@ -124,26 +118,30 @@ public class HTTPOperation : NSOperation {
         return done
     }
     
-    /// Returns if the task is ready to be run or not.
-    override public var ready: Bool {
-        return !running
-    }
-    
     /// Starts the task.
     override public func start() {
-        super.start()
-        stopped = false
+        if cancelled {
+            self.willChangeValueForKey("isFinished")
+            done = true
+            self.didChangeValueForKey("isFinished")
+            return
+        }
+
+        self.willChangeValueForKey("isExecuting")
+        self.willChangeValueForKey("isFinished")
+
         running = true
         done = false
+        
+        self.didChangeValueForKey("isExecuting")
+        self.didChangeValueForKey("isFinished")
+
         task.resume()
     }
     
     /// Cancels the running task.
     override public func cancel() {
         super.cancel()
-        running = false
-        stopped = true
-        done = true
         task.cancel()
     }
     
@@ -204,7 +202,6 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         let task = session.dataTaskWithRequest(serialReq.request,
             completionHandler: {(data: NSData!, response: NSURLResponse!, error: NSError!) -> Void in
-                opt.finish()
                 var extraResponse = HTTPResponse()
                 if let hresponse = response as? NSHTTPURLResponse {
                     extraResponse.headers = hresponse.allHeaderFields as? Dictionary<String,String>
@@ -217,6 +214,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                     if failure != nil {
                         failure(error, extraResponse)
                     }
+                    opt.finish()
                     return
                 }
                 if data != nil {
@@ -227,6 +225,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                             if failure != nil {
                                 failure(resObj.error!, extraResponse)
                             }
+                            opt.finish()
                             return
                         }
                         if resObj.object != nil {
@@ -244,6 +243,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                 } else if failure != nil {
                     failure(error, extraResponse)
                 }
+                opt.finish()
             })
         opt.task = task
         return opt
