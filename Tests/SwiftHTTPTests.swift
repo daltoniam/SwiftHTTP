@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import UIKit
 import SwiftHTTP
 
 class SwiftHTTPTests: XCTestCase {
@@ -25,13 +26,11 @@ class SwiftHTTPTests: XCTestCase {
         let expectation = expectationWithDescription("testGetRequest")
         
         let request = HTTPTask()
-        request.GET("http://vluxe.io", parameters: nil, success: {(response: HTTPResponse) -> Void in
-            if response.responseObject != nil {
-                XCTAssert(true, "Pass")
+        request.GET("http://vluxe.io", parameters: nil, completionHandler: {(response: HTTPResponse)  in
+            if let err = response.error {
+                XCTAssert(false, "Failure")
             }
-            expectation.fulfill()
-        },failure: {(error: NSError, _) -> Void in
-            XCTAssert(false, "Failure")
+            XCTAssert(true, "Pass")
             expectation.fulfill()
         })
         
@@ -50,13 +49,11 @@ class SwiftHTTPTests: XCTestCase {
             }
             return nil
         }
-        request.GET("http://httpbin.org/basic-auth/user/passwd", parameters: nil, success: {(response: HTTPResponse) -> Void in
-            if response.responseObject != nil {
-                XCTAssert(true, "Pass")
+        request.GET("http://httpbin.org/basic-auth/user/passwd", parameters: nil, completionHandler: {(response: HTTPResponse) in
+            if let err = response.error {
+                XCTAssert(false, "Failure")
             }
-            expectation.fulfill()
-        },failure: {(error: NSError, _) -> Void in
-            XCTAssert(false, "Failure")
+            XCTAssert(true, "Pass")
             expectation.fulfill()
         })
         
@@ -76,24 +73,22 @@ class SwiftHTTPTests: XCTestCase {
         let urlString2 = "http://photojournal.jpl.nasa.gov/jpeg/PIA19330.jpg" // (0.14 MB)
         
         let request1 = HTTPTask()
-        let op1 = request1.create(urlString1, method: .GET, parameters: nil, success: { (response) -> Void in
+        let op1 = request1.create(urlString1, method: .GET, parameters: nil, completionHandler: { (response) -> Void in
+            if let err = response.error {
+                XCTFail("request1 failed: \(err.localizedDescription)")
+            }
             operation1Finished = true
             expectation1.fulfill()
-        }) { (error, response) -> Void in
-            operation1Finished = true
-            XCTFail("request1 failed: \(error.localizedDescription)")
-            expectation1.fulfill()
-        }
+        })
         
         let request2 = HTTPTask()
-        let op2 = request2.create(urlString2, method: .GET, parameters: nil, success: { (response) -> Void in
+        let op2 = request2.create(urlString2, method: .GET, parameters: nil, completionHandler: { (response) -> Void in
+            if let err = response.error {
+                XCTFail("request2 failed: \(err.localizedDescription)")
+            }
             XCTAssert(operation1Finished, "Operation 1 did not finish first")
             expectation2.fulfill()
-        }) { (error, response) -> Void in
-            XCTFail("request1 failed: \(error.localizedDescription)")
-            XCTAssert(operation1Finished, "Operation 1 did not finish first")
-            expectation2.fulfill()
-        }
+        })
         
         op2?.addDependency(op1!)
         operationQueue.addOperation(op1!)
