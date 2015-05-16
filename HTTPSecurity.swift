@@ -22,7 +22,7 @@ public class HTTPSSLCert {
     
     :returns: a representation security object to be used with
     */
-    init(data: NSData) {
+    public init(data: NSData) {
         self.certData = data
     }
     
@@ -33,7 +33,7 @@ public class HTTPSSLCert {
     
     :returns: a representation security object to be used with
     */
-    init(key: SecKeyRef) {
+    public init(key: SecKeyRef) {
         self.key = key
     }
 }
@@ -53,7 +53,7 @@ public class HTTPSecurity {
     
     :returns: a representation security object to be used with
     */
-    convenience init(usePublicKeys: Bool = false) {
+    public convenience init(usePublicKeys: Bool = false) {
         let paths = NSBundle.mainBundle().pathsForResourcesOfType("cer", inDirectory: ".")
         var collect = Array<HTTPSSLCert>()
         for path in paths {
@@ -72,7 +72,7 @@ public class HTTPSecurity {
     
     :returns: a representation security object to be used with
     */
-    init(certs: [HTTPSSLCert], usePublicKeys: Bool) {
+    public init(certs: [HTTPSSLCert], usePublicKeys: Bool) {
         self.usePublicKeys = usePublicKeys
         
         if self.usePublicKeys {
