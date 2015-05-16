@@ -280,7 +280,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         :param: parameters The parameters are HTTP parameters you would like to send.
         :param: completionHandler The closure that is run when a HTTP Request finished.
     */
-    public func PUT(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) {
+    public func PUT(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) {
         if let opt = self.create(url, method:.PUT, parameters: parameters,completionHandler: completionHandler) {
             opt.start()
         }
@@ -293,7 +293,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         :param: parameters The parameters are HTTP parameters you would like to send.
         :param: completionHandler The closure that is run when a HTTP Request finished.
     */
-    public func DELETE(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!)  {
+    public func DELETE(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!)  {
         if let opt = self.create(url, method:.DELETE, parameters: parameters,completionHandler: completionHandler) {
             opt.start()
         }
@@ -306,7 +306,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         :param: parameters The parameters are HTTP parameters you would like to send.
         :param: completionHandler The closure that is run when a HTTP Request finished.
     */
-    public func HEAD(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!, failure:((NSError, HTTPResponse?) -> Void)!) {
+    public func HEAD(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) {
         if let opt = self.create(url, method:.HEAD, parameters: parameters,completionHandler: completionHandler) {
             opt.start()
         }
