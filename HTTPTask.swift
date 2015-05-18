@@ -363,7 +363,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         let ident = createBackgroundIdent()
         let config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(ident)
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
-        let task = session.dataTaskWithRequest(serialReq.request)
+        let task = session.uploadTaskWithStreamedRequest(serialReq.request)
         self.backgroundTaskMap[ident] = BackgroundBlocks(completionHandler,progress)
         task.resume()
         return task
