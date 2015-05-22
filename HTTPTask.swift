@@ -475,9 +475,10 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         if current > 1 {
             current = 1;
         }
-        let blocks = self.backgroundTaskMap[session.configuration.identifier]
-        if blocks?.progress != nil {
-            blocks?.progress!(current)
+        if let blocks = self.backgroundTaskMap[session.configuration.identifier] {
+            if blocks.progress != nil {
+                blocks.progress!(current)
+            }
         }
     }
     
