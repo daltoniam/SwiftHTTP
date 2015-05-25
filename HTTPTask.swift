@@ -335,7 +335,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         let config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(ident)
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         let task = session.downloadTaskWithRequest(serialReq.request)
-        self.backgroundTaskMap[ident] = BackgroundBlocks(completionHandler,progress)
+        backgroundTaskMap[ident] = BackgroundBlocks(completionHandler,progress)
         //this does not have to be queueable as Apple's background dameon *should* handle that.
         task.resume()
         return task
@@ -364,7 +364,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         let config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(ident)
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         let task = session.uploadTaskWithStreamedRequest(serialReq.request)
-        self.backgroundTaskMap[ident] = BackgroundBlocks(completionHandler,progress)
+        backgroundTaskMap[ident] = BackgroundBlocks(completionHandler,progress)
         task.resume()
         return task
     }
@@ -436,7 +436,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         :returns: An NSError.
     */
     private func cleanupBackground(identifier: String) {
-        self.backgroundTaskMap.removeValueForKey(identifier)
+        backgroundTaskMap.removeValueForKey(identifier)
     }
     
     //MARK: NSURLSession Delegate Methods
@@ -470,61 +470,67 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     
     ///update the download/upload progress closure
     func handleProgress(session: NSURLSession, totalBytesExpected: Int64, currentBytes: Int64) {
-        let increment = 100.0/Double(totalBytesExpected)
-        var current = (increment*Double(currentBytes))*0.01
-        if current > 1 {
-            current = 1;
-        }
-        if let blocks = self.backgroundTaskMap[session.configuration.identifier] {
-            if blocks.progress != nil {
-                blocks.progress!(current)
+        if session.configuration.valueForKey("identifier") != nil { //temp workaround for radar: 21097168
+            let increment = 100.0/Double(totalBytesExpected)
+            var current = (increment*Double(currentBytes))*0.01
+            if current > 1 {
+                current = 1;
+            }
+            if let blocks = backgroundTaskMap[session.configuration.identifier] {
+                if blocks.progress != nil {
+                    blocks.progress!(current)
+                }
             }
         }
     }
     
     //call the completionHandler closure for upload/download requests
     func handleFinish(session: NSURLSession, task: NSURLSessionTask, response: AnyObject) {
-        if let blocks = self.backgroundTaskMap[session.configuration.identifier] {
-            if let handler = blocks.completionHandler {
-                var resp = HTTPResponse()
-                if let hresponse = task.response as? NSHTTPURLResponse {
-                    resp.headers = hresponse.allHeaderFields as? Dictionary<String,String>
-                    resp.mimeType = hresponse.MIMEType
-                    resp.suggestedFilename = hresponse.suggestedFilename
-                    resp.statusCode = hresponse.statusCode
-                    resp.URL = hresponse.URL
-                }
-                resp.responseObject = response
-                if let code = resp.statusCode where resp.statusCode > 299 {
-                    resp.error = self.createError(code)
-                }
-                handler(resp)
-            }
-        }
-        cleanupBackground(session.configuration.identifier)
-    }
-    
-    /// Called when the background task failed.
-    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-        if let err = error {
-            if let blocks = self.backgroundTaskMap[session.configuration.identifier] {
+        if session.configuration.valueForKey("identifier") != nil { //temp workaround for radar: 21097168
+            if let blocks = backgroundTaskMap[session.configuration.identifier] {
                 if let handler = blocks.completionHandler {
-                    var res = HTTPResponse()
-                    res.error = err
-                    handler(res)
+                    var resp = HTTPResponse()
+                    if let hresponse = task.response as? NSHTTPURLResponse {
+                        resp.headers = hresponse.allHeaderFields as? Dictionary<String,String>
+                        resp.mimeType = hresponse.MIMEType
+                        resp.suggestedFilename = hresponse.suggestedFilename
+                        resp.statusCode = hresponse.statusCode
+                        resp.URL = hresponse.URL
+                    }
+                    resp.responseObject = response
+                    if let code = resp.statusCode where resp.statusCode > 299 {
+                        resp.error = self.createError(code)
+                    }
+                    handler(resp)
                 }
             }
             cleanupBackground(session.configuration.identifier)
         }
     }
     
+    /// Called when the background task failed.
+    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+        if let err = error {
+            if session.configuration.valueForKey("identifier") != nil { //temp workaround for radar: 21097168
+                if let blocks = backgroundTaskMap[session.configuration.identifier] {
+                    if let handler = blocks.completionHandler {
+                        var res = HTTPResponse()
+                        res.error = err
+                        handler(res)
+                    }
+                }
+                cleanupBackground(session.configuration.identifier)
+            }
+        }
+    }
+    
     /// The background download finished and reports the url the data was saved to.
-    func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didFinishDownloadingToURL location: NSURL!) {
+    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL!) {
         handleFinish(session, task: downloadTask, response: location)
     }
     
     /// Will report progress of background download
-    func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         handleProgress(session, totalBytesExpected: totalBytesExpectedToWrite, currentBytes:totalBytesWritten)
     }
     
@@ -533,7 +539,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     }
     
     /// The background upload finished and reports the response.
-    func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, didReceiveData data: NSData!) {
+    func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData!) {
         handleFinish(session, task: dataTask, response: data)
     }
     
@@ -543,6 +549,6 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     }
     
     //implement if we want to support partial file upload/download
-    func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
+    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
     }
 }

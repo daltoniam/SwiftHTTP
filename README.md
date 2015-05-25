@@ -49,7 +49,7 @@ request.GET("http://google.com", parameters: ["param": "param1", "array": ["firs
 		println("error: \(err.localizedDescription)")
 		return //also notify app of failure as needed
 	}
-	if let res = response.responseObject {
+	if let res: AnyObject = response.responseObject {
 		println("response: \(res)")
 	}
 })
@@ -402,7 +402,7 @@ request.GET("http://localhost:8080/bar", parameters: nil, completionHandler: {(r
 		println("error: \(err.localizedDescription)")
 		return //also notify app of failure as needed
 	}
-    if let obj = response.responseObject {
+    if let obj: AnyObject = response.responseObject {
 		let resp = Status(JSONDecoder(obj))
         println("status is: \(resp.status)")
     }
