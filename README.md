@@ -423,7 +423,7 @@ SwiftHTTP works with iOS 7/OSX 10.9 or above. It is recommended to use iOS 8/10.
 
 ### Cocoapods
 
-Check out [Get Started](http://cocoapods.org/) tab on [cocoapods.org](http://cocoapods.org/).
+Check out [Get Started](https://guides.cocoapods.org/using/getting-started.html) tab on [cocoapods.org](http://cocoapods.org/).
 
 To use SwiftHTTP in your project add the following 'Podfile' to your project
 
