@@ -216,8 +216,8 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                     serialResponse.error = error
                     if let d = data {
                         serialResponse.responseObject = d
-                        if let resSerializer = self.responseSerializer {
-                            let resObj = resSerializer.responseObjectFromResponse(response, data: d)
+                        if let resSerializer = self.responseSerializer, let resp = response {
+                            let resObj = resSerializer.responseObjectFromResponse(resp, data: d)
                             serialResponse.responseObject = resObj.object
                             serialResponse.error = resObj.error
                         }
