@@ -146,7 +146,7 @@ public class HTTPRequestSerializer: NSObject {
     }
     
     ///convert the parameter dict to its HTTP string representation
-    func stringFromParameters(parameters: Dictionary<String,AnyObject>) -> String {
+    public func stringFromParameters(parameters: Dictionary<String,AnyObject>) -> String {
         return join("&", map(serializeObject(parameters, key: nil), {(pair) in
             return pair.stringValue()
             }))
