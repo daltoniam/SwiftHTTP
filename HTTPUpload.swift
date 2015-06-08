@@ -15,12 +15,12 @@ import Foundation
 
 
 /// Object representation of a HTTP File Upload.
-public class HTTPUpload: NSObject {
+public class HTTPUpload: NSObject, NSCoding {
     var fileUrl: NSURL? {
-    didSet {
-        updateMimeType()
-        loadData()
-    }
+        didSet {
+            updateMimeType()
+            loadData()
+        }
     }
     var mimeType: String?
     var data: NSData?
@@ -47,15 +47,30 @@ public class HTTPUpload: NSObject {
         }
     }
     
+    public func encodeWithCoder(aCoder: NSCoder) {
+        aCoder.encodeObject(self.fileUrl, forKey: "fileUrl")
+        aCoder.encodeObject(self.mimeType, forKey: "mimeType")
+        aCoder.encodeObject(self.fileName, forKey: "fileName")
+        aCoder.encodeObject(self.data, forKey: "data")
+    }
+    
     /// Initializes a new HTTPUpload Object.
     public override init() {
         super.init()
     }
     
-    /** 
-        Initializes a new HTTPUpload Object with a fileUrl. The fileName and mimeType will be infered.
+    required public convenience init(coder aDecoder: NSCoder) {
+        self.init()
+        self.fileUrl = aDecoder.decodeObjectForKey("fileUrl") as? NSURL
+        self.mimeType = aDecoder.decodeObjectForKey("mimeType") as? String
+        self.fileName = aDecoder.decodeObjectForKey("fileName") as? String
+        self.data = aDecoder.decodeObjectForKey("data") as? NSData
+    }
     
-        :param: fileUrl The fileUrl is a standard url path to a file.
+    /**
+    Initializes a new HTTPUpload Object with a fileUrl. The fileName and mimeType will be infered.
+    
+    :param: fileUrl The fileUrl is a standard url path to a file.
     */
     public convenience init(fileUrl: NSURL) {
         self.init()
@@ -67,9 +82,9 @@ public class HTTPUpload: NSObject {
     /**
     Initializes a new HTTPUpload Object with a data blob of a file. The fileName and mimeType will be infered if none are provided.
     
-        :param: data The data is a NSData representation of a file's data.
-        :param: fileName The fileName is just that. The file's name.
-        :param: mimeType The mimeType is just that. The mime type you would like the file to uploaded as.
+    :param: data The data is a NSData representation of a file's data.
+    :param: fileName The fileName is just that. The file's name.
+    :param: mimeType The mimeType is just that. The mime type you would like the file to uploaded as.
     */
     ///upload a file from a a data blob. Must add a filename and mimeType as that can't be infered from the data
     public convenience init(data: NSData, fileName: String, mimeType: String) {
