@@ -7,7 +7,6 @@
 //
 
 import XCTest
-import UIKit
 import SwiftHTTP
 
 class SwiftHTTPTests: XCTestCase {
