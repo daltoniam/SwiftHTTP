@@ -189,7 +189,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     
         :returns: A freshly constructed HTTPOperation to add to your NSOperationQueue.
     */
-    public func create(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!, completionHandler:((HTTPResponse) -> Void)!) ->  HTTPOperation? {
+    public func create(url: String, method: HTTPMethod, parameters: AnyObject!, completionHandler:((HTTPResponse) -> Void)!) ->  HTTPOperation? {
         
         var serialResponse = HTTPResponse()
         let serialReq = createRequest(url, method: method, parameters: parameters)
@@ -380,17 +380,17 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     
         :returns: A NSURLRequest from configured requestSerializer.
     */
-   private func createRequest(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!) -> (request: NSURLRequest, error: NSError?) {
+    private func createRequest(url: String, method: HTTPMethod, parameters: AnyObject!) -> (request: NSURLRequest, error: NSError?) {
         var urlVal = url
         //probably should change the 'http' to something more generic
         if !url.hasPrefix("http") && self.baseURL != nil {
             var split = url.hasPrefix("/") ? "" : "/"
             urlVal = "\(self.baseURL!)\(split)\(url)"
         }
-    if let u = NSURL(string: urlVal) {
-        return self.requestSerializer.createRequest(u, method: method, parameters: parameters)
-    }
-    return (NSURLRequest(),createError(-1001))
+        if let u = NSURL(string: urlVal) {
+            return self.requestSerializer.createRequest(u, method: method, parameters: parameters)
+        }
+        return (NSURLRequest(),createError(-1001))
     }
     
     /**
