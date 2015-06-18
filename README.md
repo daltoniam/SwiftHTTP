@@ -326,7 +326,8 @@ request.GET("http://vluxe.io", parameters: nil, completionHandler: {(response: H
 		return //also notify app of failure as needed
 	}
     if let dict = response.responseObject as? Dictionary<String,AnyObject> {
-		println("example of the JSON key: \(dict["key"])")
+    		let value = dict["key"]!
+		println("example of the JSON key: \(value)")
 		println("print the whole response: \(response)")
     }
  })
