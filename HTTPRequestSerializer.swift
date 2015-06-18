@@ -79,12 +79,12 @@ public class HTTPRequestSerializer: NSObject {
         
         :returns: A new NSMutableURLRequest with said options or an error.
     */
-    public func createRequest(url: NSURL, method: HTTPMethod, parameters: Dictionary<String,AnyObject>?) -> (request: NSURLRequest, error: NSError?) {
+    public func createRequest(url: NSURL, method: HTTPMethod, parameters: AnyObject?) -> (request: NSURLRequest, error: NSError?) {
         
         var request = newRequest(url, method: method)
         var isMulti = false
         //do a check for upload objects to see if we are multi form
-        if let params = parameters {
+        if let params: AnyObject = parameters {
             isMulti = isMultiForm(params)
         }
         if isMulti {
@@ -124,12 +124,22 @@ public class HTTPRequestSerializer: NSObject {
     }
     
     ///check for multi form objects
-    public func isMultiForm(params: Dictionary<String,AnyObject>) -> Bool {
-        for (name,object: AnyObject) in params {
-            if object is HTTPUpload {
-                return true
-            } else if let subParams = object as? Dictionary<String,AnyObject> {
-                if isMultiForm(subParams) {
+    public func isMultiForm(params: AnyObject) -> Bool {
+        if let params = params as? Dictionary<String, AnyObject> {
+            for (name,object: AnyObject) in params {
+                if object is HTTPUpload {
+                    return true
+                } else if let subParams = object as? Dictionary<String,AnyObject> {
+                    if isMultiForm(subParams) {
+                        return true
+                    }
+                }
+            }
+        } else if let params = params as? Array<AnyObject> {
+            for element in params {
+                if element is HTTPUpload {
+                    return true
+                } else if isMultiForm(element) {
                     return true
                 }
             }
@@ -146,7 +156,7 @@ public class HTTPRequestSerializer: NSObject {
     }
     
     ///convert the parameter dict to its HTTP string representation
-    public func stringFromParameters(parameters: Dictionary<String,AnyObject>) -> String {
+    public func stringFromParameters(parameters: AnyObject) -> String {
         return join("&", map(serializeObject(parameters, key: nil), {(pair) in
             return pair.stringValue()
             }))
@@ -171,7 +181,7 @@ public class HTTPRequestSerializer: NSObject {
     }
     
     //create a multi form data object of the parameters
-    func dataFromParameters(parameters: Dictionary<String,AnyObject>,boundary: String) -> NSData {
+    func dataFromParameters(parameters: AnyObject,boundary: String) -> NSData {
         var mutData = NSMutableData()
         var multiCRLF = "\r\n"
         var boundSplit =  "\(multiCRLF)--\(boundary)\(multiCRLF)".dataUsingEncoding(self.stringEncoding)!
@@ -269,7 +279,7 @@ public class JSONRequestSerializer: HTTPRequestSerializer {
         
         :returns: A new NSMutableURLRequest with said options or an error.
     */
-    public override func createRequest(url: NSURL, method: HTTPMethod, parameters: Dictionary<String,AnyObject>?) -> (request: NSURLRequest, error: NSError?) {
+    public override func createRequest(url: NSURL, method: HTTPMethod, parameters: AnyObject?) -> (request: NSURLRequest, error: NSError?) {
         if self.isURIParam(method) {
             return super.createRequest(url, method: method, parameters: parameters)
         }
