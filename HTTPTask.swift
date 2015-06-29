@@ -380,17 +380,19 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     
         :returns: A NSURLRequest from configured requestSerializer.
     */
-   private func createRequest(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!) -> (request: NSURLRequest, error: NSError?) {
+    private func createRequest(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!) -> (request: NSURLRequest, error: NSError?) {
         var urlVal = url
         //probably should change the 'http' to something more generic
-        if !url.hasPrefix("http") && self.baseURL != nil {
+        if  let base = self.baseURL where !url.hasPrefix("http") {
             var split = url.hasPrefix("/") ? "" : "/"
-            urlVal = "\(self.baseURL!)\(split)\(url)"
+            urlVal = "\(base)\(split)\(url)"
         }
-    if let u = NSURL(string: urlVal) {
-        return self.requestSerializer.createRequest(u, method: method, parameters: parameters)
-    }
-    return (NSURLRequest(),createError(-1001))
+        if let encoded = urlVal.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding) {
+            if let u = NSURL(string: encoded) {
+                return self.requestSerializer.createRequest(u, method: method, parameters: parameters)
+            }
+        }
+        return (NSURLRequest(),createError(-1001))
     }
     
     /**
