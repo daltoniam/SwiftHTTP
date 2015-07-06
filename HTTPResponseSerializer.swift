@@ -23,14 +23,20 @@ public struct JSONResponseSerializer : HTTPResponseSerializer {
     /**
         Creates a HTTPOperation that can be scheduled on a NSOperationQueue. Called by convenience HTTP verb methods below.
         
-        :param: response The NSURLResponse.
-        :param: data The response data to be parsed into JSON.
+        - parameter response: The NSURLResponse.
+        - parameter data: The response data to be parsed into JSON.
         
-        :returns: Returns a object from JSON data and an NSError if an error occured while parsing the data.
+        - returns: Returns a object from JSON data and an NSError if an error occured while parsing the data.
     */
     public func responseObjectFromResponse(response: NSURLResponse, data: NSData) -> (object: AnyObject?, error: NSError?) {
         var error: NSError?
-        let response: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(), error: &error)
-        return (response,error)
+        let response: AnyObject?
+        do {
+            response = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions())
+        } catch let error1 as NSError {
+            error = error1
+            response = nil
+        }
+        return (response, error)
     }
 }
