@@ -1,5 +1,5 @@
 //
-//  HTTPStatusErrorCode.swift
+//  HTTPStatusCode.swift
 //  SwiftHTTP
 //
 //  Created by Yu Kadowaki on 7/12/15.
@@ -8,8 +8,8 @@
 
 import Foundation
 
-/// HTTP Response Status Code (RFC 2616)
-public enum HTTPResponseStatusCode: Int {
+/// HTTP Status Code (RFC 2616)
+public enum HTTPStatusCode: Int {
     case Continue = 100,
         SwitchingProtocols = 101
     
@@ -61,7 +61,7 @@ public enum HTTPResponseStatusCode: Int {
     case UnknownStatus = 0
     
     init(statusCode: Int) {
-        self = HTTPResponseStatusCode(rawValue: statusCode) ?? .UnknownStatus
+        self = HTTPStatusCode(rawValue: statusCode) ?? .UnknownStatus
     }
     
     public var statusDescription: String {

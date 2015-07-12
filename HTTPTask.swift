@@ -418,7 +418,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         :returns: An NSError.
     */
     private func createError(code: Int) -> NSError {
-        var text: String = HTTPResponseStatusCode(statusCode: code).statusDescription
+        var text: String = HTTPStatusCode(statusCode: code).statusDescription
         
         return NSError(domain: "HTTPTask", code: code, userInfo: [NSLocalizedDescriptionKey: text])
     }
