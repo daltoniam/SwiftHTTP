@@ -84,6 +84,23 @@ class SwiftHTTPTests: XCTestCase {
         let urlString1 = "http://photojournal.jpl.nasa.gov/tiff/PIA19330.tif" // (4.32 MB)
         let urlString2 = "http://photojournal.jpl.nasa.gov/jpeg/PIA19330.jpg" // (0.14 MB)
         
+        OHHTTPStubs.stubRequestsPassingTest({(request: NSURLRequest) in
+            return true
+            }, withStubResponse: {(request: NSURLRequest) in
+                if request.URL == urlString1 {
+                    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC)))
+                    dispatch_after(delayTime, dispatch_get_main_queue()) {
+                        println("test")
+                    }
+                }
+                
+                if request.URL == urlString2 {
+                    let responseData = "PIA19330.jpg".dataUsingEncoding(NSUTF8StringEncoding)
+                    return OHHTTPStubsResponse(data: responseData!, statusCode:200, headers:nil)
+                }
+            }
+        )
+        
         let request1 = HTTPTask()
         let op1 = request1.create(urlString1, method: .GET, parameters: nil, completionHandler: { (response) -> Void in
             if let err = response.error {
@@ -106,6 +123,6 @@ class SwiftHTTPTests: XCTestCase {
         operationQueue.addOperation(op1!)
         operationQueue.addOperation(op2!)
         
-        waitForExpectationsWithTimeout(30, handler: nil)
+        waitForExpectationsWithTimeout(kTimeout, handler: nil)
     }
 }
