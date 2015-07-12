@@ -418,14 +418,8 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         :returns: An NSError.
     */
     private func createError(code: Int) -> NSError {
-        var text = "An error occured"
-        if code == 404 {
-            text = "Page not found"
-        } else if code == 401 {
-            text = "Access denied"
-        } else if code == -1001 {
-            text = "Invalid URL"
-        }
+        var text: String = HTTPResponseStatusCode(statusCode: code).statusDescription
+        
         return NSError(domain: "HTTPTask", code: code, userInfo: [NSLocalizedDescriptionKey: text])
     }
     

@@ -15,6 +15,7 @@
 		6BFD904319C928D900DD99B6 /* HTTPRequestSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD902F19C8D95C00DD99B6 /* HTTPRequestSerializer.swift */; };
 		6BFD904419C928D900DD99B6 /* HTTPResponseSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD903019C8D95C00DD99B6 /* HTTPResponseSerializer.swift */; };
 		6BFD904519C928D900DD99B6 /* HTTPTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD903119C8D95C00DD99B6 /* HTTPTask.swift */; };
+		BFE224D01B51FA8200013E3D /* HTTPStatusErrorCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE224CF1B51FA8200013E3D /* HTTPStatusErrorCode.swift */; };
 		D958026419E6EEEB003C8218 /* SwiftHTTP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D958025919E6EEEB003C8218 /* SwiftHTTP.framework */; };
 		D958027219E6EF2B003C8218 /* SwiftHTTPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD903D19C8D98000DD99B6 /* SwiftHTTPTests.swift */; };
 		D958027319E6EF4B003C8218 /* HTTPRequestSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD902F19C8D95C00DD99B6 /* HTTPRequestSerializer.swift */; };
@@ -53,6 +54,7 @@
 		6BFD903919C8D96500DD99B6 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		6BFD903C19C8D98000DD99B6 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Tests/Info.plist; sourceTree = "<group>"; };
 		6BFD903D19C8D98000DD99B6 /* SwiftHTTPTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftHTTPTests.swift; path = Tests/SwiftHTTPTests.swift; sourceTree = "<group>"; };
+		BFE224CF1B51FA8200013E3D /* HTTPStatusErrorCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPStatusErrorCode.swift; sourceTree = SOURCE_ROOT; };
 		D958025919E6EEEB003C8218 /* SwiftHTTP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftHTTP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D958026319E6EEEB003C8218 /* SwiftHTTPOSXTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftHTTPOSXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -118,6 +120,7 @@
 				6BFD903119C8D95C00DD99B6 /* HTTPTask.swift */,
 				6BFD903219C8D95C00DD99B6 /* HTTPUpload.swift */,
 				5CB3204D1B03F5C50050968C /* HTTPSecurity.swift */,
+				BFE224CF1B51FA8200013E3D /* HTTPStatusErrorCode.swift */,
 				6BFD903319C8D95C00DD99B6 /* SwiftHTTP.h */,
 				6BFD901919C8D8B500DD99B6 /* Supporting Files */,
 			);
@@ -317,6 +320,7 @@
 				6BFD904319C928D900DD99B6 /* HTTPRequestSerializer.swift in Sources */,
 				6BFD904419C928D900DD99B6 /* HTTPResponseSerializer.swift in Sources */,
 				5CB3204E1B03F5C50050968C /* HTTPSecurity.swift in Sources */,
+				BFE224D01B51FA8200013E3D /* HTTPStatusErrorCode.swift in Sources */,
 				6BFD904519C928D900DD99B6 /* HTTPTask.swift in Sources */,
 				6BFD903719C8D95C00DD99B6 /* HTTPUpload.swift in Sources */,
 			);
