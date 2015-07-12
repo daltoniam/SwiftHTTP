@@ -31,7 +31,10 @@ class SwiftHTTPTestsWithOHHTTPStubs: XCTestCase {
         
         let request = HTTPTask()
         
+        // dummyURL for  HTTP Request
         let dummyURL = "dummyURL.com"
+        
+        // Requesting by using SwiftHTTP's method
         request.GET(dummyURL, parameters: nil, completionHandler: {(response: HTTPResponse)  in
             if let err = response.error {
                 XCTAssert(false, "Failure")
@@ -51,6 +54,7 @@ class SwiftHTTPTestsWithOHHTTPStubs: XCTestCase {
     
     // setup OHHTPPStubs for running virtual API
     private func setupOHHTTPStubs() {
+        
         OHHTTPStubs.stubRequestsPassingTest({(request: NSURLRequest) in
             // Put success request condition code here.
             // Now, all request is allowed.
