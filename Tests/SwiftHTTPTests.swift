@@ -106,6 +106,6 @@ class SwiftHTTPTests: XCTestCase {
         operationQueue.addOperation(op1!)
         operationQueue.addOperation(op2!)
         
-        waitForExpectationsWithTimeout(kTimeout, handler: nil)
+        waitForExpectationsWithTimeout(30, handler: nil)
     }
 }
