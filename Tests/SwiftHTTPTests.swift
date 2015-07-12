@@ -87,7 +87,8 @@ class SwiftHTTPTests: XCTestCase {
         OHHTTPStubs.stubRequestsPassingTest({(request: NSURLRequest) in
             return true
             }, withStubResponse: {(request: NSURLRequest) in
-                var response = OHHTTPStubsResponse(error: NSError(domain: "testOperationDependencies", code: 400, userInfo: [NSLocalizedDescriptionKey: "Requested URL is not urlString"]))
+                let err = NSError(domain: "testOperationDependencies", code: 400, userInfo: [NSLocalizedDescriptionKey: "Requested URL is not urlString"])
+                var response = OHHTTPStubsResponse(error: err)
                 if request.URL!.absoluteString == urlString1 {
                     let responseData = "PIA19330.tif".dataUsingEncoding(NSUTF8StringEncoding)
                     response =  OHHTTPStubsResponse(data: responseData!, statusCode:200, headers:nil).requestTime(0.0, responseTime: 0.5)
