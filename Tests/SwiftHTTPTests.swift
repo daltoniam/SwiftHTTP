@@ -87,17 +87,18 @@ class SwiftHTTPTests: XCTestCase {
         OHHTTPStubs.stubRequestsPassingTest({(request: NSURLRequest) in
             return true
             }, withStubResponse: {(request: NSURLRequest) in
-                if request.URL == urlString1 {
-                    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC)))
-                    dispatch_after(delayTime, dispatch_get_main_queue()) {
-                        println("test")
-                    }
+                var response = OHHTTPStubsResponse(error: NSError(domain: "testOperationDependencies", code: 400, userInfo: [NSLocalizedDescriptionKey: "Requested URL is not urlString"]))
+                if request.URL!.absoluteString == urlString1 {
+                    let responseData = "PIA19330.tif".dataUsingEncoding(NSUTF8StringEncoding)
+                    response =  OHHTTPStubsResponse(data: responseData!, statusCode:200, headers:nil).requestTime(0.0, responseTime: 0.5)
                 }
                 
-                if request.URL == urlString2 {
+                if request.URL!.absoluteString == urlString2 {
                     let responseData = "PIA19330.jpg".dataUsingEncoding(NSUTF8StringEncoding)
-                    return OHHTTPStubsResponse(data: responseData!, statusCode:200, headers:nil)
+                    response =  OHHTTPStubsResponse(data: responseData!, statusCode:200, headers:nil).requestTime(0.0, responseTime: 0.1)
                 }
+                
+                return response
             }
         )
         
