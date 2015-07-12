@@ -2,7 +2,7 @@
 //  SwiftHTTPTestsWithOHHTTPStubs.swift
 //  SwiftHTTP
 //
-//  Created by 比佐 幸基 on 2015/07/11.
+//  Created by 比佐 幸基 on 2015/07/12.
 //  Copyright (c) 2015年 Vluxe. All rights reserved.
 //
 
@@ -11,7 +11,7 @@ import SwiftHTTP
 import OHHTTPStubs
 
 class SwiftHTTPTestsWithOHHTTPStubs: XCTestCase {
-
+    
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -21,11 +21,11 @@ class SwiftHTTPTestsWithOHHTTPStubs: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-
+    
     func testVirtualServerWithOHHTTPStubs() {
         let expectation = expectationWithDescription("testVirtualServerWithOHHTTPStubs")
         
-        // setup OHHTTPStubs here. 
+        // setup OHHTTPStubs here.
         // Don't remove this code for preventing you from illegal HTTP access.
         self.setupOHHTTPStubs()
         
@@ -36,7 +36,7 @@ class SwiftHTTPTestsWithOHHTTPStubs: XCTestCase {
             if let err = response.error {
                 XCTAssert(false, "Failure")
             }
-
+            
             if let data = response.responseObject as? NSData {
                 let str = NSString(data: data, encoding: NSUTF8StringEncoding)
                 println("response: \(str)")
@@ -57,28 +57,28 @@ class SwiftHTTPTestsWithOHHTTPStubs: XCTestCase {
             
             return true
             
-        }, withStubResponse: {(request: NSURLRequest) in
-            // Put creating response code here.
-            // Now, here is a code for each request methods.
-            
-            let requestMethods = HTTPMethod(rawValue: request.HTTPMethod!)!
-            switch requestMethods {
-            case .GET:
-                return self.responseGET(request)
-            case .POST:
-                return self.responsePOST(request)
-            case .PUT:
-                return self.responsePUT(request)
-            case .HEAD:
-                return self.responseHEAD(request)
-            case .DELETE:
-                return self.responseDELETE(request)
-            case .PATCH:
-                return self.responsePATCH(request)
-            default:
-                return self.responseError(request)
-            }
-            
+            }, withStubResponse: {(request: NSURLRequest) in
+                // Put creating response code here.
+                // Now, here is a code for each request methods.
+                
+                let requestMethods = HTTPMethod(rawValue: request.HTTPMethod!)!
+                switch requestMethods {
+                case .GET:
+                    return self.responseGET(request)
+                case .POST:
+                    return self.responsePOST(request)
+                case .PUT:
+                    return self.responsePUT(request)
+                case .HEAD:
+                    return self.responseHEAD(request)
+                case .DELETE:
+                    return self.responseDELETE(request)
+                case .PATCH:
+                    return self.responsePATCH(request)
+                default:
+                    return self.responseError(request)
+                }
+                
         })
     }
     
@@ -117,6 +117,6 @@ class SwiftHTTPTestsWithOHHTTPStubs: XCTestCase {
         let response = OHHTTPStubsResponse(error: err)
         return response
     }
-
-
+    
+    
 }
