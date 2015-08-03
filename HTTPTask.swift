@@ -337,7 +337,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         let task = session.downloadTaskWithRequest(serialReq.request)
         backgroundTaskMap[ident] = BackgroundBlocks(completionHandler,progress)
         //this does not have to be queueable as Apple's background dameon *should* handle that.
-        task?.resume()
+        task.resume()
         return task
     }
     
@@ -365,7 +365,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         let task = session.uploadTaskWithStreamedRequest(serialReq.request)
         backgroundTaskMap[ident] = BackgroundBlocks(completionHandler,progress)
-        task?.resume()
+        task.resume()
         return task
     }
     
