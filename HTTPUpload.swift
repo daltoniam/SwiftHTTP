@@ -29,7 +29,7 @@ public class HTTPUpload: NSObject, NSCoding {
     /// Tries to determine the mime type from the fileUrl extension.
     func updateMimeType() {
         if mimeType == nil && fileUrl != nil {
-            let pathExtension = fileUrl?.pathExtension as! CFString
+            let pathExtension = fileUrl!.pathExtension! as CFString
             let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension, nil);
             let str = UTTypeCopyPreferredTagWithClass(UTI!.takeUnretainedValue(), kUTTagClassMIMEType);
             if (str == nil) {
