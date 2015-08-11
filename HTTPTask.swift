@@ -387,7 +387,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             let split = url.hasPrefix("/") ? "" : "/"
             urlVal = "\(base)\(split)\(url)"
         }
-        if let encoded = urlVal.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding) {
+        if let encoded = urlVal.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
             if let u = NSURL(string: encoded) {
                 return self.requestSerializer.createRequest(u, method: method, parameters: parameters)
             }
