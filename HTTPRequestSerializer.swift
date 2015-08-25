@@ -147,9 +147,9 @@ public class HTTPRequestSerializer: NSObject {
     
     ///convert the parameter dict to its HTTP string representation
     public func stringFromParameters(parameters: Dictionary<String,AnyObject>) -> String {
-        return "&".join(serializeObject(parameters, key: nil).map({(pair) in
+        return (serializeObject(parameters, key: nil).map({(pair) in
             return pair.stringValue()
-            }))
+        })).joinWithSeparator("&")
     }
     
     ///the method to serialized all the objects
@@ -157,12 +157,12 @@ public class HTTPRequestSerializer: NSObject {
         var collect = Array<HTTPPair>()
         if let array = object as? Array<AnyObject> {
             for nestedValue : AnyObject in array {
-                collect.extend(self.serializeObject(nestedValue,key: "\(key!)[]"))
+                collect.appendContentsOf(self.serializeObject(nestedValue,key: "\(key!)[]"))
             }
         } else if let dict = object as? Dictionary<String,AnyObject> {
             for (nestedKey, nestedObject) in dict {
                 let newKey = key != nil ? "\(key!)[\(nestedKey)]" : nestedKey
-                collect.extend(self.serializeObject(nestedObject, key: newKey))
+                collect.appendContentsOf(self.serializeObject(nestedObject, key: newKey))
             }
         } else {
             collect.append(HTTPPair(value: object, key: key))

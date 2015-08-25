@@ -405,7 +405,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         var str = ""
         for var i = 0; i < 14; i++ {
             let start = Int(arc4random() % 14)
-            str.append(letters[advance(letters.startIndex,start)])
+            str.append(letters[letters.startIndex.advancedBy(start)])
         }
         return "com.vluxe.swifthttp.request.\(str)"
     }
