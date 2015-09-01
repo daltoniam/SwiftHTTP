@@ -438,7 +438,16 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     //MARK: NSURLSession Delegate Methods
     
     /// Method for authentication challenge.
+    public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void){
+        self.sessionChallenge(session, task: nil, didReceiveChallenge: challenge, completionHandler: completionHandler)
+    }
+    
+    /// Method for authentication challenge.
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
+        self.sessionChallenge(session, task: task, didReceiveChallenge: challenge, completionHandler: completionHandler)
+    }
+    
+    func sessionChallenge(session: NSURLSession, task: NSURLSessionTask?, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
         if let sec = security where challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
             let space = challenge.protectionSpace
             if let trust = space.serverTrust {
@@ -461,6 +470,8 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         }
         completionHandler(.PerformDefaultHandling, nil)
     }
+    
+
     
     //MARK: Methods for background download/upload
     
