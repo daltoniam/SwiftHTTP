@@ -80,11 +80,11 @@ class BackgroundBlocks {
     var completionHandler:((HTTPResponse) -> Void)?
     var progress:((Double) -> Void)?
     
-    /** 
-        Initializes a new Background Block
-        
-        :param: completionHandler The closure that is run when a HTTP Request finished.
-        :param: progress The closure that is run on the progress of a HTTP Upload or Download.
+    /**
+    Initializes a new Background Block
+    
+    :param: completionHandler The closure that is run when a HTTP Request finished.
+    :param: progress The closure that is run on the progress of a HTTP Upload or Download.
     */
     init(_ completionHandler: ((HTTPResponse) -> Void)?,_ progress: ((Double) -> Void)?) {
         self.completionHandler = completionHandler
@@ -125,16 +125,16 @@ public class HTTPOperation : NSOperation {
             self.didChangeValueForKey("isFinished")
             return
         }
-
+        
         self.willChangeValueForKey("isExecuting")
         self.willChangeValueForKey("isFinished")
-
+        
         running = true
         done = false
         
         self.didChangeValueForKey("isExecuting")
         self.didChangeValueForKey("isFinished")
-
+        
         task.resume()
     }
     
@@ -169,6 +169,8 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     //Returning nil from this method will cause the request to be rejected and cancelled
     public var auth:((NSURLAuthenticationChallenge) -> NSURLCredential?)?
     
+    /// NSURLSession redirection dlegate,default is nil
+    public var redirection:((session: NSURLSession, task: NSURLSessionTask, response: NSHTTPURLResponse, request: NSURLRequest, completionHandler: ((NSURLRequest!) -> Void))->Void)?
     //This is for doing SSL pinning
     public var security: HTTPSecurity?
     
@@ -179,15 +181,15 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         super.init()
     }
     
-    /** 
-        Creates a HTTPOperation that can be scheduled on a NSOperationQueue. Called by convenience HTTP verb methods below.
+    /**
+    Creates a HTTPOperation that can be scheduled on a NSOperationQueue. Called by convenience HTTP verb methods below.
     
-        :param: url The url you would like to make a request to.
-        :param: method The HTTP method/verb for the request.
-        :param: parameters The parameters are HTTP parameters you would like to send.
-        :param: completionHandler The closure that is run when a HTTP Request finished.
+    :param: url The url you would like to make a request to.
+    :param: method The HTTP method/verb for the request.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: completionHandler The closure that is run when a HTTP Request finished.
     
-        :returns: A freshly constructed HTTPOperation to add to your NSOperationQueue.
+    :returns: A freshly constructed HTTPOperation to add to your NSOperationQueue.
     */
     public func create(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!, completionHandler:((HTTPResponse) -> Void)!) ->  HTTPOperation? {
         
@@ -228,7 +230,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                     handler(serialResponse)
                 }
                 opt.finish()
-            })
+        })
         opt.task = task
         return opt
     }
@@ -240,23 +242,27 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     :param: parameters The parameters are HTTP parameters you would like to send.
     :param: completionHandler The closure that is run when a HTTP Request finished.
     */
-    public func GET(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) {
+    public func GET(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) ->  HTTPOperation?{
         if let opt = self.create(url, method:.GET, parameters: parameters,completionHandler: completionHandler) {
             opt.start()
+            return opt
         }
+        return nil
     }
     
     /**
-        Creates a HTTPOperation as a HTTP POST request and starts it for you.
-        
-        :param: url The url you would like to make a request to.
-        :param: parameters The parameters are HTTP parameters you would like to send.
-        :param: completionHandler The closure that is run when a HTTP Request finished.
+    Creates a HTTPOperation as a HTTP POST request and starts it for you.
+    
+    :param: url The url you would like to make a request to.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: completionHandler The closure that is run when a HTTP Request finished.
     */
-    public func POST(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) {
+    public func POST(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) ->  HTTPOperation?{
         if let opt = self.create(url, method:.POST, parameters: parameters,completionHandler: completionHandler) {
             opt.start()
+            return opt
         }
+        return nil
     }
     
     /**
@@ -266,60 +272,68 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     :param: parameters The parameters are HTTP parameters you would like to send.
     :param: completionHandler The closure that is run when a HTTP Request finished.
     */
-    public func PATCH(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) {
+    public func PATCH(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) ->  HTTPOperation? {
         if let opt = self.create(url, method:.PATCH, parameters: parameters,completionHandler: completionHandler) {
             opt.start()
+            return opt
         }
+        return nil
     }
     
     
     /**
-        Creates a HTTPOperation as a HTTP PUT request and starts it for you.
-        
-        :param: url The url you would like to make a request to.
-        :param: parameters The parameters are HTTP parameters you would like to send.
-        :param: completionHandler The closure that is run when a HTTP Request finished.
+    Creates a HTTPOperation as a HTTP PUT request and starts it for you.
+    
+    :param: url The url you would like to make a request to.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: completionHandler The closure that is run when a HTTP Request finished.
     */
-    public func PUT(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) {
+    public func PUT(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) ->  HTTPOperation? {
         if let opt = self.create(url, method:.PUT, parameters: parameters,completionHandler: completionHandler) {
             opt.start()
+            return opt
         }
+        return nil
     }
     
     /**
-        Creates a HTTPOperation as a HTTP DELETE request and starts it for you.
-        
-        :param: url The url you would like to make a request to.
-        :param: parameters The parameters are HTTP parameters you would like to send.
-        :param: completionHandler The closure that is run when a HTTP Request finished.
+    Creates a HTTPOperation as a HTTP DELETE request and starts it for you.
+    
+    :param: url The url you would like to make a request to.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: completionHandler The closure that is run when a HTTP Request finished.
     */
-    public func DELETE(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!)  {
+    public func DELETE(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) ->  HTTPOperation? {
         if let opt = self.create(url, method:.DELETE, parameters: parameters,completionHandler: completionHandler) {
             opt.start()
+            return opt
         }
+        return nil
     }
     
     /**
-        Creates a HTTPOperation as a HTTP HEAD request and starts it for you.
-        
-        :param: url The url you would like to make a request to.
-        :param: parameters The parameters are HTTP parameters you would like to send.
-        :param: completionHandler The closure that is run when a HTTP Request finished.
+    Creates a HTTPOperation as a HTTP HEAD request and starts it for you.
+    
+    :param: url The url you would like to make a request to.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: completionHandler The closure that is run when a HTTP Request finished.
     */
-    public func HEAD(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) {
+    public func HEAD(url: String, parameters: Dictionary<String,AnyObject>?, completionHandler:((HTTPResponse) -> Void)!) ->  HTTPOperation? {
         if let opt = self.create(url, method:.HEAD, parameters: parameters,completionHandler: completionHandler) {
             opt.start()
+            return opt
         }
+        return nil
     }
     
     /**
-        Creates and starts a HTTPOperation to download a file in the background.
+    Creates and starts a HTTPOperation to download a file in the background.
     
-        :param: url The url you would like to make a request to.
-        :param: method The HTTP method you want to use. Default is GET.
-        :param: parameters The parameters are HTTP parameters you would like to send.
-        :param: progress The progress returned in the progress closure is between 0 and 1.
-        :param: completionHandler The closure that is run when the HTTP Request finishes. The HTTPResponse responseObject object will be a fileURL. You MUST copy the fileURL return in HTTPResponse.responseObject to a new location before using it (e.g. your documents directory).
+    :param: url The url you would like to make a request to.
+    :param: method The HTTP method you want to use. Default is GET.
+    :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: progress The progress returned in the progress closure is between 0 and 1.
+    :param: completionHandler The closure that is run when the HTTP Request finishes. The HTTPResponse responseObject object will be a fileURL. You MUST copy the fileURL return in HTTPResponse.responseObject to a new location before using it (e.g. your documents directory).
     */
     public func download(url: String, method: HTTPMethod = .GET, parameters: Dictionary<String,AnyObject>?,progress:((Double) -> Void)!, completionHandler:((HTTPResponse) -> Void)!) -> NSURLSessionDownloadTask? {
         let serialReq = createRequest(url,method: method, parameters: parameters)
@@ -372,13 +386,13 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     //MARK: Private Helper Methods
     
     /**
-        Creates and starts a HTTPOperation to download a file in the background.
+    Creates and starts a HTTPOperation to download a file in the background.
     
-        :param: url The url you would like to make a request to.
-        :param: method The HTTP method/verb for the request.
-        :param: parameters The parameters are HTTP parameters you would like to send.
+    :param: url The url you would like to make a request to.
+    :param: method The HTTP method/verb for the request.
+    :param: parameters The parameters are HTTP parameters you would like to send.
     
-        :returns: A NSURLRequest from configured requestSerializer.
+    :returns: A NSURLRequest from configured requestSerializer.
     */
     private func createRequest(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!) -> (request: NSURLRequest, error: NSError?) {
         var urlVal = url
@@ -396,9 +410,9 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     }
     
     /**
-        Creates a random string to use for the identifier of the background download/upload requests.
+    Creates a random string to use for the identifier of the background download/upload requests.
     
-        :returns: Identifier String.
+    :returns: Identifier String.
     */
     private func createBackgroundIdent() -> String {
         let letters = "abcdefghijklmnopqurstuvwxyz"
@@ -411,11 +425,11 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     }
     
     /**
-        Creates a random string to use for the identifier of the background download/upload requests.
-        
-        :param: code Code for error.
-        
-        :returns: An NSError.
+    Creates a random string to use for the identifier of the background download/upload requests.
+    
+    :param: code Code for error.
+    
+    :returns: An NSError.
     */
     private func createError(code: Int) -> NSError {
         var text: String = HTTPStatusCode(statusCode: code).statusDescription
@@ -425,11 +439,11 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     
     
     /**
-        Creates a random string to use for the identifier of the background download/upload requests.
-        
-        :param: identifier The identifier string.
-        
-        :returns: An NSError.
+    Creates a random string to use for the identifier of the background download/upload requests.
+    
+    :param: identifier The identifier string.
+    
+    :returns: An NSError.
     */
     private func cleanupBackground(identifier: String) {
         backgroundTaskMap.removeValueForKey(identifier)
@@ -471,7 +485,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         completionHandler(.PerformDefaultHandling, nil)
     }
     
-
+    
     
     //MARK: Methods for background download/upload
     
@@ -529,6 +543,15 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                 cleanupBackground(session.configuration.identifier)
             }
         }
+    }
+    
+    public func URLSession(session: NSURLSession, task: NSURLSessionTask, willPerformHTTPRedirection response: NSHTTPURLResponse, newRequest request: NSURLRequest, completionHandler: (NSURLRequest!) -> Void) {
+    
+        if let reDirect = redirection {
+            reDirect(session: session, task: task, response: response, request: request, completionHandler: completionHandler)
+        }
+
+       
     }
     
     /// The background download finished and reports the url the data was saved to.
