@@ -142,6 +142,7 @@ public class HTTPOperation : NSOperation {
     override public func cancel() {
         super.cancel()
         task.cancel()
+        finish()
     }
     
     /// Sets the task to finished.
