@@ -100,7 +100,7 @@ public class Response {
     public var auth:((NSURLAuthenticationChallenge) -> NSURLCredential?)?
     
     ///This is for doing SSL pinning
-    public var security: Security?
+    public var security: HTTPSecurity?
 }
 
 /**
@@ -133,7 +133,7 @@ public class HTTP: NSOperation {
     }
     
     ///This is for doing SSL pinning
-    public var security: Security? {
+    public var security: HTTPSecurity? {
         set {
             guard let resp = DelegateManager.sharedInstance.responseForTask(task) else { return }
             resp.security = newValue
@@ -293,7 +293,7 @@ public class HTTP: NSOperation {
     /**
     Set the global security handler
     */
-    public class func globalSecurity(handler: Security?) {
+    public class func globalSecurity(handler: HTTPSecurity?) {
         DelegateManager.sharedInstance.security = handler
     }
 }
@@ -310,7 +310,7 @@ class DelegateManager: NSObject, NSURLSessionDataDelegate {
     var auth:((NSURLAuthenticationChallenge) -> NSURLCredential?)?
     
     ///This is for global SSL pinning
-    var security: Security?
+    var security: HTTPSecurity?
     
     var taskMap = Dictionary<Int,Response>()
     //"install" a task by adding the task to the map and setting the completion handler

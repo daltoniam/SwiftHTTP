@@ -11,8 +11,8 @@
 		5C6E39CA1B94CB2600D55578 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E39C41B94CB2600D55578 /* Operation.swift */; settings = {ASSET_TAGS = (); }; };
 		5C6E39CB1B94CB2600D55578 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E39C51B94CB2600D55578 /* Request.swift */; settings = {ASSET_TAGS = (); }; };
 		5C6E39CC1B94CB2600D55578 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E39C51B94CB2600D55578 /* Request.swift */; settings = {ASSET_TAGS = (); }; };
-		5C6E39CD1B94CB2600D55578 /* Security.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E39C61B94CB2600D55578 /* Security.swift */; settings = {ASSET_TAGS = (); }; };
-		5C6E39CE1B94CB2600D55578 /* Security.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E39C61B94CB2600D55578 /* Security.swift */; settings = {ASSET_TAGS = (); }; };
+		5C6E39CD1B94CB2600D55578 /* HTTPSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E39C61B94CB2600D55578 /* HTTPSecurity.swift */; settings = {ASSET_TAGS = (); }; };
+		5C6E39CE1B94CB2600D55578 /* HTTPSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E39C61B94CB2600D55578 /* HTTPSecurity.swift */; settings = {ASSET_TAGS = (); }; };
 		5C6E39CF1B94CB2600D55578 /* StatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E39C71B94CB2600D55578 /* StatusCode.swift */; settings = {ASSET_TAGS = (); }; };
 		5C6E39D01B94CB2600D55578 /* StatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E39C71B94CB2600D55578 /* StatusCode.swift */; settings = {ASSET_TAGS = (); }; };
 		5C6E39D11B94CB2600D55578 /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E39C81B94CB2600D55578 /* Upload.swift */; settings = {ASSET_TAGS = (); }; };
@@ -44,7 +44,7 @@
 /* Begin PBXFileReference section */
 		5C6E39C41B94CB2600D55578 /* Operation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = SOURCE_ROOT; };
 		5C6E39C51B94CB2600D55578 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = SOURCE_ROOT; };
-		5C6E39C61B94CB2600D55578 /* Security.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Security.swift; sourceTree = SOURCE_ROOT; };
+		5C6E39C61B94CB2600D55578 /* HTTPSecurity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPSecurity.swift; sourceTree = SOURCE_ROOT; };
 		5C6E39C71B94CB2600D55578 /* StatusCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusCode.swift; sourceTree = SOURCE_ROOT; };
 		5C6E39C81B94CB2600D55578 /* Upload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Upload.swift; sourceTree = SOURCE_ROOT; };
 		6BFD901619C8D8B500DD99B6 /* SwiftHTTP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftHTTP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -115,7 +115,7 @@
 			children = (
 				5C6E39C41B94CB2600D55578 /* Operation.swift */,
 				5C6E39C51B94CB2600D55578 /* Request.swift */,
-				5C6E39C61B94CB2600D55578 /* Security.swift */,
+				5C6E39C61B94CB2600D55578 /* HTTPSecurity.swift */,
 				5C6E39C71B94CB2600D55578 /* StatusCode.swift */,
 				5C6E39C81B94CB2600D55578 /* Upload.swift */,
 				6BFD903319C8D95C00DD99B6 /* SwiftHTTP.h */,
@@ -320,7 +320,7 @@
 				5C6E39D11B94CB2600D55578 /* Upload.swift in Sources */,
 				5C6E39CB1B94CB2600D55578 /* Request.swift in Sources */,
 				5C6E39CF1B94CB2600D55578 /* StatusCode.swift in Sources */,
-				5C6E39CD1B94CB2600D55578 /* Security.swift in Sources */,
+				5C6E39CD1B94CB2600D55578 /* HTTPSecurity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,7 +340,7 @@
 				5C6E39D21B94CB2600D55578 /* Upload.swift in Sources */,
 				5C6E39CC1B94CB2600D55578 /* Request.swift in Sources */,
 				5C6E39D01B94CB2600D55578 /* StatusCode.swift in Sources */,
-				5C6E39CE1B94CB2600D55578 /* Security.swift in Sources */,
+				5C6E39CE1B94CB2600D55578 /* HTTPSecurity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

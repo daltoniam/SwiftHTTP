@@ -1,5 +1,5 @@
 //
-//  Security.swift
+//  HTTPSecurity.swift
 //  SwiftHTTP
 //
 //  Created by Dalton Cherry on 5/16/15.
@@ -36,7 +36,7 @@ public class SSLCert {
     }
 }
 
-public class Security {
+public class HTTPSecurity {
     public var validatedDN = true //should the domain name be validated?
     
     var isReady = false //is the key processing done?
