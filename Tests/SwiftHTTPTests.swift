@@ -8,9 +8,13 @@
 
 import XCTest
 import SwiftHTTP
+import OHHTTPStubs
 
 class SwiftHTTPTests: XCTestCase {
     
+    let kTimeout: NSTimeInterval = 1
+    let kDummyURL = "example.com"
+
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -24,8 +28,17 @@ class SwiftHTTPTests: XCTestCase {
     func testGetRequest() {
         let expectation = expectationWithDescription("testGetRequest")
         
+        OHHTTPStubs.stubRequestsPassingTest({(request: NSURLRequest) in
+                return true
+            }, withStubResponse: {(request: NSURLRequest) in
+                let responseHTML = "<html><head></head><body></body></html>"
+                let responseData = responseHTML.dataUsingEncoding(NSUTF8StringEncoding)
+                return OHHTTPStubsResponse(data: responseData!, statusCode:200, headers:nil)
+            }
+        )
+        
         let request = HTTPTask()
-        request.GET("http://vluxe.io", parameters: nil, completionHandler: {(response: HTTPResponse)  in
+        request.GET(kDummyURL, parameters: nil, completionHandler: {(response: HTTPResponse)  in
             if let err = response.error {
                 XCTAssert(false, "Failure")
             }
@@ -33,12 +46,12 @@ class SwiftHTTPTests: XCTestCase {
             expectation.fulfill()
         })
         
-        waitForExpectationsWithTimeout(30, handler: nil)
+        waitForExpectationsWithTimeout(kTimeout, handler: nil)
     }
     
     func testAuthRequest() {
         let expectation = expectationWithDescription("testAuthRequest")
-
+        
         let request = HTTPTask()
         var attempted = false
         request.auth = {(challenge: NSURLAuthenticationChallenge) in
@@ -71,6 +84,25 @@ class SwiftHTTPTests: XCTestCase {
         let urlString1 = "http://photojournal.jpl.nasa.gov/tiff/PIA19330.tif" // (4.32 MB)
         let urlString2 = "http://photojournal.jpl.nasa.gov/jpeg/PIA19330.jpg" // (0.14 MB)
         
+        OHHTTPStubs.stubRequestsPassingTest({(request: NSURLRequest) in
+            return true
+            }, withStubResponse: {(request: NSURLRequest) in
+                let err = NSError(domain: "testOperationDependencies", code: 400, userInfo: [NSLocalizedDescriptionKey: "Requested URL is not urlString"])
+                var response = OHHTTPStubsResponse(error: err)
+                if request.URL!.absoluteString == urlString1 {
+                    let responseData = "PIA19330.tif".dataUsingEncoding(NSUTF8StringEncoding)
+                    response =  OHHTTPStubsResponse(data: responseData!, statusCode:200, headers:nil).requestTime(0.0, responseTime: 0.5)
+                }
+                
+                if request.URL!.absoluteString == urlString2 {
+                    let responseData = "PIA19330.jpg".dataUsingEncoding(NSUTF8StringEncoding)
+                    response =  OHHTTPStubsResponse(data: responseData!, statusCode:200, headers:nil).requestTime(0.0, responseTime: 0.1)
+                }
+                
+                return response
+            }
+        )
+        
         let request1 = HTTPTask()
         let op1 = request1.create(urlString1, method: .GET, parameters: nil, completionHandler: { (response) -> Void in
             if let err = response.error {
@@ -93,6 +125,6 @@ class SwiftHTTPTests: XCTestCase {
         operationQueue.addOperation(op1!)
         operationQueue.addOperation(op2!)
         
-        waitForExpectationsWithTimeout(30, handler: nil)
+        waitForExpectationsWithTimeout(kTimeout, handler: nil)
     }
 }
