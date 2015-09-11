@@ -39,11 +39,13 @@ public class Upload: NSObject, NSCoding {
     func getMimeType() {
         mimeType = "application/octet-stream"
         guard let url = fileUrl else { return }
-        if let ext = url.pathExtension  {
-            guard let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, nil) else { return }
-            guard let str = UTTypeCopyPreferredTagWithClass(UTI.takeRetainedValue(), kUTTagClassMIMEType) else { return }
-            mimeType = str.takeRetainedValue() as String
-        }
+#if os(iOS)
+    if let ext = url.pathExtension  {
+        guard let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, nil) else { return }
+        guard let str = UTTypeCopyPreferredTagWithClass(UTI.takeRetainedValue(), kUTTagClassMIMEType) else { return }
+        mimeType = str.takeRetainedValue() as String
+    }
+#endif
     }
     
     /**
