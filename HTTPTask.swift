@@ -8,6 +8,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 import Foundation
+import UIKit
 
 /// HTTP Verbs.
 ///
@@ -158,6 +159,8 @@ public class HTTPOperation : NSOperation {
     }
 }
 
+private var _sessionCount:Int = 0
+
 /// Configures NSURLSession Request for HTTPOperation. Also provides convenience methods for easily running HTTP Request.
 public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate {
     var backgroundTaskMap = Dictionary<String,BackgroundBlocks>()
@@ -171,17 +174,31 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     public var auth:((NSURLAuthenticationChallenge) -> NSURLCredential?)?
     
     /// NSURLSession redirection dlegate,default is nil
-    public var redirection:((session: NSURLSession, task: NSURLSessionTask, response: NSHTTPURLResponse, request: NSURLRequest, completionHandler: ((NSURLRequest!) -> Void))->Void)?
+    public var redirect:((session: NSURLSession, task: NSURLSessionTask, response: NSHTTPURLResponse, request: NSURLRequest, completionHandler: ((NSURLRequest!) -> Void))->Void)?
     //This is for doing SSL pinning
     public var security: HTTPSecurity?
     
     //MARK: Public Methods
+   
+    private var sessionCount:Int{
+      set{
+         _sessionCount = newValue
+         if(newValue > 0){
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+         }else{
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+         }
+      }
+      get{
+         return _sessionCount
+      }
+    }
     
     /// A newly minted HTTPTask for your enjoyment.
     public override init() {
         super.init()
     }
-    
+   
     /**
     Creates a HTTPOperation that can be scheduled on a NSOperationQueue. Called by convenience HTTP verb methods below.
     
@@ -193,7 +210,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     :returns: A freshly constructed HTTPOperation to add to your NSOperationQueue.
     */
     public func create(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!, completionHandler:((HTTPResponse) -> Void)!) ->  HTTPOperation? {
-        
+      
         var serialResponse = HTTPResponse()
         let serialReq = createRequest(url, method: method, parameters: parameters)
         if let err = serialReq.error {
@@ -203,11 +220,14 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             }
             return nil
         }
+      
         let opt = HTTPOperation()
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         let task = session.dataTaskWithRequest(serialReq.request,
-            completionHandler: {(data: NSData!, response: NSURLResponse!, error: NSError!) -> Void in
+            completionHandler: {[weak session](data: NSData!, response: NSURLResponse!, error: NSError!) -> Void in
+               session?.finishTasksAndInvalidate()
+               self.sessionCount -= 1
                 if let handler = completionHandler {
                     if let hresponse = response as? NSHTTPURLResponse {
                         serialResponse.headers = hresponse.allHeaderFields as? Dictionary<String,String>
@@ -233,6 +253,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                 opt.finish()
         })
         opt.task = task
+        self.sessionCount += 1
         return opt
     }
     
@@ -353,6 +374,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         backgroundTaskMap[ident] = BackgroundBlocks(completionHandler,progress)
         //this does not have to be queueable as Apple's background dameon *should* handle that.
         task.resume()
+         self.sessionCount += 1
         return task
     }
     
@@ -381,6 +403,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         let task = session.uploadTaskWithStreamedRequest(serialReq.request)
         backgroundTaskMap[ident] = BackgroundBlocks(completionHandler,progress)
         task.resume()
+        self.sessionCount += 1
         return task
     }
     
@@ -527,7 +550,9 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                 }
             }
             cleanupBackground(session.configuration.identifier)
+            self.sessionCount -= 1
         }
+       session.finishTasksAndInvalidate()
     }
     
     /// Called when the background task failed.
@@ -542,13 +567,15 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                     }
                 }
                 cleanupBackground(session.configuration.identifier)
+               self.sessionCount -= 1
             }
         }
+      session.finishTasksAndInvalidate()
     }
     
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, willPerformHTTPRedirection response: NSHTTPURLResponse, newRequest request: NSURLRequest, completionHandler: (NSURLRequest!) -> Void) {
     
-        if let reDirect = redirection {
+        if let reDirect = redirect {
             reDirect(session: session, task: task, response: response, request: request, completionHandler: completionHandler)
         }
 
