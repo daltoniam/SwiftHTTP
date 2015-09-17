@@ -3,6 +3,8 @@ SwiftHTTP
 
 SwiftHTTP is a thin wrapper around NSURLSession in Swift to simplify HTTP requests.
 
+This is the Swift 2.0 backwards compatibility branch. It provides the minimal changes to work with Swift 2.0 to easy the transition to the new API. See the master branch for the new API and latest Swift 2.0 changes.
+
 ## Features
 
 - Convenient Closure APIs
@@ -12,8 +14,6 @@ SwiftHTTP is a thin wrapper around NSURLSession in Swift to simplify HTTP reques
 - Builtin JSON Response Serialization
 - Upload/Download with Progress Closure
 - Concise Codebase. Under 1000 LOC
-
-Full article here: [http://vluxe.io/swifthttp.html](http://vluxe.io/swifthttp.html)
 
 First thing is to import the framework. See the Installation instructions on how to add the framework to your project.
 
@@ -432,7 +432,7 @@ To use SwiftHTTP in your project add the following 'Podfile' to your project
 	platform :ios, '8.0'
 	use_frameworks!
 
-	pod 'SwiftHTTP', '~> 0.9.4'
+	pod 'SwiftHTTP', :git => 'https://github.com/daltoniam/SwiftHTTP', :branch => 'swift-2-bc'
 
 Then run:
 
