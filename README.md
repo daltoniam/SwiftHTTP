@@ -3,6 +3,8 @@ SwiftHTTP
 
 SwiftHTTP is a thin wrapper around NSURLSession in Swift to simplify HTTP requests.
 
+This is written Swift 2.0 (the latest). If you need older legecy support checkout the Swift-1.2 branch [here](https://github.com/daltoniam/SwiftHTTP/tree/swift-1.2). If you are upgrading from SwiftHTTP and just want the minimal changes to work with Swift 2 checkout the backwards compatibility branch [here](https://github.com/daltoniam/SwiftHTTP/tree/swift-2-bc)
+
 ## Features
 
 - Convenient Closure APIs
@@ -33,6 +35,7 @@ do {
 			return //also notify app of failure as needed
 		}
         print("opt finished: \(response.description)")
+        //print("data is: \(response.data)") access the response of the data with response.data
     }
 } catch let error {
     print("got an error creating the request: \(error)")
@@ -292,7 +295,7 @@ To use SwiftHTTP in your project add the following 'Podfile' to your project
 	platform :ios, '8.0'
 	use_frameworks!
 
-	pod 'SwiftHTTP', '~> 0.9.4'
+	pod 'SwiftHTTP', '~> 1.0.0'
 
 Then run:
 
