@@ -3,6 +3,8 @@ SwiftHTTP
 
 SwiftHTTP is a thin wrapper around NSURLSession in Swift to simplify HTTP requests.
 
+This is the Swift 1.2 branch. The last release of 1.2 was tag 0.9.7. If you need Swift 2.0 checkout the master branch.
+
 ## Features
 
 - Convenient Closure APIs
