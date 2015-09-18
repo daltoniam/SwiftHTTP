@@ -335,7 +335,7 @@ extension NSMutableURLRequest {
     public func containsFile(parameters: Any) -> Bool {
         guard let params = parameters as? HTTPParameterProtocol else { return false }
         for pair in params.createPairs(nil) {
-            if let upload = pair.upload {
+            if let _ = pair.upload {
                 return true
             }
         }
