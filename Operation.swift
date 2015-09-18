@@ -29,6 +29,7 @@ public protocol HTTPSerializeProtocol {
 Standard HTTP encoding
 */
 public struct HTTPParameterSerializer: HTTPSerializeProtocol {
+    public init() { }
     public func serialize(request: NSMutableURLRequest, parameters: HTTPParameterProtocol) throws {
         try request.appendParameters(parameters)
     }
@@ -38,6 +39,7 @@ public struct HTTPParameterSerializer: HTTPSerializeProtocol {
 Send the data as a JSON body
 */
 public struct JSONParameterSerializer: HTTPSerializeProtocol {
+    public init() { }
     public func serialize(request: NSMutableURLRequest, parameters: HTTPParameterProtocol) throws {
          try request.appendParametersAsJSON(parameters)
     }
@@ -154,7 +156,7 @@ public class HTTP: NSOperation {
     /**
     creates a new HTTP request.
     */
-    init(req: NSURLRequest, session: NSURLSession = SharedSession.defaultSession) {
+    public init(_ req: NSURLRequest, session: NSURLSession = SharedSession.defaultSession) {
         super.init()
         task = session.dataTaskWithRequest(req)
     }
@@ -280,7 +282,7 @@ public class HTTP: NSOperation {
         if let params = parameters {
             try requestSerializer.serialize(req, parameters: params)
         }
-        return HTTP(req: req)
+        return HTTP(req)
     }
     
     /**

@@ -123,10 +123,21 @@ do {
 
 ### Custom Headers
 
-Custom HTTP headers can be add to a request via the requestSerializer.
+Custom HTTP headers can be add to a request with the standard NSMutableRequest API:
 
 ```swift
-//finish example
+if let req = NSMutableURLRequest(urlString: "http://domain.com") {
+    do {
+        try req.appendParameters(["hello": "there"])
+        req.addValue("custom", forHTTPHeaderField: "header")
+        let opt = HTTP(req)
+        opt.start { response in
+            //do stuff
+        }
+    } catch let error {
+        print("couldn't serialize the paraemeters: \(error)")
+    }
+}
 ```
 
 ### SSL Pinning
