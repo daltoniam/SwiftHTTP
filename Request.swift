@@ -260,9 +260,11 @@ extension NSMutableURLRequest {
         let mutData = NSMutableData()
         let multiCRLF = "\r\n"
         mutData.appendData("--\(boundary)".dataUsingEncoding(NSUTF8StringEncoding)!)
+        print("--\(boundary)")
         for pair in parameters.createPairs(nil) {
             guard let key = pair.key else { continue } //this won't happen, but just to properly unwrap
             mutData.appendData("\(multiCRLF)".dataUsingEncoding(NSUTF8StringEncoding)!)
+            print("\(multiCRLF)")
             if let upload = pair.upload {
                 let data = try upload.getData()
                 mutData.appendData(multiFormHeader(key, fileName: upload.fileName,
@@ -273,8 +275,10 @@ extension NSMutableURLRequest {
                 mutData.appendData(str.dataUsingEncoding(NSUTF8StringEncoding)!)
             }
             mutData.appendData("\(multiCRLF)--\(boundary)".dataUsingEncoding(NSUTF8StringEncoding)!)
+            print("\(multiCRLF)--\(boundary)")
         }
         mutData.appendData("--\(multiCRLF)".dataUsingEncoding(NSUTF8StringEncoding)!)
+        print("--\(multiCRLF)")
         HTTPBody = mutData
     }
     
@@ -282,15 +286,16 @@ extension NSMutableURLRequest {
     Helper method to create the multipart form data
     */
     func multiFormHeader(name: String, fileName: String?, type: String?, multiCRLF: String) -> String {
-        var str = "Content-Disposition: form-data; name=\"\(name.escaped)\""
-        if fileName != nil {
-            str += "; filename=\"\(fileName!)\""
+        var str = "Content-Disposition: form-data; name=\"\(name.escaped!)\""
+        if let name = fileName {
+            str += "; filename=\"\(name)\""
         }
         str += multiCRLF
-        if type != nil {
-            str += "Content-Type: \(type!)\(multiCRLF)"
+        if let t = type {
+            str += "Content-Type: \(t)\(multiCRLF)"
         }
         str += multiCRLF
+        print("\(str)")
         return str
     }
     
@@ -329,23 +334,9 @@ extension NSMutableURLRequest {
     */
     public func containsFile(parameters: Any) -> Bool {
         guard let params = parameters as? HTTPParameterProtocol else { return false }
-        if params.paramType() == .Upload {
-            return true
-        } else if params.paramType() == .Dictionary {
-            if let p = params as? Dictionary<String, Any> {
-                for (_ ,v) in p {
-                    if containsFile(v) {
-                        return true
-                    }
-                }
-            }
-        } else if params.paramType() == .Array {
-            if let p = parameters as? Array<Any> {
-                for v in p {
-                    if containsFile(v) {
-                        return true
-                    }
-                }
+        for pair in params.createPairs(nil) {
+            if let upload = pair.upload {
+                return true
             }
         }
         return false

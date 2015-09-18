@@ -269,7 +269,95 @@ func main() {
 Now for the request:
 
 ```swift
-//finish example
+struct Response: JSONJoy {
+    let status: String?
+    init(_ decoder: JSONDecoder) {
+        status = decoder["status"].string
+    }
+}
+
+do {
+    let opt = try HTTP.GET("http://localhost:8080/bar", parameters: nil)
+    opt.start { response in
+        if let error = response.error {
+            print("got an error: \(error)")
+            return
+        }
+        let resp = Response(JSONDecoder(response.data))
+        if let status = resp.status {
+            print("completed: \(status)")
+        }
+    }
+} catch let error {
+    print("got an error: \(error)")
+}
+```
+
+## POST example
+
+```go
+package main
+
+import (
+    "fmt"
+    "io"
+    "log"
+    "net/http"
+    "os"
+)
+
+func main() {
+    http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Println("header: ", r.Header.Get("Content-Type"))
+        upload, header, err := r.FormFile("file")
+        if err != nil {
+            w.Write([]byte("{\"error\": \"bad file upload\"}")) //normally be a 500 status code
+            return
+        }
+        file, err := os.Create(header.Filename) // we would normally need to generate unique filenames.
+        if err != nil {
+            w.Write([]byte("{\"error\": \"system error occured\"}")) //normally be a 500 status code
+            return
+        }
+        io.Copy(file, upload) // write the uploaded file to disk.
+        w.Write([]byte("{\"status\": \"ok\"}")) 
+    })
+
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}
+```
+
+Now for the Swift:
+
+```swift
+struct Response: JSONJoy {
+    let status: String?
+    let error: String?
+    init(_ decoder: JSONDecoder) {
+        status = decoder["status"].string
+        error = decoder["error"].string
+    }
+}
+
+do {
+    let url = NSURL(fileURLWithPath: "/Users/dalton/Desktop/dalton.jpeg")
+    let opt = try HTTP.POST("http://localhost:8080/bar", parameters: ["test": "value", "file": Upload(fileUrl: url)])
+    opt.start { response in
+        if let error = response.error {
+            print("got an error: \(error)")
+            return
+        }
+        let resp = Response(JSONDecoder(response.data))
+        if let err = resp.error {
+            print("got an error: \(err)")
+        }
+        if let status = resp.status {
+            print("completed: \(status)")
+        }
+    }
+} catch let error {
+    print("got an error: \(error)")
+}
 ```
 
 ## JSON Parsing
