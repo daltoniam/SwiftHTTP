@@ -147,8 +147,8 @@ SSL Pinning is also supported in SwiftHTTP.
 ```swift
 do {
     let opt = try HTTP.GET("https://domain.com", parameters: nil)
-    task.security = HTTPSecurity(certs: [HTTPSSLCert(data: data)], usePublicKeys: true)
-	//task.security = HTTPSecurity() //uses the .cer files in your app's bundle
+    opt.security = HTTPSecurity(certs: [HTTPSSLCert(data: data)], usePublicKeys: true)
+	//opt.security = HTTPSecurity() //uses the .cer files in your app's bundle
     opt.start { response in
     	if let err = response.error {
 			print("error: \(err.localizedDescription)")
