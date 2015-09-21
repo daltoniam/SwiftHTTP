@@ -159,6 +159,7 @@ public class HTTP: NSOperation {
     public init(_ req: NSURLRequest, session: NSURLSession = SharedSession.defaultSession) {
         super.init()
         task = session.dataTaskWithRequest(req)
+        DelegateManager.sharedInstance.addResponseForTask(task)
     }
     
     //MARK: Subclassed NSOperation Methods
