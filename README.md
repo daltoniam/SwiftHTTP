@@ -28,7 +28,7 @@ import SwiftHTTP
 The most basic request. By default an NSData object will be returned for the response.
 ```swift
 do {
-    let opt = try HTTP.GET("https://google.com", parameters: nil)
+    let opt = try HTTP.GET("https://google.com")
     opt.start { response in
     	if let err = response.error {
 			print("error: \(err.localizedDescription)")
@@ -83,19 +83,19 @@ do {
 ### PUT
 
 ```swift
-let opt = try HTTP.PUT("https://domain.com/1", parameters: params)
+let opt = try HTTP.PUT("https://domain.com/1")
 ```
 
 ### HEAD
 
 ```swift
-let opt = try HTTP.HEAD("https://domain.com/1", parameters: params)
+let opt = try HTTP.HEAD("https://domain.com/1")
 ```
 
 ### DELETE
 
 ```swift
-let opt = try HTTP.DELETE("https://domain.com/1", parameters: params)
+let opt = try HTTP.DELETE("https://domain.com/1")
 ```
 
 ### Download
@@ -126,17 +126,13 @@ do {
 Custom HTTP headers can be add to a request with the standard NSMutableRequest API:
 
 ```swift
-if let req = NSMutableURLRequest(urlString: "http://domain.com") {
-    do {
-        try req.appendParameters(["hello": "there"])
-        req.addValue("custom", forHTTPHeaderField: "header")
-        let opt = HTTP(req)
-        opt.start { response in
-            //do stuff
-        }
-    } catch let error {
-        print("couldn't serialize the paraemeters: \(error)")
+do {
+    let opt = HTTP.GET("https://domain.com", parameters: ["hello": "there"], headers: ["header": "value"])
+    opt.start { response in
+        //do stuff
     }
+} catch let error {
+    print("couldn't serialize the paraemeters: \(error)")
 }
 ```
 

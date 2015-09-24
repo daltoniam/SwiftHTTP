@@ -235,53 +235,60 @@ public class HTTP: NSOperation {
     /**
     Class method to create a GET request that handles the NSMutableURLRequest and parameter encoding for you.
     */
-    public class func GET(url: String, parameters: HTTPParameterProtocol?, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
-        return try HTTP.New(url, method: .GET, parameters: parameters, requestSerializer: requestSerializer)
+    public class func GET(url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil,
+        requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
+        return try HTTP.New(url, method: .GET, parameters: parameters, headers: headers, requestSerializer: requestSerializer)
     }
     
     /**
     Class method to create a HEAD request that handles the NSMutableURLRequest and parameter encoding for you.
     */
-    public class func HEAD(url: String, parameters: HTTPParameterProtocol?, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
-        return try HTTP.New(url, method: .HEAD, parameters: parameters, requestSerializer: requestSerializer)
+    public class func HEAD(url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
+        return try HTTP.New(url, method: .HEAD, parameters: parameters, headers: headers, requestSerializer: requestSerializer)
     }
     
     /**
     Class method to create a DELETE request that handles the NSMutableURLRequest and parameter encoding for you.
     */
-    public class func DELETE(url: String, parameters: HTTPParameterProtocol?, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
-        return try HTTP.New(url, method: .DELETE, parameters: parameters, requestSerializer: requestSerializer)
+    public class func DELETE(url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
+        return try HTTP.New(url, method: .DELETE, parameters: parameters, headers: headers, requestSerializer: requestSerializer)
     }
     
     /**
     Class method to create a POST request that handles the NSMutableURLRequest and parameter encoding for you.
     */
-    public class func POST(url: String, parameters: HTTPParameterProtocol?, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
-        return try HTTP.New(url, method: .POST, parameters: parameters, requestSerializer: requestSerializer)
+    public class func POST(url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
+        return try HTTP.New(url, method: .POST, parameters: parameters, headers: headers, requestSerializer: requestSerializer)
     }
     
     /**
     Class method to create a PUT request that handles the NSMutableURLRequest and parameter encoding for you.
     */
-    public class func PUT(url: String, parameters: HTTPParameterProtocol?, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
-        return try HTTP.New(url, method: .PUT, parameters: parameters, requestSerializer: requestSerializer)
+    public class func PUT(url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil,
+        requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
+        return try HTTP.New(url, method: .PUT, parameters: parameters, headers: headers, requestSerializer: requestSerializer)
     }
     
     /**
     Class method to create a PUT request that handles the NSMutableURLRequest and parameter encoding for you.
     */
-    public class func PATCH(url: String, parameters: HTTPParameterProtocol?, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
-        return try HTTP.New(url, method: .PATCH, parameters: parameters, requestSerializer: requestSerializer)
+    public class func PATCH(url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
+        return try HTTP.New(url, method: .PATCH, parameters: parameters, headers: headers, requestSerializer: requestSerializer)
     }
     
     /**
     Class method to create a HTTP request that handles the NSMutableURLRequest and parameter encoding for you.
     */
-    public class func New(url: String, method: HTTPVerb, parameters: HTTPParameterProtocol?, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
+    public class func New(url: String, method: HTTPVerb, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
         guard let req = NSMutableURLRequest(urlString: url) else { throw HTTPOptError.InvalidRequest }
         req.verb = method
         if let params = parameters {
             try requestSerializer.serialize(req, parameters: params)
+        }
+        if let heads = headers {
+            for (key,value) in heads {
+                req.addValue(key, forHTTPHeaderField: value)
+            }
         }
         return HTTP(req)
     }
