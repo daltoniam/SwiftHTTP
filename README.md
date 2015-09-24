@@ -106,12 +106,12 @@ let opt = try HTTP.DELETE("https://domain.com/1", parameters: params)
 
 ### Upload
 
-File uploads can be done using the `HTTPUpload` object. All files to upload should be wrapped in a HTTPUpload object and added as a parameter.
+File uploads can be done using the `Upload` object. All files to upload should be wrapped in a Upload object and added as a parameter.
 
 ```swift
 let fileUrl = NSURL(fileURLWithPath: "/Users/dalton/Desktop/testfile")!
 do {
-    let opt = try HTTP.POST("https://domain.com/new", parameters: ["aParam": "aValue", "file": HTTPUpload(fileUrl: fileUrl)])
+    let opt = try HTTP.POST("https://domain.com/new", parameters: ["aParam": "aValue", "file": Upload(fileUrl: fileUrl)])
     opt.start { response in
     //do things...
     }
@@ -119,7 +119,7 @@ do {
     print("got an error creating the request: \(error)")
 }
 ```
-`HTTPUpload` comes in both a on disk fileUrl version and a NSData version.
+`Upload` comes in both a on disk fileUrl version and a NSData version.
 
 ### Custom Headers
 
