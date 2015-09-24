@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C40EFD51BB49E3500145EFE /* HTTPStatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE224CF1B51FA8200013E3D /* HTTPStatusCode.swift */; };
 		5CB3204E1B03F5C50050968C /* HTTPSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB3204D1B03F5C50050968C /* HTTPSecurity.swift */; };
 		5CB3204F1B03F5C50050968C /* HTTPSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB3204D1B03F5C50050968C /* HTTPSecurity.swift */; };
 		6BFD903719C8D95C00DD99B6 /* HTTPUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD903219C8D95C00DD99B6 /* HTTPUpload.swift */; };
@@ -340,6 +341,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C40EFD51BB49E3500145EFE /* HTTPStatusCode.swift in Sources */,
 				D958027319E6EF4B003C8218 /* HTTPRequestSerializer.swift in Sources */,
 				D958027419E6EF4B003C8218 /* HTTPResponseSerializer.swift in Sources */,
 				5CB3204F1B03F5C50050968C /* HTTPSecurity.swift in Sources */,
