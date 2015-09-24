@@ -287,7 +287,7 @@ public class HTTP: NSOperation {
         }
         if let heads = headers {
             for (key,value) in heads {
-                req.addValue(key, forHTTPHeaderField: value)
+                req.addValue(value, forHTTPHeaderField: key)
             }
         }
         return HTTP(req)
