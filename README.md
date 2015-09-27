@@ -127,7 +127,7 @@ Custom HTTP headers can be add to a request with the standard NSMutableRequest A
 
 ```swift
 do {
-    let opt = HTTP.GET("https://domain.com", parameters: ["hello": "there"], headers: ["header": "value"])
+    let opt = try HTTP.GET("https://domain.com", parameters: ["hello": "there"], headers: ["header": "value"])
     opt.start { response in
         //do stuff
     }
