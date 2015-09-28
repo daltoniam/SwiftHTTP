@@ -212,7 +212,7 @@ Operation queues are also supported in SwiftHTTP.
 let operationQueue = NSOperationQueue()
 operationQueue.maxConcurrentOperationCount = 2
 do {
-    let opt = try HTTP.New("https://google.com", parameters: nil)
+    let opt = try HTTP.New("https://google.com", method: .GET, parameters: nil)
     opt.onFinish = { response in
     //do stuff
     }
@@ -236,7 +236,7 @@ Request parameters can also be serialized to JSON as needed. By default request 
 
 ```swift
 do {
-    let opt = try HTTP.New("https://google.com", parameters: nil, requestSerializer: JSONParameterSerializer())
+    let opt = try HTTP.New("https://google.com", method: .GET, parameters: nil, requestSerializer: JSONParameterSerializer())
     opt.onFinish = { response in
     	if let err = response.error {
 			print("error: \(err.localizedDescription)")
