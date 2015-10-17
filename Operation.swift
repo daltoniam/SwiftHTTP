@@ -97,12 +97,15 @@ public class Response {
     ///finish closure
     var completionHandler:((Response) -> Void)?
     
+    //progress closure. Progress is between 0 and 1.
+    var progressHandler:((Float) -> Void)?
+    
     ///This gets called on auth challenges. If nil, default handling is use.
     ///Returning nil from this method will cause the request to be rejected and cancelled
-    public var auth:((NSURLAuthenticationChallenge) -> NSURLCredential?)?
+    var auth:((NSURLAuthenticationChallenge) -> NSURLCredential?)?
     
     ///This is for doing SSL pinning
-    public var security: HTTPSecurity?
+    var security: HTTPSecurity?
 }
 
 /**
@@ -143,6 +146,18 @@ public class HTTP: NSOperation {
         get {
             guard let resp = DelegateManager.sharedInstance.responseForTask(task) else { return nil }
             return resp.security
+        }
+    }
+    
+    ///This is for monitoring progress
+    public var progress: ((Float) -> Void)? {
+        set {
+            guard let resp = DelegateManager.sharedInstance.responseForTask(task) else { return }
+            resp.progressHandler = newValue
+        }
+        get {
+            guard let resp = DelegateManager.sharedInstance.responseForTask(task) else { return nil }
+            return resp.progressHandler
         }
     }
     
@@ -363,30 +378,32 @@ class DelegateManager: NSObject, NSURLSessionDataDelegate {
     //handle getting data
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
         addResponseForTask(dataTask)
-        if let resp = responseForTask(dataTask) {
-            resp.collectData.appendData(data)
+        guard let resp = responseForTask(dataTask) else { return }
+        resp.collectData.appendData(data)
+        if resp.progressHandler != nil { //don't want the extra cycles for no reason
+            guard let taskResp = dataTask.response else { return }
+            progressHandler(resp, expectedLength: taskResp.expectedContentLength, currentLength: Int64(resp.collectData.length))
         }
     }
     
     //handle task finishing
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-        if let resp = responseForTask(task) {
-            resp.error = error
-            if let hresponse = task.response as? NSHTTPURLResponse {
-                resp.headers = hresponse.allHeaderFields as? Dictionary<String,String>
-                resp.mimeType = hresponse.MIMEType
-                resp.suggestedFilename = hresponse.suggestedFilename
-                resp.statusCode = hresponse.statusCode
-                resp.URL = hresponse.URL
-            }
-            if let code = resp.statusCode where resp.statusCode > 299 {
-                resp.error = createError(code)
-            }
-            if let handler = resp.completionHandler {
-                handler(resp)
-            }
-            removeTask(task)
+        guard let resp = responseForTask(task) else { return }
+        resp.error = error
+        if let hresponse = task.response as? NSHTTPURLResponse {
+            resp.headers = hresponse.allHeaderFields as? Dictionary<String,String>
+            resp.mimeType = hresponse.MIMEType
+            resp.suggestedFilename = hresponse.suggestedFilename
+            resp.statusCode = hresponse.statusCode
+            resp.URL = hresponse.URL
         }
+        if let code = resp.statusCode where resp.statusCode > 299 {
+            resp.error = createError(code)
+        }
+        if let handler = resp.completionHandler {
+            handler(resp)
+        }
+        removeTask(task)
     }
     
     //handle authenication
@@ -422,6 +439,23 @@ class DelegateManager: NSObject, NSURLSessionDataDelegate {
             return
         }
         completionHandler(.PerformDefaultHandling, nil)
+    }
+    //upload progress
+    func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+        guard let resp = responseForTask(task) else { return }
+        progressHandler(resp, expectedLength: totalBytesExpectedToSend, currentLength: totalBytesSent)
+    }
+    //download progress
+    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        guard let resp = responseForTask(downloadTask) else { return }
+        progressHandler(resp, expectedLength: totalBytesExpectedToWrite, currentLength: bytesWritten)
+    }
+    
+    //handle progress
+    func progressHandler(response: Response, expectedLength: Int64, currentLength: Int64) {
+        guard let handler = response.progressHandler else { return }
+        let slice = 1/expectedLength;
+        handler(Float(slice*currentLength))
     }
     
     /**
