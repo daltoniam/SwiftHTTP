@@ -249,6 +249,25 @@ do {
 }
 ```
 
+## Global handlers
+
+SwiftHTTP also has global handlers, to reduce the requirement of repeat HTTP modifiers, such as a auth header or setting `NSMutableURLRequest` properties such as `timeoutInterval`. 
+
+```swift
+//modify NSMutableURLRequest for any Factory method call (e.g. HTTP.GET, HTTP.POST, HTTP.New, etc).
+HTTP.globalRequest { req in
+    req.timeoutInterval = 5
+}
+
+//set a global SSL pinning setting
+HTTP.globalSecurity(HTTPSecurity()) //see the SSL section for more info
+
+//set global auth handler. See the Auth section for more info
+HTTP.globalAuth { challenge in
+    return NSURLCredential(user: "user", password: "passwd", persistence: .ForSession)
+}
+```
+
 ## Client/Server Example
 
 This is a full example swiftHTTP in action. First here is a quick web server in Go.

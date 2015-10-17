@@ -281,6 +281,9 @@ public class HTTP: NSOperation {
     */
     public class func New(url: String, method: HTTPVerb, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
         guard let req = NSMutableURLRequest(urlString: url) else { throw HTTPOptError.InvalidRequest }
+        if let handler = DelegateManager.sharedInstance.requestHandler {
+            handler(req)
+        }
         req.verb = method
         if let params = parameters {
             try requestSerializer.serialize(req, parameters: params)
@@ -303,8 +306,15 @@ public class HTTP: NSOperation {
     /**
     Set the global security handler
     */
-    public class func globalSecurity(handler: HTTPSecurity?) {
-        DelegateManager.sharedInstance.security = handler
+    public class func globalSecurity(security: HTTPSecurity?) {
+        DelegateManager.sharedInstance.security = security
+    }
+    
+    /**
+    Set the global request handler
+    */
+    public class func globalRequest(handler: ((NSMutableURLRequest) -> Void)?) {
+        DelegateManager.sharedInstance.requestHandler = handler
     }
 }
 
@@ -321,6 +331,9 @@ class DelegateManager: NSObject, NSURLSessionDataDelegate {
     
     ///This is for global SSL pinning
     var security: HTTPSecurity?
+    
+    /// this is for global request handling
+    var requestHandler:((NSMutableURLRequest) -> Void)?
     
     var taskMap = Dictionary<Int,Response>()
     //"install" a task by adding the task to the map and setting the completion handler
