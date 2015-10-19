@@ -115,7 +115,9 @@ extension Dictionary: HTTPParameterProtocol {
         for (k, v) in self {
             if let nestedKey = k as? String, let nestedVal = v as? AnyObject {
                 let useKey = key != nil ? "\(key!)[\(nestedKey)]" : nestedKey
-                if let subParam = v as? HTTPParameterProtocol {
+                if let subParam = nestedVal as? Dictionary { //as? HTTPParameterProtocol <- bug? should work.
+                    collect.appendContentsOf(subParam.createPairs(useKey))
+                } else if let subParam = nestedVal as? Array<AnyObject> {
                     collect.appendContentsOf(subParam.createPairs(useKey))
                 } else {
                     collect.append(HTTPPair(key: useKey, value: nestedVal))
@@ -138,10 +140,13 @@ extension Array: HTTPParameterProtocol {
         var collect = Array<HTTPPair>()
         for v in self {
             if let nestedVal = v as? AnyObject {
-                if let subParam = v as? HTTPParameterProtocol {
-                    collect.appendContentsOf(subParam.createPairs(key != nil ? "\(key!)[]" : key))
+                let useKey = key != nil ? "\(key!)[]" : key
+                if let subParam = nestedVal as? Dictionary<String, AnyObject> {
+                    collect.appendContentsOf(subParam.createPairs(useKey))
+                } else if let subParam = nestedVal as? Array<AnyObject> {
+                    collect.appendContentsOf(subParam.createPairs(useKey))
                 } else {
-                    collect.append(HTTPPair(key: key, value: nestedVal))
+                    collect.append(HTTPPair(key: useKey, value: nestedVal))
                 }
             }
         }
@@ -263,11 +268,9 @@ extension NSMutableURLRequest {
         let mutData = NSMutableData()
         let multiCRLF = "\r\n"
         mutData.appendData("--\(boundary)".dataUsingEncoding(NSUTF8StringEncoding)!)
-        print("--\(boundary)")
         for pair in parameters.createPairs(nil) {
             guard let key = pair.key else { continue } //this won't happen, but just to properly unwrap
             mutData.appendData("\(multiCRLF)".dataUsingEncoding(NSUTF8StringEncoding)!)
-            print("\(multiCRLF)")
             if let upload = pair.upload {
                 let data = try upload.getData()
                 mutData.appendData(multiFormHeader(key, fileName: upload.fileName,
@@ -278,10 +281,8 @@ extension NSMutableURLRequest {
                 mutData.appendData(str.dataUsingEncoding(NSUTF8StringEncoding)!)
             }
             mutData.appendData("\(multiCRLF)--\(boundary)".dataUsingEncoding(NSUTF8StringEncoding)!)
-            print("\(multiCRLF)--\(boundary)")
         }
         mutData.appendData("--\(multiCRLF)".dataUsingEncoding(NSUTF8StringEncoding)!)
-        print("--\(multiCRLF)")
         HTTPBody = mutData
     }
     
@@ -298,7 +299,6 @@ extension NSMutableURLRequest {
             str += "Content-Type: \(t)\(multiCRLF)"
         }
         str += multiCRLF
-        print("\(str)")
         return str
     }
     
@@ -316,7 +316,7 @@ extension NSMutableURLRequest {
             } catch let error {
                 throw error
             }
-            let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
+            let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding))
             setValue("application/json; charset=\(charset)", forHTTPHeaderField: contentTypeKey)
         }
     }
