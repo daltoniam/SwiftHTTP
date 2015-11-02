@@ -162,7 +162,10 @@ public class HTTPOperation : NSOperation {
 public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate {
     var backgroundTaskMap = Dictionary<String,BackgroundBlocks>()
     //var sess: NSURLSession?
-    
+
+    public var timeoutIntervalForRequest: NSTimeInterval?
+	public var timeoutIntervalForResource: NSTimeInterval?
+
     public var baseURL: String?
     public var requestSerializer = HTTPRequestSerializer()
     public var responseSerializer: HTTPResponseSerializer?
@@ -203,6 +206,14 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         }
         let opt = HTTPOperation()
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+
+        if let timeoutIntervalForRequest = self.timeoutIntervalForRequest {
+			config.timeoutIntervalForRequest = timeoutIntervalForRequest
+		}
+		if let timeoutIntervalForResource = self.timeoutIntervalForResource {
+			config.timeoutIntervalForResource = timeoutIntervalForResource
+		}
+
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         let task = session.dataTaskWithRequest(serialReq.request,
             completionHandler: {(data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
