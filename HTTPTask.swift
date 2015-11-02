@@ -160,6 +160,9 @@ public class HTTPOperation : NSOperation {
 
 /// Configures NSURLSession Request for HTTPOperation. Also provides convenience methods for easily running HTTP Request.
 public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate {
+    var timeoutIntervalForRequest: NSTimeInterval?
+	var timeoutIntervalForResource: NSTimeInterval?
+
     var backgroundTaskMap = Dictionary<String,BackgroundBlocks>()
     //var sess: NSURLSession?
     
@@ -203,6 +206,14 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         }
         let opt = HTTPOperation()
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+        
+        if let timeoutIntervalForRequest = self.timeoutIntervalForRequest {
+			config.timeoutIntervalForRequest = timeoutIntervalForRequest
+		}
+		if let timeoutIntervalForResource = self.timeoutIntervalForResource {
+			config.timeoutIntervalForResource = timeoutIntervalForResource
+		}
+        
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         let task = session.dataTaskWithRequest(serialReq.request,
             completionHandler: {(data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
