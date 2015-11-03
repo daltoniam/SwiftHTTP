@@ -126,7 +126,7 @@ public class HTTPRequestSerializer: NSObject {
     ///check for multi form objects
     public func isMultiForm(params: Dictionary<String,AnyObject>) -> Bool {
         for (_, object) in params {
-            if object is HTTPUpload {
+            if object is HTTPUpload || object is [HTTPUpload] {
                 return true
             } else if let subParams = object as? Dictionary<String,AnyObject> {
                 if isMultiForm(subParams) {
