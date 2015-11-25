@@ -79,10 +79,10 @@ class BackgroundBlocks {
     // these 2 only get used for background download/upload since they have to be delegate methods
     var completionHandler:((HTTPResponse) -> Void)?
     var progress:((Double) -> Void)?
-    
-    /** 
+
+    /**
         Initializes a new Background Block
-        
+
         - parameter completionHandler: The closure that is run when a HTTP Request finished.
         - parameter progress: The closure that is run on the progress of a HTTP Upload or Download.
     */
@@ -96,27 +96,27 @@ class BackgroundBlocks {
 public class HTTPOperation : NSOperation {
     private var task: NSURLSessionDataTask!
     private var running = false
-    
+
     /// Controls if the task is finished or not.
     private var done = false
-    
+
     //MARK: Subclassed NSOperation Methods
-    
+
     /// Returns if the task is asynchronous or not. NSURLSessionTask requests are asynchronous.
     override public var asynchronous: Bool {
         return true
     }
-    
+
     /// Returns if the task is current running.
     override public var executing: Bool {
         return running
     }
-    
+
     /// Returns if the task is finished.
     override public var finished: Bool {
         return done
     }
-    
+
     /// Starts the task.
     override public func start() {
         if cancelled {
@@ -131,28 +131,28 @@ public class HTTPOperation : NSOperation {
 
         running = true
         done = false
-        
+
         self.didChangeValueForKey("isExecuting")
         self.didChangeValueForKey("isFinished")
 
         task.resume()
     }
-    
+
     /// Cancels the running task.
     override public func cancel() {
         super.cancel()
         task.cancel()
         finish()
     }
-    
+
     /// Sets the task to finished.
     public func finish() {
         self.willChangeValueForKey("isExecuting")
         self.willChangeValueForKey("isFinished")
-        
+
         running = false
         done = true
-        
+
         self.didChangeValueForKey("isExecuting")
         self.didChangeValueForKey("isFinished")
     }
@@ -172,29 +172,29 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
     //This gets called on auth challenges. If nil, default handling is use.
     //Returning nil from this method will cause the request to be rejected and cancelled
     public var auth:((NSURLAuthenticationChallenge) -> NSURLCredential?)?
-    
+
     //This is for doing SSL pinning
     public var security: HTTPSecurity?
-    
+
     //MARK: Public Methods
-    
+
     /// A newly minted HTTPTask for your enjoyment.
     public override init() {
         super.init()
     }
-    
-    /** 
+
+    /**
         Creates a HTTPOperation that can be scheduled on a NSOperationQueue. Called by convenience HTTP verb methods below.
-    
+
         - parameter url: The url you would like to make a request to.
         - parameter method: The HTTP method/verb for the request.
         - parameter parameters: The parameters are HTTP parameters you would like to send.
         - parameter completionHandler: The closure that is run when a HTTP Request finished.
-    
+
         - returns: A freshly constructed HTTPOperation to add to your NSOperationQueue.
     */
     public func create(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!, completionHandler:((HTTPResponse) -> Void)!) ->  HTTPOperation? {
-        
+
         let serialResponse = HTTPResponse()
         let serialReq = createRequest(url, method: method, parameters: parameters)
         if let err = serialReq.error {
@@ -244,10 +244,10 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         opt.task = task
         return opt
     }
-    
+
     /**
     Creates a HTTPOperation as a HTTP GET request and starts it for you.
-    
+
     - parameter url: The url you would like to make a request to.
     - parameter parameters: The parameters are HTTP parameters you would like to send.
     - parameter completionHandler: The closure that is run when a HTTP Request finished.
@@ -257,10 +257,10 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             opt.start()
         }
     }
-    
+
     /**
         Creates a HTTPOperation as a HTTP POST request and starts it for you.
-        
+
         - parameter url: The url you would like to make a request to.
         - parameter parameters: The parameters are HTTP parameters you would like to send.
         - parameter completionHandler: The closure that is run when a HTTP Request finished.
@@ -270,10 +270,10 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             opt.start()
         }
     }
-    
+
     /**
     Creates a HTTPOperation as a HTTP PATCH request and starts it for you.
-    
+
     - parameter url: The url you would like to make a request to.
     - parameter parameters: The parameters are HTTP parameters you would like to send.
     - parameter completionHandler: The closure that is run when a HTTP Request finished.
@@ -283,11 +283,11 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             opt.start()
         }
     }
-    
-    
+
+
     /**
         Creates a HTTPOperation as a HTTP PUT request and starts it for you.
-        
+
         - parameter url: The url you would like to make a request to.
         - parameter parameters: The parameters are HTTP parameters you would like to send.
         - parameter completionHandler: The closure that is run when a HTTP Request finished.
@@ -297,10 +297,10 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             opt.start()
         }
     }
-    
+
     /**
         Creates a HTTPOperation as a HTTP DELETE request and starts it for you.
-        
+
         - parameter url: The url you would like to make a request to.
         - parameter parameters: The parameters are HTTP parameters you would like to send.
         - parameter completionHandler: The closure that is run when a HTTP Request finished.
@@ -310,10 +310,10 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             opt.start()
         }
     }
-    
+
     /**
         Creates a HTTPOperation as a HTTP HEAD request and starts it for you.
-        
+
         - parameter url: The url you would like to make a request to.
         - parameter parameters: The parameters are HTTP parameters you would like to send.
         - parameter completionHandler: The closure that is run when a HTTP Request finished.
@@ -323,10 +323,10 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             opt.start()
         }
     }
-    
+
     /**
         Creates and starts a HTTPOperation to download a file in the background.
-    
+
         - parameter url: The url you would like to make a request to.
         - parameter method: The HTTP method you want to use. Default is GET.
         - parameter parameters: The parameters are HTTP parameters you would like to send.
@@ -352,10 +352,10 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         task.resume()
         return task
     }
-    
+
     /**
     Creates and starts a HTTPOperation to upload a file in the background.
-    
+
     - parameter url: The url you would like to make a request to.
     - parameter method: The HTTP method you want to use. Default is POST.
     - parameter parameters: The parameters are HTTP parameters you would like to send.
@@ -380,16 +380,16 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         task.resume()
         return task
     }
-    
+
     //MARK: Private Helper Methods
-    
+
     /**
         Creates and starts a HTTPOperation to download a file in the background.
-    
+
         - parameter url: The url you would like to make a request to.
         - parameter method: The HTTP method/verb for the request.
         - parameter parameters: The parameters are HTTP parameters you would like to send.
-    
+
         - returns: A NSURLRequest from configured requestSerializer.
     */
     private func createRequest(url: String, method: HTTPMethod, parameters: Dictionary<String,AnyObject>!) -> (request: NSURLRequest, error: NSError?) {
@@ -406,10 +406,10 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         }
         return (NSURLRequest(),createError(-1001))
     }
-    
+
     /**
         Creates a random string to use for the identifier of the background download/upload requests.
-    
+
         - returns: Identifier String.
     */
     private func createBackgroundIdent() -> String {
@@ -421,33 +421,33 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         }
         return "com.vluxe.swifthttp.request.\(str)"
     }
-    
+
     /**
         Creates a random string to use for the identifier of the background download/upload requests.
-        
+
         - parameter code: Code for error.
-        
+
         - returns: An NSError.
     */
     private func createError(code: Int) -> NSError {
         let text: String = HTTPStatusCode(statusCode: code).statusDescription
         return NSError(domain: "HTTPTask", code: code, userInfo: [NSLocalizedDescriptionKey: text])
     }
-    
-    
+
+
     /**
         Creates a random string to use for the identifier of the background download/upload requests.
-        
+
         - parameter identifier: The identifier string.
-        
+
         - returns: An NSError.
     */
     private func cleanupBackground(identifier: String) {
         backgroundTaskMap.removeValueForKey(identifier)
     }
-    
+
     //MARK: NSURLSession Delegate Methods
-    
+
     /// Method for authentication challenge.
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
         if let sec = security where challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
@@ -460,7 +460,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             }
             completionHandler(.CancelAuthenticationChallenge, nil)
             return
-            
+
         } else if let a = auth {
             let cred = a(challenge)
             if let c = cred {
@@ -472,9 +472,14 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
         }
         completionHandler(.PerformDefaultHandling, nil)
     }
-    
+
+
+    public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
+        completionHandler(.UseCredential, NSURLCredential(trust: challenge.protectionSpace.serverTrust!))
+
+    }
     //MARK: Methods for background download/upload
-    
+
     ///update the download/upload progress closure
     func handleProgress(session: NSURLSession, totalBytesExpected: Int64, currentBytes: Int64) {
         if session.configuration.valueForKey("identifier") != nil { //temp workaround for radar: 21097168
@@ -490,7 +495,7 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
             }
         }
     }
-    
+
     //call the completionHandler closure for upload/download requests
     func handleFinish(session: NSURLSession, task: NSURLSessionTask, response: AnyObject) {
         if session.configuration.valueForKey("identifier") != nil { //temp workaround for radar: 21097168
@@ -510,12 +515,12 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                     }
                     handler(resp)
                 }
-                
+
                 cleanupBackground(identifier)
             }
         }
     }
-    
+
     /// Called when the background task failed.
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         if let err = error {
@@ -526,37 +531,37 @@ public class HTTPTask : NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate
                         res.error = err
                         handler(res)
                     }
-        
+
                     cleanupBackground(identifier)
                 }
             }
         }
     }
-    
+
     /// The background download finished and reports the url the data was saved to.
     func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL!) {
         handleFinish(session, task: downloadTask, response: location)
     }
-    
+
     /// Will report progress of background download
     func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         handleProgress(session, totalBytesExpected: totalBytesExpectedToWrite, currentBytes:totalBytesWritten)
     }
-    
+
     /// The background download finished, don't have to really do anything.
     public func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
     }
-    
+
     /// The background upload finished and reports the response.
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData!) {
         handleFinish(session, task: dataTask, response: data)
     }
-    
+
     ///Will report progress of background upload
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         handleProgress(session, totalBytesExpected: totalBytesExpectedToSend, currentBytes:totalBytesSent)
     }
-    
+
     //implement if we want to support partial file upload/download
     func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
     }
