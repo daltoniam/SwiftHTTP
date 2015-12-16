@@ -167,6 +167,8 @@ public class HTTP: NSOperation {
     private var running = false
     /// Reports if the task is finished or not.
     private var done = false
+    /// Reports if the task is cancelled
+    private var _cancelled = false
     
     /**
     creates a new HTTP request.
@@ -191,7 +193,7 @@ public class HTTP: NSOperation {
     
     /// Returns if the task is finished.
     override public var finished: Bool {
-        return done
+        return done && !_cancelled
     }
     
     /**
@@ -230,6 +232,7 @@ public class HTTP: NSOperation {
     */
     override public func cancel() {
         task.cancel()
+        _cancelled = true
         finish()
     }
     /**
