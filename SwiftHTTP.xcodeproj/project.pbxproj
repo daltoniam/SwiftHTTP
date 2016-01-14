@@ -27,9 +27,6 @@
 		5C135F251C47366700AA3A01 /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F151C47366700AA3A01 /* Upload.swift */; };
 		5C135F261C47366700AA3A01 /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F151C47366700AA3A01 /* Upload.swift */; };
 		5C135F271C47366700AA3A01 /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F151C47366700AA3A01 /* Upload.swift */; };
-		5C135F291C47367400AA3A01 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5C135F281C47367400AA3A01 /* Info.plist */; };
-		5C135F2A1C47367400AA3A01 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5C135F281C47367400AA3A01 /* Info.plist */; };
-		5C135F2B1C47367400AA3A01 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5C135F281C47367400AA3A01 /* Info.plist */; };
 		5C135FB11C4737EE00AA3A01 /* HTTPSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F101C47366700AA3A01 /* HTTPSecurity.swift */; };
 		5C135FB21C4737EE00AA3A01 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F111C47366700AA3A01 /* Operation.swift */; };
 		5C135FB31C4737EE00AA3A01 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F121C47366700AA3A01 /* Request.swift */; };
@@ -419,7 +416,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C135F2B1C47367400AA3A01 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,7 +437,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C135F291C47367400AA3A01 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,7 +451,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C135F2A1C47367400AA3A01 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -580,7 +574,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.1;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Debug;
 		};
@@ -602,7 +596,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.1;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Release;
 		};
@@ -958,6 +952,7 @@
 				5C135FAF1C4737E200AA3A01 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6BFD901019C8D8B500DD99B6 /* Build configuration list for PBXProject "SwiftHTTP" */ = {
 			isa = XCConfigurationList;
