@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 `SwiftHTTP` adheres to [Semantic Versioning](http://semver.org/).
 
+#### [1.0.3](https://github.com/daltoniam/SwiftHTTP/tree/1.0.3)
+
+Changed:
+Add Swift package manager support
+TVOS support
+WatchOS support
+
+fixed:
+[#195](https://github.com/daltoniam/SwiftHTTP/issues/195)
+[#203](https://github.com/daltoniam/SwiftHTTP/issues/203)
 
 #### [1.0.2](https://github.com/daltoniam/SwiftHTTP/tree/1.0.2)
 

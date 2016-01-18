@@ -3,8 +3,6 @@ SwiftHTTP
 
 SwiftHTTP is a thin wrapper around NSURLSession in Swift to simplify HTTP requests.
 
-This is written Swift 2.0 (the latest). If you need older legecy support checkout the Swift-1.2 branch [here](https://github.com/daltoniam/SwiftHTTP/tree/swift-1.2). If you are upgrading from SwiftHTTP and just want the minimal changes to work with Swift 2 checkout the backwards compatibility branch [here](https://github.com/daltoniam/SwiftHTTP/tree/swift-2-bc)
-
 ## Features
 
 - Convenient Closure APIs
@@ -98,10 +96,10 @@ let opt = try HTTP.HEAD("https://domain.com/1")
 let opt = try HTTP.DELETE("https://domain.com/1")
 ```
 
-### Download
+### Background Downloads
 
 ```
-//TODO finish porting download method
+//TODO implement background download...
 ```
 
 ### Upload
@@ -428,7 +426,7 @@ To use SwiftHTTP in your project add the following 'Podfile' to your project
 	platform :ios, '8.0'
 	use_frameworks!
 
-	pod 'SwiftHTTP', '~> 1.0.0'
+	pod 'SwiftHTTP', '~> 1.0.3'
 
 Then run:
 
@@ -450,7 +448,7 @@ $ brew install carthage
 To integrate SwiftHTTP into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```
-github "daltoniam/SwiftHTTP" >= 1.0.0
+github "daltoniam/SwiftHTTP" >= 1.0.3
 ```
 
 ### Rogue
@@ -477,6 +475,7 @@ If you are running this in an OSX app or on a physical iOS device you will need 
 
 ## TODOs
 
+- [ ] Linux support?
 - [ ] Add more unit tests
 
 ## License
