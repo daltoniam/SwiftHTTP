@@ -561,8 +561,8 @@ class DelegateManager: NSObject, NSURLSessionDataDelegate {
     //handle progress
     func progressHandler(response: Response, expectedLength: Int64, currentLength: Int64) {
         guard let handler = response.progressHandler else { return }
-        let slice = 1/expectedLength
-        handler(Float(slice*currentLength))
+        let slice = Float(1.0)/Float(expectedLength)
+        handler(slice*Float(currentLength))
     }
     
     /**

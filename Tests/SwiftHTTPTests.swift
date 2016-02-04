@@ -38,7 +38,35 @@ class SwiftHTTPTests: XCTestCase {
         }
         waitForExpectationsWithTimeout(30, handler: nil)
     }
-    
+	
+	func testGetProgress() {
+		let expectation1 = expectationWithDescription("testGetProgressFinished")
+		let expectation2 = expectationWithDescription("testGetProgressIncremented")
+
+		do {
+			let opt = try HTTP.GET("http://photojournal.jpl.nasa.gov/tiff/PIA19330.tif", parameters: nil)
+			var alreadyCheckedProgressIncremented: Bool = false
+			opt.progress = { progress in
+				if progress > 0 && !alreadyCheckedProgressIncremented {
+					alreadyCheckedProgressIncremented = true
+					XCTAssert(true, "Pass")
+					expectation2.fulfill()
+				}
+			}
+			opt.start { response in
+				if response.error != nil {
+					XCTAssert(false, "Failure")
+				}
+				XCTAssert(true, "Pass")
+				expectation1.fulfill()
+			}
+		} catch {
+			XCTAssert(false, "Failure")
+		}
+
+		waitForExpectationsWithTimeout(30, handler: nil)
+	}
+	
     func testOperationDependencies() {
         let expectation1 = expectationWithDescription("testOperationDependencies1")
         let expectation2 = expectationWithDescription("testOperationDependencies2")
