@@ -163,13 +163,80 @@ public class HTTP: NSOperation {
     
     ///the actual task
     var task: NSURLSessionDataTask!
-    /// Reports if the task is currently running
-    private var running = false
-    /// Reports if the task is finished or not.
-    private var done = false
-    /// Reports if the task is cancelled
-    private var _cancelled = false
-    
+	
+	private enum State: Int, Comparable {
+		/// The initial state of an `Operation`.
+		case Initialized
+		
+		/**
+		The `Operation`'s conditions have all been satisfied, and it is ready
+		to execute.
+		*/
+		case Ready
+		
+		/// The `Operation` is executing.
+		case Executing
+		
+		/// The `Operation` has finished executing.
+		case Finished
+		
+		/// what state transitions are allowed
+		func canTransitionToState(target: State) -> Bool {
+			switch (self, target) {
+			case (.Initialized, .Ready):
+				return true
+			case (.Ready, .Executing):
+				return true
+			case (.Ready, .Finished):
+				return true
+			case (.Executing, .Finished):
+				return true
+			default:
+				return false
+			}
+		}
+	}
+	
+	/// Private storage for the `state` property that will be KVO observed. don't set directly!
+	private var _state = State.Initialized
+	
+	/// A lock to guard reads and writes to the `_state` property
+	private let stateLock = NSLock()
+	
+	// use the KVO mechanism to indicate that changes to "state" affect ready, executing, finished properties
+	class func keyPathsForValuesAffectingIsReady() -> Set<NSObject> {
+		return ["state"]
+	}
+	
+	class func keyPathsForValuesAffectingIsExecuting() -> Set<NSObject> {
+		return ["state"]
+	}
+	
+	class func keyPathsForValuesAffectingIsFinished() -> Set<NSObject> {
+		return ["state"]
+	}
+	
+	// threadsafe
+	private var state: State {
+		get {
+			return stateLock.withCriticalScope {
+				_state
+			}
+		}
+		set(newState) {
+			willChangeValueForKey("state")
+			stateLock.withCriticalScope { Void -> Void in
+				guard _state != .Finished else {
+					print("Invalid! - Attempted to back out of Finished State")
+					return
+				}
+				assert(_state.canTransitionToState(newState), "Performing invalid state transition.")
+				_state = newState
+			}
+			didChangeValueForKey("state")
+		}
+	}
+	
     /**
     creates a new HTTP request.
     */
@@ -177,6 +244,7 @@ public class HTTP: NSOperation {
         super.init()
         task = session.dataTaskWithRequest(req)
         DelegateManager.sharedInstance.addResponseForTask(task)
+		state = .Ready
     }
     
     //MARK: Subclassed NSOperation Methods
@@ -185,16 +253,30 @@ public class HTTP: NSOperation {
     override public var asynchronous: Bool {
         return true
     }
-    
+	
+	// If the operation has been cancelled, "isReady" should return true
+	override public var ready: Bool {
+		switch state {
+			
+		case .Initialized:
+			return cancelled
+			
+		case .Ready:
+			return super.ready || cancelled
+			
+		default:
+			return false
+		}
+	}
+	
     /// Returns if the task is current running.
-    override public var executing: Bool {
-        return running
-    }
-    
-    /// Returns if the task is finished.
-    override public var finished: Bool {
-        return done && !_cancelled
-    }
+	override public var executing: Bool {
+		return state == .Executing
+	}
+	
+	override public var finished: Bool {
+		return state == .Finished
+	}
     
     /**
     start/sends the HTTP task with a completionHandler. Use this when *NOT* using an NSOperationQueue.
@@ -208,31 +290,20 @@ public class HTTP: NSOperation {
     Start the HTTP task. Make sure to set the onFinish closure before calling this to get a response.
     */
     override public func start() {
-        if cancelled {
-            self.willChangeValueForKey("isFinished")
-            done = true
-            self.didChangeValueForKey("isFinished")
-            return
-        }
-        
-        self.willChangeValueForKey("isExecuting")
-        self.willChangeValueForKey("isFinished")
-        
-        running = true
-        done = false
-        
-        self.didChangeValueForKey("isExecuting")
-        self.didChangeValueForKey("isFinished")
-        
-        task.resume()
+		if cancelled {
+			state = .Finished
+			return
+		}
+		
+		state = .Executing
+		task.resume()
     }
-    
+	
     /**
     Cancel the running task
     */
     override public func cancel() {
         task.cancel()
-        _cancelled = true
         finish()
     }
     /**
@@ -240,16 +311,30 @@ public class HTTP: NSOperation {
     If you aren't using the DelegateManager, you will have to call this in your delegate's URLSession:dataTask:didCompleteWithError: method
     */
     public func finish() {
-        self.willChangeValueForKey("isExecuting")
-        self.willChangeValueForKey("isFinished")
-        
-        running = false
-        done = true
-        
-        self.didChangeValueForKey("isExecuting")
-        self.didChangeValueForKey("isFinished")
+		state = .Finished
     }
-    
+	
+	/**
+	Check not executing or finished when adding dependencies
+	*/
+	override public func addDependency(operation: NSOperation) {
+		assert(state < .Executing, "Dependencies cannot be modified after execution has begun.")
+		super.addDependency(operation)
+	}
+	
+	/**
+	Convenience bool to flag as operation userInitiated if necessary
+	*/
+	var userInitiated: Bool {
+		get {
+			return qualityOfService == .UserInitiated
+		}
+		set {
+			assert(state < State.Executing, "Cannot modify userInitiated after execution has begun.")
+			qualityOfService = newValue ? .UserInitiated : .Default
+		}
+	}
+
     /**
     Class method to create a GET request that handles the NSMutableURLRequest and parameter encoding for you.
     */
@@ -334,6 +419,25 @@ public class HTTP: NSOperation {
     public class func globalRequest(handler: ((NSMutableURLRequest) -> Void)?) {
         DelegateManager.sharedInstance.requestHandler = handler
     }
+}
+
+// Simple operator functions to simplify the assertions used above.
+private func <(lhs: HTTP.State, rhs: HTTP.State) -> Bool {
+	return lhs.rawValue < rhs.rawValue
+}
+
+private func ==(lhs: HTTP.State, rhs: HTTP.State) -> Bool {
+	return lhs.rawValue == rhs.rawValue
+}
+
+// Lock for getting / setting state safely
+extension NSLock {
+	func withCriticalScope<T>(@noescape block: Void -> T) -> T {
+		lock()
+		let value = block()
+		unlock()
+		return value
+	}
 }
 
 /**
@@ -457,8 +561,8 @@ class DelegateManager: NSObject, NSURLSessionDataDelegate {
     //handle progress
     func progressHandler(response: Response, expectedLength: Int64, currentLength: Int64) {
         guard let handler = response.progressHandler else { return }
-        let slice = 1/expectedLength
-        handler(Float(slice*currentLength))
+        let slice = Float(1.0)/Float(expectedLength)
+        handler(slice*Float(currentLength))
     }
     
     /**
