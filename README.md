@@ -411,12 +411,12 @@ Swift has a lot of great JSON parsing libraries, but I made one specifically des
 
 ## Requirements
 
-SwiftHTTP works with iOS 7/OSX 10.9 or above. It is recommended to use iOS 8/10.10 or above for Cocoapods/framework support.
+SwiftHTTP works with iOS 7/OSX 10.10 or above. It is recommended to use iOS 8/10.10 or above for Cocoapods/framework support.
 To use SwiftHTTP with a project targeting iOS 7, you must include all Swift files directly in your project.
 
 ## Installation
 
-### Cocoapods
+### CocoaPods
 
 Check out [Get Started](https://guides.cocoapods.org/using/getting-started.html) tab on [cocoapods.org](http://cocoapods.org/).
 
@@ -426,7 +426,7 @@ To use SwiftHTTP in your project add the following 'Podfile' to your project
 	platform :ios, '8.0'
 	use_frameworks!
 
-	pod 'SwiftHTTP', '~> 1.0.3'
+	pod 'SwiftHTTP', '~> 1.0.4'
 
 Then run:
 
@@ -448,7 +448,7 @@ $ brew install carthage
 To integrate SwiftHTTP into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```
-github "daltoniam/SwiftHTTP" >= 1.0.3
+github "daltoniam/SwiftHTTP" >= 1.0.4
 ```
 
 ### Rogue
