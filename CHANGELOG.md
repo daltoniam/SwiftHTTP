@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 `SwiftHTTP` adheres to [Semantic Versioning](http://semver.org/).
 
+#### [1.0.4](https://github.com/daltoniam/SwiftHTTP/tree/1.0.4)
+
+fixed:
+[#215](https://github.com/daltoniam/SwiftHTTP/issues/215)
+
 #### [1.0.3](https://github.com/daltoniam/SwiftHTTP/tree/1.0.3)
 
 Changed:
