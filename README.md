@@ -411,7 +411,7 @@ Swift has a lot of great JSON parsing libraries, but I made one specifically des
 
 ## Requirements
 
-SwiftHTTP works with iOS 7/OSX 10.10 or above. It is recommended to use iOS 8/10.10 or above for Cocoapods/framework support.
+SwiftHTTP works with iOS 7/OSX 10.10 or above. It is recommended to use iOS 8/10.10 or above for CocoaPods/framework support.
 To use SwiftHTTP with a project targeting iOS 7, you must include all Swift files directly in your project.
 
 ## Installation
