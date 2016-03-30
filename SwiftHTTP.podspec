@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "SwiftHTTP"
-  s.version      = "1.0.4"
+  s.version      = "1.0.5"
   s.summary      = "Thin wrapper around NSURLSession in Swift. Simplifies HTTP requests."
   s.homepage     = "https://github.com/daltoniam/SwiftHTTP"
   s.license      = 'Apache License, Version 2.0'

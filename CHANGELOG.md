@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 `SwiftHTTP` adheres to [Semantic Versioning](http://semver.org/).
 
+#### [1.0.5](https://github.com/daltoniam/SwiftHTTP/tree/1.0.5)
+
+Swift 2.2 update.
+
 #### [1.0.4](https://github.com/daltoniam/SwiftHTTP/tree/1.0.4)
 
 fixed:
