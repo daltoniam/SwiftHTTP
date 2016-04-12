@@ -290,7 +290,11 @@ extension NSMutableURLRequest {
     Helper method to create the multipart form data
     */
     func multiFormHeader(name: String, fileName: String?, type: String?, multiCRLF: String) -> String {
-        var str = "Content-Disposition: form-data; name=\"\(name.escaped!)\""
+        var name = name
+        if name.hasSuffix("[]") {
+            name = "\(name.substringToIndex(name.endIndex.advancedBy(-2)).escaped!)[]"
+        }
+        var str = "Content-Disposition: form-data; name=\"\(name)\""
         if let name = fileName {
             str += "; filename=\"\(name)\""
         }
