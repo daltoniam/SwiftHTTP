@@ -21,6 +21,18 @@ extension String {
         set.removeCharactersInString("[].:/?&=;+!@#$()',*\"") // remove the HTTP ones from the set.
         return self.stringByAddingPercentEncodingWithAllowedCharacters(set)
     }
+    
+    /**
+     A simple extension to the String object to url encode quotes only.
+     
+     :returns: string with .
+     */
+    var quoteEscaped: String? {
+        let set = NSMutableCharacterSet()
+        set.formUnionWithCharacterSet(NSCharacterSet.URLQueryAllowedCharacterSet())
+        set.removeCharactersInString("[].:/?&+!@#$(),*") // remove the HTTP ones from the set.
+        return self.stringByAddingPercentEncodingWithAllowedCharacters(set)
+    }
 }
 
 /**
@@ -118,7 +130,10 @@ extension Dictionary: HTTPParameterProtocol {
                 if let subParam = nestedVal as? Dictionary { //as? HTTPParameterProtocol <- bug? should work.
                     collect.appendContentsOf(subParam.createPairs(useKey))
                 } else if let subParam = nestedVal as? Array<AnyObject> {
-                    collect.appendContentsOf(subParam.createPairs(useKey))
+                    //collect.appendContentsOf(subParam.createPairs(useKey)) <- bug? should work.
+                    for s in subParam.createPairs(useKey) {
+                        collect.append(s)
+                    }
                 } else {
                     collect.append(HTTPPair(key: useKey, value: nestedVal))
                 }
@@ -144,7 +159,10 @@ extension Array: HTTPParameterProtocol {
                 if let subParam = nestedVal as? Dictionary<String, AnyObject> {
                     collect.appendContentsOf(subParam.createPairs(useKey))
                 } else if let subParam = nestedVal as? Array<AnyObject> {
-                    collect.appendContentsOf(subParam.createPairs(useKey))
+                    //collect.appendContentsOf(subParam.createPairs(useKey)) <- bug? should work.
+                    for s in subParam.createPairs(useKey) {
+                        collect.append(s)
+                    }
                 } else {
                     collect.append(HTTPPair(key: useKey, value: nestedVal))
                 }
@@ -290,9 +308,9 @@ extension NSMutableURLRequest {
     Helper method to create the multipart form data
     */
     func multiFormHeader(name: String, fileName: String?, type: String?, multiCRLF: String) -> String {
-        var str = "Content-Disposition: form-data; name=\"\(name.escaped!)\""
-        if let name = fileName {
-            str += "; filename=\"\(name)\""
+        var str = "Content-Disposition: form-data; name=\"\(name.quoteEscaped!)\""
+        if let n = fileName {
+            str += "; filename=\"\(n.quoteEscaped!)\""
         }
         str += multiCRLF
         if let t = type {
