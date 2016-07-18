@@ -59,6 +59,7 @@ public class Upload: NSObject, NSCoding {
         fileName = url.lastPathComponent
         let d = try NSData(contentsOfURL: url, options: NSDataReadingOptions.DataReadingMappedIfSafe)
         data = d
+        getMimeType()
         return d
     }
     

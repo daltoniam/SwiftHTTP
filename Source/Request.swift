@@ -27,11 +27,8 @@ extension String {
      
      :returns: string with .
      */
-    var quoteEscaped: String? {
-        let set = NSMutableCharacterSet()
-        set.formUnionWithCharacterSet(NSCharacterSet.URLQueryAllowedCharacterSet())
-        set.removeCharactersInString("[].:/?&+!@#$(),*") // remove the HTTP ones from the set.
-        return self.stringByAddingPercentEncodingWithAllowedCharacters(set)
+    var quoteEscaped: String {
+        return self.stringByReplacingOccurrencesOfString("\"", withString: "%22").stringByReplacingOccurrencesOfString("'", withString: "%27")
     }
 }
 
@@ -308,9 +305,9 @@ extension NSMutableURLRequest {
     Helper method to create the multipart form data
     */
     func multiFormHeader(name: String, fileName: String?, type: String?, multiCRLF: String) -> String {
-        var str = "Content-Disposition: form-data; name=\"\(name.quoteEscaped!)\""
+        var str = "Content-Disposition: form-data; name=\"\(name.quoteEscaped)\""
         if let n = fileName {
-            str += "; filename=\"\(n.quoteEscaped!)\""
+            str += "; filename=\"\(n.quoteEscaped)\""
         }
         str += multiCRLF
         if let t = type {
