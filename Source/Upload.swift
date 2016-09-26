@@ -15,22 +15,22 @@ import Foundation
 /**
 Upload errors
 */
-enum HTTPUploadError: ErrorType {
-    case NoFileUrl
+enum HTTPUploadError: Error {
+    case noFileUrl
 }
 
 
 /**
 This is how to upload files in SwiftHTTP. The upload object represents a file to upload by either a data blob or a url (which it reads off disk).
 */
-public class Upload: NSObject, NSCoding {
-    var fileUrl: NSURL? {
+open class Upload: NSObject, NSCoding {
+    var fileUrl: URL? {
         didSet {
             getMimeType()
         }
     }
     var mimeType: String?
-    var data: NSData?
+    var data: Data?
     var fileName: String?
     
     /**
@@ -40,24 +40,22 @@ public class Upload: NSObject, NSCoding {
         mimeType = "application/octet-stream"
         guard let url = fileUrl else { return }
         #if os(iOS) || os(OSX) //for watchOS support
-        if let ext = url.pathExtension  {
-            guard let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, nil) else { return }
+            guard let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, url.pathExtension as CFString, nil) else { return }
             guard let str = UTTypeCopyPreferredTagWithClass(UTI.takeRetainedValue(), kUTTagClassMIMEType) else { return }
             mimeType = str.takeRetainedValue() as String
-        }
         #endif
     }
     
     /**
     Reads the data from disk or from memory. Throws an error if no data or file is found.
     */
-    public func getData() throws -> NSData {
+    open func getData() throws -> Data {
         if let d = data {
             return d
         }
-        guard let url = fileUrl else { throw HTTPUploadError.NoFileUrl }
+        guard let url = fileUrl else { throw HTTPUploadError.noFileUrl }
         fileName = url.lastPathComponent
-        let d = try NSData(contentsOfURL: url, options: NSDataReadingOptions.DataReadingMappedIfSafe)
+        let d = try Data(contentsOf: url, options: NSData.ReadingOptions.mappedIfSafe)
         data = d
         getMimeType()
         return d
@@ -66,11 +64,11 @@ public class Upload: NSObject, NSCoding {
     /**
     Standard NSCoder support
     */
-    public func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(self.fileUrl, forKey: "fileUrl")
-        aCoder.encodeObject(self.mimeType, forKey: "mimeType")
-        aCoder.encodeObject(self.fileName, forKey: "fileName")
-        aCoder.encodeObject(self.data, forKey: "data")
+    open func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.fileUrl, forKey: "fileUrl")
+        aCoder.encode(self.mimeType, forKey: "mimeType")
+        aCoder.encode(self.fileName, forKey: "fileName")
+        aCoder.encode(self.data, forKey: "data")
     }
     
     /**
@@ -82,10 +80,10 @@ public class Upload: NSObject, NSCoding {
     
     required public convenience init(coder aDecoder: NSCoder) {
         self.init()
-        fileUrl = aDecoder.decodeObjectForKey("fileUrl") as? NSURL
-        mimeType = aDecoder.decodeObjectForKey("mimeType") as? String
-        fileName = aDecoder.decodeObjectForKey("fileName") as? String
-        data = aDecoder.decodeObjectForKey("data") as? NSData
+        fileUrl = aDecoder.decodeObject(forKey: "fileUrl") as? URL
+        mimeType = aDecoder.decodeObject(forKey: "mimeType") as? String
+        fileName = aDecoder.decodeObject(forKey: "fileName") as? String
+        data = aDecoder.decodeObject(forKey: "data") as? Data
     }
     
     /**
@@ -93,7 +91,7 @@ public class Upload: NSObject, NSCoding {
     
     -parameter fileUrl: The fileUrl is a standard url path to a file.
     */
-    public convenience init(fileUrl: NSURL) {
+    public convenience init(fileUrl: URL) {
         self.init()
         self.fileUrl = fileUrl
     }
@@ -106,7 +104,7 @@ public class Upload: NSObject, NSCoding {
     -parameter mimeType: The mimeType is just that. The mime type you would like the file to uploaded as.
     */
     ///upload a file from a a data blob. Must add a filename and mimeType as that can't be infered from the data
-    public convenience init(data: NSData, fileName: String, mimeType: String) {
+    public convenience init(data: Data, fileName: String, mimeType: String) {
         self.init()
         self.data = data
         self.fileName = fileName

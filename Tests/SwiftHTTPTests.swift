@@ -22,7 +22,7 @@ class SwiftHTTPTests: XCTestCase {
     }
     
     func testGetRequest() {
-        let expectation = expectationWithDescription("testGetRequest")
+        let expectation = self.expectation(description: "testGetRequest")
         
         do {
             let opt = try HTTP.GET("https://google.com", parameters: nil)
@@ -36,12 +36,12 @@ class SwiftHTTPTests: XCTestCase {
         } catch {
             XCTAssert(false, "Failure")
         }
-        waitForExpectationsWithTimeout(30, handler: nil)
+        waitForExpectations(timeout: 30, handler: nil)
     }
 	
 	func testGetProgress() {
-		let expectation1 = expectationWithDescription("testGetProgressFinished")
-		let expectation2 = expectationWithDescription("testGetProgressIncremented")
+		let expectation1 = expectation(description: "testGetProgressFinished")
+		let expectation2 = expectation(description: "testGetProgressIncremented")
 
 		do {
 			let opt = try HTTP.GET("http://photojournal.jpl.nasa.gov/tiff/PIA19330.tif", parameters: nil)
@@ -64,19 +64,19 @@ class SwiftHTTPTests: XCTestCase {
 			XCTAssert(false, "Failure")
 		}
 
-		waitForExpectationsWithTimeout(30, handler: nil)
+		waitForExpectations(timeout: 30, handler: nil)
 	}
 	
     func testOperationDependencies() {
-        let expectation1 = expectationWithDescription("testOperationDependencies1")
-        let expectation2 = expectationWithDescription("testOperationDependencies2")
+        let expectation1 = expectation(description: "testOperationDependencies1")
+        let expectation2 = expectation(description: "testOperationDependencies2")
         
         var operation1Finished = false
         
         let urlString1 = "http://photojournal.jpl.nasa.gov/tiff/PIA19330.tif" // (4.32 MB)
         let urlString2 = "http://photojournal.jpl.nasa.gov/jpeg/PIA19330.jpg" // (0.14 MB)
         
-        let operationQueue = NSOperationQueue()
+        let operationQueue = OperationQueue()
         operationQueue.maxConcurrentOperationCount = 2
         
         do {
@@ -106,6 +106,6 @@ class SwiftHTTPTests: XCTestCase {
             XCTAssert(false, "Failure")
         }
         
-        waitForExpectationsWithTimeout(30, handler: nil)
+        waitForExpectations(timeout: 30, handler: nil)
     }
 }
