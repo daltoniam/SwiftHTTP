@@ -348,9 +348,8 @@ extension NSMutableURLRequest {
      check if the parameters contain a file object within them
     -parameter parameters: The parameters to search through for an upload object
     */
-    public func containsFile(_ parameters: Any) -> Bool {
-        guard let params = parameters as? HTTPParameterProtocol else { return false }
-        for pair in params.createPairs(nil) {
+    public func containsFile(_ parameters: HTTPParameterProtocol) -> Bool {
+        for pair in parameters.createPairs(nil) {
             if let _ = pair.upload {
                 return true
             }
