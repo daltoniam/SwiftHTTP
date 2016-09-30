@@ -87,7 +87,7 @@ open class Response {
     open var error: NSError?
     ///Returns the response as a string
     open var text: String? {
-        return  NSString(data: data, encoding: String.Encoding.utf8.rawValue) as? String
+        return  String(data: data, encoding: .utf8)
     }
     ///get the description of the response
     open var description: String {

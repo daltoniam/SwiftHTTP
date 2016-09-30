@@ -257,10 +257,11 @@ extension NSMutableURLRequest {
     */
     public func appendParametersAsUrlEncoding(_ parameters: HTTPParameterProtocol) {
         if value(forHTTPHeaderField: contentTypeKey) == nil {
-            let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(String.Encoding.utf8.rawValue))
-            setValue("application/x-www-form-urlencoded; charset=\(charset)",
-                forHTTPHeaderField:contentTypeKey)
-            
+            var contentStr = "application/x-www-form-urlencoded"
+            if let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(String.Encoding.utf8.rawValue)) {
+                contentStr += "; charset=\(charset)"
+            }
+            setValue(contentStr, forHTTPHeaderField:contentTypeKey)
         }
         let queryString = parameters.createPairs(nil).map({ (pair) in
             return pair.escapedValue
@@ -348,9 +349,8 @@ extension NSMutableURLRequest {
      check if the parameters contain a file object within them
     -parameter parameters: The parameters to search through for an upload object
     */
-    public func containsFile(_ parameters: Any) -> Bool {
-        guard let params = parameters as? HTTPParameterProtocol else { return false }
-        for pair in params.createPairs(nil) {
+    public func containsFile(_ parameters: HTTPParameterProtocol) -> Bool {
+        for pair in parameters.createPairs(nil) {
             if let _ = pair.upload {
                 return true
             }
