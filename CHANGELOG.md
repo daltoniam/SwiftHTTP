@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 `SwiftHTTP` adheres to [Semantic Versioning](http://semver.org/).
 
+#### [2.0.1](https://github.com/daltoniam/SwiftHTTP/tree/2.0.1)
+
+Addresses bugs from the Swift 3 port.
+
+fixed:
+[#249](https://github.com/daltoniam/SwiftHTTP/issues/249)
+[#248](https://github.com/daltoniam/SwiftHTTP/issues/248)
+
 #### [2.0.0](https://github.com/daltoniam/SwiftHTTP/tree/2.0.0)
 
 Swift 3.0 update.
