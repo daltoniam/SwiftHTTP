@@ -429,11 +429,17 @@ open class HTTP: Operation {
         return task
     }
     
+    ///the timeout interval for request
+    public static var timeoutIntervalForRequest: TimeInterval?
+    
     /**
     Class method to create a HTTP request that handles the NSMutableURLRequest and parameter encoding for you.
     */
     open class func New(_ url: String, method: HTTPVerb, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), isDownload: Bool = false) throws -> HTTP  {
         guard let req = NSMutableURLRequest(urlString: url) else { throw HTTPOptError.invalidRequest }
+        if let timeoutInterval = timeoutIntervalForRequest {
+            req.timeoutInterval = timeoutInterval
+        }
         if let handler = DelegateManager.sharedInstance.requestHandler {
             handler(req)
         }
