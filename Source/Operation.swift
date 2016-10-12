@@ -494,7 +494,7 @@ extension NSLock {
 Absorb all the delegates methods of NSURLSession and forwards them to pretty closures.
 This is basically the sin eater for NSURLSession.
 */
-class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownloadDelegate {
+public class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownloadDelegate {
     //the singleton to handle delegate needs of NSURLSession
     static let sharedInstance = DelegateManager()
     
@@ -533,7 +533,7 @@ class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownloadDeleg
     }
     
     //handle getting data
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         addResponseForTask(dataTask)
         guard let resp = responseForTask(dataTask) else { return }
         resp.collectData.append(data)
@@ -544,7 +544,7 @@ class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownloadDeleg
     }
     
     //handle task finishing
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let resp = responseForTask(task) else { return }
         resp.error = error as NSError?
         if let hresponse = task.response as? HTTPURLResponse {
@@ -564,7 +564,7 @@ class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownloadDeleg
     }
     
     //handle authenication
-    func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         var sec = security
         var au = auth
         if let resp = responseForTask(task) {
@@ -599,26 +599,26 @@ class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownloadDeleg
     }
     
     //upload progress
-    func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         guard let resp = responseForTask(task) else { return }
         progressHandler(resp, expectedLength: totalBytesExpectedToSend, currentLength: totalBytesSent)
     }
     
     //download progress
-    func urlSession(_ session: Foundation.URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+    public func urlSession(_ session: Foundation.URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         guard let resp = responseForTask(downloadTask) else { return }
         progressHandler(resp, expectedLength: totalBytesExpectedToWrite, currentLength: bytesWritten)
     }
     
     //handle download task
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         guard let resp = responseForTask(downloadTask) else { return }
         guard let handler = resp.downloadHandler else { return }
         handler(location)
     }
     
     //handle progress
-    func progressHandler(_ response: Response, expectedLength: Int64, currentLength: Int64) {
+    public func progressHandler(_ response: Response, expectedLength: Int64, currentLength: Int64) {
         guard let handler = response.progressHandler else { return }
         let slice = Float(1.0)/Float(expectedLength)
         handler(slice*Float(currentLength))
