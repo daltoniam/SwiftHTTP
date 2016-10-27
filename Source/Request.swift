@@ -330,8 +330,11 @@ extension NSMutableURLRequest {
             } catch let error {
                 throw error
             }
-            let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(String.Encoding.utf8.rawValue))
-            setValue("application/json; charset=\(charset)", forHTTPHeaderField: contentTypeKey)
+            var contentStr = "application/json"
+            if let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(String.Encoding.utf8.rawValue)) {
+                contentStr += "; charset=\(charset)"
+            }
+            setValue(contentStr, forHTTPHeaderField: contentTypeKey)
         }
     }
     
