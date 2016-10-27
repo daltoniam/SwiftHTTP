@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 `SwiftHTTP` adheres to [Semantic Versioning](http://semver.org/).
 
+#### [2.0.2](https://github.com/daltoniam/SwiftHTTP/tree/2.0.2)
+
+Small fix for JSON serializer.
+
 #### [2.0.1](https://github.com/daltoniam/SwiftHTTP/tree/2.0.1)
 
 Addresses bugs from the Swift 3 port.
