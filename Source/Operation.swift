@@ -607,7 +607,7 @@ public class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownlo
     //download progress
     public func urlSession(_ session: Foundation.URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         guard let resp = responseForTask(downloadTask) else { return }
-        progressHandler(resp, expectedLength: totalBytesExpectedToWrite, currentLength: bytesWritten)
+        progressHandler(resp, expectedLength: totalBytesExpectedToWrite, currentLength: totalBytesWritten)
     }
     
     //handle download task
