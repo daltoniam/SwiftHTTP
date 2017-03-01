@@ -16,10 +16,10 @@ extension String {
     :returns: Encoded version of of string it was called as.
     */
     var escaped: String? {
-        let set = NSMutableCharacterSet()
-        set.formUnion(with: CharacterSet.urlQueryAllowed)
-        set.removeCharacters(in: "[].:/?&=;+!@#$()',*\"") // remove the HTTP ones from the set.
-        return self.addingPercentEncoding(withAllowedCharacters: set as CharacterSet)
+        var set = CharacterSet()
+        set.formUnion(CharacterSet.urlQueryAllowed)
+        set.remove(charactersIn: "[].:/?&=;+!@#$()',*\"") // remove the HTTP ones from the set.
+        return self.addingPercentEncoding(withAllowedCharacters: set)
     }
     
     /**
