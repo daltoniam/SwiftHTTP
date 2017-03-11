@@ -110,6 +110,16 @@ open class Response {
         }
         return buffer
     }
+    ///get suggestedFilename with other encoding
+    open func suggestedFilename(encoding: String.Encoding) -> String? {
+        guard let suggestedFilename = suggestedFilename else {
+            return nil
+        }
+        if let byte = suggestedFilename.cString(using: .isoLatin1) {
+            return String(cString: byte, encoding: encoding)
+        }
+        return nil
+    }
     ///private things
     
     ///holds the collected data
