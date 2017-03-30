@@ -70,27 +70,26 @@ public struct HTTPPair {
     /**
     Computed property of the string representation of the storedVal
     */
-    var value: String {
+    var value: String? {
         if let v = storeVal as? String {
             return v
-        } else if let v = storeVal.description {
-            return v
+        } else if storeVal is NSNull {
+            return "NULL"
         }
-        return ""
+        
+        return storeVal.description
     }
     /**
     Computed property of the string representation of the storedVal escaped for URLs
     */
     var escapedValue: String {
-        if let v = value.escaped {
-            if let k = key {
-                if let escapedKey = k.escaped {
-                    return "\(escapedKey)=\(v)"
-                }
-            }
-            return v
+        let v = value?.escaped ?? ""
+        
+        if let escapedKey = key?.escaped {
+            return "\(escapedKey)=\(v)"
         }
-        return ""
+        
+        return v
     }
 }
 
