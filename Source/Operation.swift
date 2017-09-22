@@ -261,7 +261,7 @@ open class HTTP: Operation {
 		}
 		set(newState) {
 			willChangeValue(forKey: "state")
-			stateLock.withCriticalScope { Void -> Void in
+			stateLock.withCriticalScope { () -> Void in
 				guard _state != .finished else {
 					print("Invalid! - Attempted to back out of Finished State")
 					return
@@ -482,7 +482,7 @@ private func ==(lhs: HTTP.State, rhs: HTTP.State) -> Bool {
 
 // Lock for getting / setting state safely
 extension NSLock {
-	func withCriticalScope<T>(_ block: (Void) -> T) -> T {
+	func withCriticalScope<T>(_ block: () -> T) -> T {
 		lock()
 		let value = block()
 		unlock()
@@ -640,8 +640,8 @@ public class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownlo
 /**
 Handles providing singletons of NSURLSession.
 */
-class SharedSession {
-    static let defaultSession = URLSession(configuration: URLSessionConfiguration.default,
+public class SharedSession {
+    public static let defaultSession = URLSession(configuration: URLSessionConfiguration.default,
         delegate: DelegateManager.sharedInstance, delegateQueue: nil)
     static let ephemeralSession = URLSession(configuration: URLSessionConfiguration.ephemeral,
         delegate: DelegateManager.sharedInstance, delegateQueue: nil)

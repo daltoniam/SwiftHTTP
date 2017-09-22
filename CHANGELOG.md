@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 `SwiftHTTP` adheres to [Semantic Versioning](http://semver.org/).
 
+#### [2.1.0](https://github.com/daltoniam/SwiftHTTP/tree/2.1.0)
+
+Update for Swift 4 support
+
+fixed:
+[#259](https://github.com/daltoniam/SwiftHTTP/issues/259)
+[#265](https://github.com/daltoniam/SwiftHTTP/issues/265)
+
 #### [2.0.2](https://github.com/daltoniam/SwiftHTTP/tree/2.0.2)
 
 Small fix for JSON serializer.
