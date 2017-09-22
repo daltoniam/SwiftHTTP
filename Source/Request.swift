@@ -73,10 +73,9 @@ public struct HTTPPair {
     var value: String {
         if let v = storeVal as? String {
             return v
-        } else if let v = storeVal.description {
-            return v
+        } else {
+            return "\(storeVal)"
         }
-        return ""
     }
     /**
     Computed property of the string representation of the storedVal escaped for URLs
