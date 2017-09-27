@@ -6,7 +6,7 @@ SwiftHTTP is a thin wrapper around NSURLSession in Swift to simplify HTTP reques
 ## Features
 
 - Convenient Closure APIs
-- NSOperationQueue Support
+- Simple Queue Support
 - Parameter Encoding
 - Builtin JSON Request Serialization
 - Upload/Download with Progress Closure
@@ -25,40 +25,30 @@ import SwiftHTTP
 
 The most basic request. By default an Data object will be returned for the response.
 ```swift
-do {
-    let opt = try HTTP.GET("https://google.com")
-    opt.start { response in
-    	if let err = response.error {
-			print("error: \(err.localizedDescription)")
-			return //also notify app of failure as needed
-		}
-        print("opt finished: \(response.description)")
-        //print("data is: \(response.data)") access the response of the data with response.data
-    }
-} catch let error {
-    print("got an error creating the request: \(error)")
+HTTP.GET("https://google.com") { response in
+	if let err = response.error {
+		print("error: \(err.localizedDescription)")
+		return //also notify app of failure as needed
+	}
+    print("opt finished: \(response.description)")
+    //print("data is: \(response.data)") access the response of the data with response.data
 }
 ```
 
 We can also add parameters as with standard container objects and they will be properly serialized to their respective HTTP equivalent.
 
 ```swift
-do {
-	//the url sent will be https://google.com?hello=world&param2=value2
-    let opt = try HTTP.GET("https://google.com", parameters: ["hello": "world", "param2": "value2"])
-    opt.start { response in
-    	if let err = response.error {
-			print("error: \(err.localizedDescription)")
-			return //also notify app of failure as needed
-		}
-        print("opt finished: \(response.description)")
-    }
-} catch let error {
-    print("got an error creating the request: \(error)")
+//the url sent will be https://google.com?hello=world&param2=value2
+HTTP.GET("https://google.com", parameters: ["hello": "world", "param2": "value2"]) { response in
+	if let err = response.error {
+		print("error: \(err.localizedDescription)")
+		return //also notify app of failure as needed
+	}
+    print("opt finished: \(response.description)")
 }
 ```
 
-The `HTTPResponse` contains all the common HTTP response data, such as the responseObject of the data and the headers of the response.
+The `Response` contains all the common HTTP response data, such as the responseObject of the data and the headers of the response.
 
 ### HTTP Methods
 
@@ -68,45 +58,35 @@ All the common HTTP methods are avalaible as convenience methods as well.
 
 ```swift
 let params = ["param": "param1", "array": ["first array element","second","third"], "num": 23, "dict": ["someKey": "someVal"]]
-do {
-    let opt = try HTTP.POST("https://domain.com/new", parameters: params)
-    opt.start { response in
-    //do things...
-    }
-} catch let error {
-    print("got an error creating the request: \(error)")
+HTTP.POST("https://domain.com/new", parameters: params) { response in
+//do things...
 }
 ```
 
 ### PUT
 
 ```swift
-let opt = try HTTP.PUT("https://domain.com/1")
+HTTP.PUT("https://domain.com/1")
 ```
 
 ### HEAD
 
 ```swift
-let opt = try HTTP.HEAD("https://domain.com/1")
+HTTP.HEAD("https://domain.com/1")
 ```
 
 ### DELETE
 
 ```swift
-let opt = try HTTP.DELETE("https://domain.com/1")
+HTTP.DELETE("https://domain.com/1")
 ```
 
 ### Download
 
 ```swift
-do {
-    let opt = try HTTP.Download("http://www.cbu.edu.zm/downloads/pdf-sample.pdf", completion: { (url) in
-        //move the temp file to desired location...
-    })
-    opt.start()
-} catch let error {
-    print("got an error creating the request: \(error)")
-}
+HTTP.Download("http://www.cbu.edu.zm/downloads/pdf-sample.pdf", completion: { (response, url) in
+    //move the temp file to desired location...
+})
 ```
 
 ### Upload
@@ -115,13 +95,8 @@ File uploads can be done using the `Upload` object. All files to upload should b
 
 ```swift
 let fileUrl = URL(fileURLWithPath: "/Users/dalton/Desktop/testfile")!
-do {
-    let opt = try HTTP.POST("https://domain.com/new", parameters: ["aParam": "aValue", "file": Upload(fileUrl: fileUrl)])
-    opt.start { response in
-    //do things...
-    }
-} catch let error {
-    print("got an error creating the request: \(error)")
+HTTP.POST("https://domain.com/new", parameters: ["aParam": "aValue", "file": Upload(fileUrl: fileUrl)]) { response in
+//do things...
 }
 ```
 `Upload` comes in both a on disk fileUrl version and a Data version.
@@ -131,13 +106,8 @@ do {
 Custom HTTP headers can be add to a request with the standard NSMutableRequest API:
 
 ```swift
-do {
-    let opt = try HTTP.GET("https://domain.com", parameters: ["hello": "there"], headers: ["header": "value"])
-    opt.start { response in
-        //do stuff
-    }
-} catch let error {
-    print("couldn't serialize the paraemeters: \(error)")
+HTTP.GET("https://domain.com", parameters: ["hello": "there"], headers: ["header": "value"]) { response in
+    //do stuff
 }
 ```
 
@@ -146,19 +116,17 @@ do {
 SSL Pinning is also supported in SwiftHTTP. 
 
 ```swift
-do {
-    let opt = try HTTP.GET("https://domain.com")
-    opt.security = HTTPSecurity(certs: [HTTPSSLCert(data: data)], usePublicKeys: true)
-	//opt.security = HTTPSecurity() //uses the .cer files in your app's bundle
-    opt.start { response in
-    	if let err = response.error {
-			print("error: \(err.localizedDescription)")
-			return //also notify app of failure as needed
-		}
-        print("opt finished: \(response.description)")
+var req = URLRequest(urlString: "https://domain.com")
+req?.timeoutInterval = 5
+let task = HTTP(req!)
+task.security = HTTPSecurity(certs: [HTTPSSLCert(data: data)], usePublicKeys: true)
+//opt.security = HTTPSecurity() //uses the .cer files in your app's bundle
+task.run { (response) in
+    if let err = response.error {
+        print("error: \(err.localizedDescription)")
+        return //also notify app of failure as needed
     }
-} catch let error {
-    print("got an error creating the request: \(error)")
+    print("opt finished: \(response.description)")
 }
 ```
 You load either a `Data` blob of your certificate or you can use a `SecKeyRef` if you have a public key you want to use. The `usePublicKeys` bool is whether to use the certificates for validation or the public keys. The public keys will be extracted from the certificates automatically if `usePublicKeys` is choosen.
@@ -168,71 +136,79 @@ You load either a `Data` blob of your certificate or you can use a `SecKeyRef` i
 SwiftHTTP supports authentication through [NSURLCredential](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLCredential_Class/Reference/Reference.html). Currently only Basic Auth and Digest Auth have been tested.
 
 ```swift
-do {
-    let opt = try HTTP.GET("https://domain.com")
-    //the auth closures will continually be called until a successful auth or rejection
-	var attempted = false
-	opt.auth = { challenge in
-	    if !attempted {
-	        attempted = true
-	        return NSURLCredential(user: "user", password: "passwd", persistence: .ForSession)
-	    }
-	    return nil //auth failed, nil causes the request to be properly cancelled.
-	}
-    opt.start { response in
-    //do stuff
+var req = URLRequest(urlString: "https://domain.com")
+req?.timeoutInterval = 5
+let task = HTTP(req!)
+//the auth closures will continually be called until a successful auth or rejection
+var attempted = false
+task.auth = { challenge in
+    if !attempted {
+        attempted = true
+        return NSURLCredential(user: "user", password: "passwd", persistence: .ForSession)
     }
-} catch let error {
-    print("got an error creating the request: \(error)")
+    return nil //auth failed, nil causes the request to be properly cancelled.
+}
+task.run { (response) in
+   //do stuff
 }
 ```
 
 Allow all certificates example:
 
 ```swift
-do {
-    let opt = try HTTP.GET("https://domain.com")
-    //the auth closures will continually be called until a successful auth or rejection
-	var attempted = false
-	opt.auth = { challenge in
+var req = URLRequest(urlString: "https://domain.com")
+req?.timeoutInterval = 5
+let task = HTTP(req!)
+//the auth closures will continually be called until a successful auth or rejection
+var attempted = false
+task.auth = { challenge in
     if !attempted {
         attempted = true
         return NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
     }
-    return nil
+    return nil //auth failed, nil causes the request to be properly cancelled.
 }
-    opt.start { response in
-    //do stuff
-    }
-} catch let error {
-    print("got an error creating the request: \(error)")
+task.run { (response) in
+   //do stuff
 }
 ```
 
 ### Operation Queue
 
-Operation queues are also supported in SwiftHTTP.
+SwiftHTTP also has a simple queue in it!
 
 ```swift
-let operationQueue = NSOperationQueue()
-operationQueue.maxConcurrentOperationCount = 2
-do {
-    let opt = try HTTP.New("https://google.com", method: .GET)
-    opt.onFinish = { response in
-    //do stuff
-    }
-    operationQueue.addOperation(opt)
-} catch let error {
-    print("got an error creating the request: \(error)")
+let queue = HTTPQueue(maxSimultaneousRequest: 2)
+var req = URLRequest(urlString: "https://google.com")
+req.timeoutInterval = 5
+let task = HTTP(req!)
+task.onFinish = { (response) in
+    print("item in the queue finished: \(response.URL!)")
+}
+queue.add(http: task) //the request will start running once added to the queue
+
+
+var req2 = URLRequest(urlString: "https://apple.com")
+req2.timeoutInterval = 5
+let task2 = HTTP(req2!)
+task2.onFinish = { (response) in
+    print("item in the queue finished: \(response.URL!)")
+}
+queue.add(http: task2)
+
+//etc...
+
+queue.finished {
+    print("all items finished")
 }
 ```
 
 ### Cancel
 
-Let's say you want to cancel the request a little later, call the `cancel` method that we get from it being an NSOperation subclass.
+Let's say you want to cancel the request a little later, call the `cancel` method.
 
 ```swift
-opt.cancel()
+task.cancel()
 ```
 
 ### JSON Request Serializer
@@ -240,17 +216,8 @@ opt.cancel()
 Request parameters can also be serialized to JSON as needed. By default request are serialized using standard HTTP form encoding.
 
 ```swift
-do {
-    let opt = try HTTP.New("https://google.com", method: .GET, requestSerializer: JSONParameterSerializer())
-    opt.onFinish = { response in
-    	if let err = response.error {
-			print("error: \(err.localizedDescription)")
-			return //also notify app of failure as needed
-		}
-        print("opt finished: \(response.description)")
-    }
-} catch let error {
-    print("got an error creating the request: \(error)")
+HTTP.GET("https://google.com", requestSerializer: JSONParameterSerializer()) { response in
+    //you already get it. The data property of the response object will have the json in it
 }
 ```
 
@@ -259,16 +226,13 @@ do {
 SwiftHTTP can monitor the progress of a request.
 
 ```swift
-do {
-    let opt = try HTTP.GET("https://domain.com/somefile")
-    opt.progress = { progress in
-        print("progress: \(progress)") //this will be between 0 and 1.
-    }
-    opt.start { response in
-    //do stuff
-    }
-} catch let error {
-    print("got an error creating the request: \(error)")
+var req = URLRequest(urlString: "https://domain.com/somefile")
+let task = HTTP(req!)
+task.progress = { progress in
+    print("progress: \(progress)") //this will be between 0 and 1.
+}
+task.run { (response) in
+   //do stuff
 }
 ```
 
@@ -319,27 +283,22 @@ func main() {
 Now for the request:
 
 ```swift
-struct Response: JSONJoy {
-    let status: String?
-    init(_ decoder: JSONDecoder) {
-        status = decoder["status"].string
-    }
+struct Response: Codable {
+    let status: String
 }
 
-do {
-    let opt = try HTTP.GET("http://localhost:8080/bar")
-    opt.start { response in
-        if let error = response.error {
-            print("got an error: \(error)")
-            return
-        }
-        let resp = Response(JSONDecoder(response.data))
-        if let status = resp.status {
-            print("completed: \(status)")
-        }
+let decoder = JSONDecoder()
+HTTP.GET("http://localhost:8080/bar") { response in
+    if let error = response.error {
+        print("got an error: \(error)")
+        return
     }
-} catch let error {
-    print("got an error: \(error)")
+    do {
+        let resp = try decoder.decode(Response.self, from: response.data)
+        print("completed: \(resp.status)")
+    } catch let error {
+        print("decode json error: \(error)")
+    }
 }
 ```
 
@@ -380,41 +339,31 @@ func main() {
 Now for the Swift:
 
 ```swift
-struct Response: JSONJoy {
+struct Response: Codable {
     let status: String?
     let error: String?
-    init(_ decoder: JSONDecoder) {
-        status = decoder["status"].string
-        error = decoder["error"].string
-    }
 }
 
-do {
-    let url = URL(fileURLWithPath: "/Users/dalton/Desktop/dalton.jpeg")
-    let opt = try HTTP.POST("http://localhost:8080/bar", parameters: ["test": "value", "file": Upload(fileUrl: url)])
-    opt.start { response in
-        if let error = response.error {
-            print("got an error: \(error)")
-            return
-        }
-        let resp = Response(JSONDecoder(response.data))
+let decoder = JSONDecoder()
+let url = URL(fileURLWithPath: "/Users/dalton/Desktop/picture.jpg")
+HTTP.POST("http://localhost:8080/bar", parameters: ["test": "value", "file": Upload(fileUrl: url)]) { response in
+    if let error = response.error {
+        print("got an error: \(error)")
+        return
+    }
+    do {
+        let resp = try decoder.decode(Response.self, from: response.data)
         if let err = resp.error {
             print("got an error: \(err)")
         }
         if let status = resp.status {
             print("completed: \(status)")
         }
+    } catch let error {
+        print("decode json error: \(error)")
     }
-} catch let error {
-    print("got an error: \(error)")
 }
 ```
-
-## JSON Parsing
-
-Swift has a lot of great JSON parsing libraries, but I made one specifically designed for JSON to object serialization.
-
-[JSONJoy-Swift](https://github.com/daltoniam/JSONJoy-Swift)
 
 ## Requirements
 
@@ -433,7 +382,7 @@ To use SwiftHTTP in your project add the following 'Podfile' to your project
 	platform :ios, '8.0'
 	use_frameworks!
 
-	pod 'SwiftHTTP', '~> 2.0.0'
+	pod 'SwiftHTTP', '~> 3.0.0'
 
 Then run:
 
@@ -455,7 +404,7 @@ $ brew install carthage
 To integrate SwiftHTTP into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```
-github "daltoniam/SwiftHTTP" >= 2.0.0
+github "daltoniam/SwiftHTTP" >= 3.0.0
 ```
 
 ### Rogue

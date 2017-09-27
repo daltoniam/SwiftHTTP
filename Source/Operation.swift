@@ -7,26 +7,6 @@
 //
 
 import Foundation
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
-}
-
-fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l > r
-  default:
-    return rhs < lhs
-  }
-}
-
 
 enum HTTPOptError: Error {
     case invalidRequest
@@ -39,10 +19,10 @@ public protocol HTTPSerializeProtocol {
     
     /**
     implement this protocol to support serializing parameters to the proper HTTP body or URL
-    -parameter request: The NSMutableURLRequest object you will modify to add the parameters to
+    -parameter request: The URLRequest object you will modify to add the parameters to
     -parameter parameters: The container (array or dictionary) to convert and append to the URL or Body
     */
-    func serialize(_ request: NSMutableURLRequest, parameters: HTTPParameterProtocol) throws
+    func serialize(_ request: inout URLRequest, parameters: HTTPParameterProtocol) -> Error?
 }
 
 /**
@@ -50,8 +30,8 @@ Standard HTTP encoding
 */
 public struct HTTPParameterSerializer: HTTPSerializeProtocol {
     public init() { }
-    public func serialize(_ request: NSMutableURLRequest, parameters: HTTPParameterProtocol) throws {
-        try request.appendParameters(parameters)
+    public func serialize(_ request: inout URLRequest, parameters: HTTPParameterProtocol) -> Error? {
+        return request.appendParameters(parameters)
     }
 }
 
@@ -60,8 +40,8 @@ Send the data as a JSON body
 */
 public struct JSONParameterSerializer: HTTPSerializeProtocol {
     public init() { }
-    public func serialize(_ request: NSMutableURLRequest, parameters: HTTPParameterProtocol) throws {
-         try request.appendParametersAsJSON(parameters)
+    public func serialize(_ request: inout URLRequest, parameters: HTTPParameterProtocol) -> Error? {
+        return request.appendParametersAsJSON(parameters)
     }
 }
 
@@ -84,7 +64,7 @@ open class Response {
     /// The URL of the HTTP response.
     open var URL: Foundation.URL?
     /// The Error of the HTTP response (if there was one).
-    open var error: NSError?
+    open var error: Error?
     ///Returns the response as a string
     open var text: String? {
         return  String(data: data, encoding: .utf8)
@@ -122,7 +102,7 @@ open class Response {
     
     //download closure. the URL is the file URL where the temp file has been download. 
     //This closure will be called so you can move the file where you desire.
-    var downloadHandler:((URL) -> Void)?
+    var downloadHandler:((Response, URL) -> Void)?
     
     ///This gets called on auth challenges. If nil, default handling is use.
     ///Returning nil from this method will cause the request to be rejected and cancelled
@@ -135,7 +115,7 @@ open class Response {
 /**
 The class that does the magic. Is a subclass of NSOperation so you can use it with operation queues or just a good ole HTTP request.
 */
-open class HTTP: Operation {
+open class HTTP {
     /**
     Get notified with a request finishes.
     */
@@ -143,7 +123,6 @@ open class HTTP: Operation {
         didSet {
             if let handler = onFinish {
                 DelegateManager.sharedInstance.addTask(task, completionHandler: { (response: Response) in
-                    self.finish()
                     handler(response)
                 })
             }
@@ -186,7 +165,7 @@ open class HTTP: Operation {
     }
     
     ///This is for handling downloads
-    open var downloadHandler: ((URL) -> Void)? {
+    open var downloadHandler: ((Response, URL) -> Void)? {
         set {
             guard let resp = DelegateManager.sharedInstance.responseForTask(task) else { return }
             resp.downloadHandler = newValue
@@ -200,253 +179,121 @@ open class HTTP: Operation {
     ///the actual task
     var task: URLSessionTask!
 	
-	fileprivate enum State: Int, Comparable {
-		/// The initial state of an `Operation`.
-		case initialized
-		
-		/**
-		The `Operation`'s conditions have all been satisfied, and it is ready
-		to execute.
-		*/
-		case ready
-		
-		/// The `Operation` is executing.
-		case executing
-		
-		/// The `Operation` has finished executing.
-		case finished
-		
-		/// what state transitions are allowed
-		func canTransitionToState(_ target: State) -> Bool {
-			switch (self, target) {
-			case (.initialized, .ready):
-				return true
-			case (.ready, .executing):
-				return true
-			case (.ready, .finished):
-				return true
-			case (.executing, .finished):
-				return true
-			default:
-				return false
-			}
-		}
-	}
-	
-	/// Private storage for the `state` property that will be KVO observed. don't set directly!
-	fileprivate var _state = State.initialized
-	
-	/// A lock to guard reads and writes to the `_state` property
-	fileprivate let stateLock = NSLock()
-	
-	// use the KVO mechanism to indicate that changes to "state" affect ready, executing, finished properties
-	class func keyPathsForValuesAffectingIsReady() -> Set<NSObject> {
-		return ["state" as NSObject]
-	}
-	
-	class func keyPathsForValuesAffectingIsExecuting() -> Set<NSObject> {
-		return ["state" as NSObject]
-	}
-	
-	class func keyPathsForValuesAffectingIsFinished() -> Set<NSObject> {
-		return ["state" as NSObject]
-	}
-	
-	// threadsafe
-	fileprivate var state: State {
-		get {
-			return stateLock.withCriticalScope {
-				_state
-			}
-		}
-		set(newState) {
-			willChangeValue(forKey: "state")
-			stateLock.withCriticalScope { () -> Void in
-				guard _state != .finished else {
-					print("Invalid! - Attempted to back out of Finished State")
-					return
-				}
-				assert(_state.canTransitionToState(newState), "Performing invalid state transition.")
-				_state = newState
-			}
-			didChangeValue(forKey: "state")
-		}
-	}
-	
     /**
     creates a new HTTP request.
     */
     public init(_ req: URLRequest, session: URLSession = SharedSession.defaultSession, isDownload: Bool = false) {
-        super.init()
         if isDownload {
             task = session.downloadTask(with: req)
         } else {
             task = session.dataTask(with: req)
         }
         DelegateManager.sharedInstance.addResponseForTask(task)
-		state = .ready
     }
-    
-    //MARK: Subclassed NSOperation Methods
-    
-    /// Returns if the task is asynchronous or not. NSURLSessionTask requests are asynchronous.
-    override open var isAsynchronous: Bool {
-        return true
-    }
-	
-	// If the operation has been cancelled, "isReady" should return true
-	override open var isReady: Bool {
-		switch state {
-			
-		case .initialized:
-			return isCancelled
-			
-		case .ready:
-			return super.isReady || isCancelled
-			
-		default:
-			return false
-		}
-	}
-	
-    /// Returns if the task is current running.
-	override open var isExecuting: Bool {
-		return state == .executing
-	}
-	
-	override open var isFinished: Bool {
-		return state == .finished
-	}
     
     /**
     start/sends the HTTP task with a completionHandler. Use this when *NOT* using an NSOperationQueue.
     */
-    open func start(_ completionHandler:@escaping ((Response) -> Void)) {
-        onFinish = completionHandler
-        start()
-    }
-    
-    /**
-    Start the HTTP task. Make sure to set the onFinish closure before calling this to get a response.
-    */
-    override open func start() {
-		if isCancelled {
-			state = .finished
-			return
-		}
-		
-		state = .executing
-		task.resume()
+    open func run(_ completionHandler: ((Response) -> Void)? = nil) {
+        if let handler = completionHandler {
+            onFinish = handler
+        }
+        task.resume()
     }
 	
     /**
     Cancel the running task
     */
-    override open func cancel() {
+    open func cancel() {
         task.cancel()
-        finish()
     }
-    /**
-     Sets the task to finished. 
-    If you aren't using the DelegateManager, you will have to call this in your delegate's URLSession:dataTask:didCompleteWithError: method
-    */
-    open func finish() {
-		state = .finished
-    }
-	
-	/**
-	Check not executing or finished when adding dependencies
-	*/
-	override open func addDependency(_ operation: Operation) {
-		assert(state < .executing, "Dependencies cannot be modified after execution has begun.")
-		super.addDependency(operation)
-	}
-	
-	/**
-	Convenience bool to flag as operation userInitiated if necessary
-	*/
-	var userInitiated: Bool {
-		get {
-			return qualityOfService == .userInitiated
-		}
-		set {
-			assert(state < State.executing, "Cannot modify userInitiated after execution has begun.")
-			qualityOfService = newValue ? .userInitiated : .default
-		}
-	}
 
     /**
-    Class method to create a GET request that handles the NSMutableURLRequest and parameter encoding for you.
+    Class method to run a GET request that handles the URLRequest and parameter encoding for you.
     */
     open class func GET(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil,
-        requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
-        return try HTTP.New(url, method: .GET, parameters: parameters, headers: headers, requestSerializer: requestSerializer)
+        requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil)  {
+        Run(url, method: .GET, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
-    Class method to create a HEAD request that handles the NSMutableURLRequest and parameter encoding for you.
+    Class method to run a HEAD request that handles the URLRequest and parameter encoding for you.
     */
-    open class func HEAD(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
-        return try HTTP.New(url, method: .HEAD, parameters: parameters, headers: headers, requestSerializer: requestSerializer)
+    open class func HEAD(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil)  {
+        Run(url, method: .HEAD, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
-    Class method to create a DELETE request that handles the NSMutableURLRequest and parameter encoding for you.
+    Class method to run a DELETE request that handles the URLRequest and parameter encoding for you.
     */
-    open class func DELETE(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
-        return try HTTP.New(url, method: .DELETE, parameters: parameters, headers: headers, requestSerializer: requestSerializer)
+    open class func DELETE(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) {
+        Run(url, method: .DELETE, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
-    Class method to create a POST request that handles the NSMutableURLRequest and parameter encoding for you.
+    Class method to run a POST request that handles the URLRequest and parameter encoding for you.
     */
-    open class func POST(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
-        return try HTTP.New(url, method: .POST, parameters: parameters, headers: headers, requestSerializer: requestSerializer)
+    open class func POST(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) {
+        Run(url, method: .POST, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
-    Class method to create a PUT request that handles the NSMutableURLRequest and parameter encoding for you.
+    Class method to run a PUT request that handles the URLRequest and parameter encoding for you.
     */
     open class func PUT(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil,
-        requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
-        return try HTTP.New(url, method: .PUT, parameters: parameters, headers: headers, requestSerializer: requestSerializer)
+        requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) {
+        Run(url, method: .PUT, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
-    Class method to create a PUT request that handles the NSMutableURLRequest and parameter encoding for you.
+    Class method to run a PUT request that handles the URLRequest and parameter encoding for you.
     */
-    open class func PATCH(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer()) throws -> HTTP  {
-        return try HTTP.New(url, method: .PATCH, parameters: parameters, headers: headers, requestSerializer: requestSerializer)
+    open class func PATCH(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) {
+        Run(url, method: .PATCH, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
+    }
+    
+    class func Run(_ url: String, method: HTTPVerb, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil)  {
+        guard let task = HTTP.New(url, method: method, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler) else {return}
+        task.run()
     }
     
     /**
-     Class method to create a Download request that handles the NSMutableURLRequest and parameter encoding for you.
+     Class method to create a Download request that handles the URLRequest and parameter encoding for you.
      */
     open class func Download(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil,
-                             requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completion:@escaping ((URL) -> Void)) throws -> HTTP  {
-        let task = try HTTP.New(url, method: .GET, parameters: parameters, headers: headers, requestSerializer: requestSerializer, isDownload: true)
+                             requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completion:@escaping ((Response, URL) -> Void)) {
+        guard let task = HTTP.New(url, method: .GET, parameters: parameters, headers: headers, requestSerializer: requestSerializer) else {return}
         task.downloadHandler = completion
-        return task
+        task.run()
     }
     
     /**
-    Class method to create a HTTP request that handles the NSMutableURLRequest and parameter encoding for you.
+    Class method to create a HTTP request that handles the URLRequest and parameter encoding for you.
     */
-    open class func New(_ url: String, method: HTTPVerb, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), isDownload: Bool = false) throws -> HTTP  {
-        guard let req = NSMutableURLRequest(urlString: url) else { throw HTTPOptError.invalidRequest }
+    open class func New(_ url: String, method: HTTPVerb, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
+        guard var req = URLRequest(urlString: url, headers: headers) else {
+            guard let handler = completionHandler else { return nil }
+            let resp = Response()
+            resp.error = HTTPOptError.invalidRequest
+            handler(resp)
+            return nil
+        }
         if let handler = DelegateManager.sharedInstance.requestHandler {
             handler(req)
         }
         req.verb = method
         if let params = parameters {
-            try requestSerializer.serialize(req, parameters: params)
-        }
-        if let heads = headers {
-            for (key,value) in heads {
-                req.addValue(value, forHTTPHeaderField: key)
+            if let error = requestSerializer.serialize(&req, parameters: params) {
+                guard let handler = completionHandler else { return nil }
+                let resp = Response()
+                resp.error = error
+                handler(resp)
+                return nil
             }
         }
-        return HTTP(req as URLRequest, isDownload: isDownload)
+        let httpReq = HTTP(req)
+        httpReq.onFinish = completionHandler
+        return httpReq
     }
     
     /**
@@ -466,28 +313,19 @@ open class HTTP: Operation {
     /**
     Set the global request handler
     */
-    open class func globalRequest(_ handler: ((NSMutableURLRequest) -> Void)?) {
+    open class func globalRequest(_ handler: ((URLRequest) -> Void)?) {
         DelegateManager.sharedInstance.requestHandler = handler
     }
 }
 
-// Simple operator functions to simplify the assertions used above.
-private func <(lhs: HTTP.State, rhs: HTTP.State) -> Bool {
-	return lhs.rawValue < rhs.rawValue
-}
-
-private func ==(lhs: HTTP.State, rhs: HTTP.State) -> Bool {
-	return lhs.rawValue == rhs.rawValue
-}
-
-// Lock for getting / setting state safely
-extension NSLock {
-	func withCriticalScope<T>(_ block: () -> T) -> T {
-		lock()
-		let value = block()
-		unlock()
-		return value
-	}
+extension HTTP {
+    static func == (left: HTTP, right: HTTP) -> Bool {
+        return left.task.taskIdentifier == right.task.taskIdentifier
+    }
+    
+    static func != (left: HTTP, right: HTTP) -> Bool {
+        return !(left == right)
+    }
 }
 
 /**
@@ -505,7 +343,7 @@ public class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownlo
     var security: HTTPSecurity?
     
     /// this is for global request handling
-    var requestHandler:((NSMutableURLRequest) -> Void)?
+    var requestHandler:((URLRequest) -> Void)?
     
     var taskMap = Dictionary<Int,Response>()
     //"install" a task by adding the task to the map and setting the completion handler
@@ -554,7 +392,7 @@ public class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownlo
             resp.statusCode = hresponse.statusCode
             resp.URL = hresponse.url
         }
-        if let code = resp.statusCode , resp.statusCode > 299 {
+        if let code = resp.statusCode, code > 299 {
             resp.error = createError(code)
         }
         if let handler = resp.completionHandler {
@@ -614,7 +452,7 @@ public class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownlo
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         guard let resp = responseForTask(downloadTask) else { return }
         guard let handler = resp.downloadHandler else { return }
-        handler(location)
+        handler(resp, location)
     }
     
     //handle progress
@@ -645,4 +483,73 @@ public class SharedSession {
         delegate: DelegateManager.sharedInstance, delegateQueue: nil)
     static let ephemeralSession = URLSession(configuration: URLSessionConfiguration.ephemeral,
         delegate: DelegateManager.sharedInstance, delegateQueue: nil)
+}
+
+
+/**
+ Bare bones queue to manage HTTP Requests
+ */
+open class HTTPQueue {
+    public var maxSimultaneousRequest = 5
+    var queue = [HTTP]()
+    let mutex = NSLock()
+    var activeReq = [Int: HTTP]()
+    var finishedHandler: (() -> Void)?
+    
+    public init(maxSimultaneousRequest: Int) {
+        self.maxSimultaneousRequest = maxSimultaneousRequest
+    }
+    
+    open func add(request: URLRequest) {
+        add(http: HTTP(request))
+    }
+    
+    open func add(http: HTTP) {
+        var doWork = false
+        mutex.lock()
+        queue.append(http)
+        if activeReq.count < maxSimultaneousRequest {
+            doWork = true
+        }
+        mutex.unlock()
+        if doWork {
+            run()
+        }
+    }
+    
+    open func finished(queue: DispatchQueue = DispatchQueue.main, completionHandler: @escaping (() -> Void)) {
+        finishedHandler = completionHandler
+    }
+    
+    func run() {
+        guard let http = nextItem() else {
+            mutex.lock()
+            let count = activeReq.count
+            mutex.unlock()
+            if count == 0 {
+                finishedHandler?()
+            }
+            return
+        }
+        let handler = http.onFinish
+        http.run {[weak self] (response) in
+            handler?(response)
+            self?.mutex.lock()
+            self?.activeReq.removeValue(forKey: http.task.taskIdentifier)
+            self?.mutex.unlock()
+            self?.run()
+        }
+    }
+    
+    func nextItem() -> HTTP? {
+        mutex.lock()
+        if queue.count == 0 {
+            mutex.unlock()
+            return nil
+        }
+        let next = queue.removeFirst()
+        activeReq[next.task.taskIdentifier] = next
+        mutex.unlock()
+        return next
+    }
 }

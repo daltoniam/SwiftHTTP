@@ -7,45 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5C135ECB1C4733CE00AA3A01 /* SwiftHTTP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C135EC11C4733CD00AA3A01 /* SwiftHTTP.framework */; };
-		5C135EDE1C47341300AA3A01 /* SwiftHTTPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD903D19C8D98000DD99B6 /* SwiftHTTPTests.swift */; };
 		5C135F161C47366700AA3A01 /* HTTPSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F101C47366700AA3A01 /* HTTPSecurity.swift */; };
-		5C135F171C47366700AA3A01 /* HTTPSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F101C47366700AA3A01 /* HTTPSecurity.swift */; };
-		5C135F181C47366700AA3A01 /* HTTPSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F101C47366700AA3A01 /* HTTPSecurity.swift */; };
 		5C135F191C47366700AA3A01 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F111C47366700AA3A01 /* Operation.swift */; };
-		5C135F1A1C47366700AA3A01 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F111C47366700AA3A01 /* Operation.swift */; };
-		5C135F1B1C47366700AA3A01 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F111C47366700AA3A01 /* Operation.swift */; };
 		5C135F1C1C47366700AA3A01 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F121C47366700AA3A01 /* Request.swift */; };
-		5C135F1D1C47366700AA3A01 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F121C47366700AA3A01 /* Request.swift */; };
-		5C135F1E1C47366700AA3A01 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F121C47366700AA3A01 /* Request.swift */; };
 		5C135F1F1C47366700AA3A01 /* StatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F131C47366700AA3A01 /* StatusCode.swift */; };
-		5C135F201C47366700AA3A01 /* StatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F131C47366700AA3A01 /* StatusCode.swift */; };
-		5C135F211C47366700AA3A01 /* StatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F131C47366700AA3A01 /* StatusCode.swift */; };
 		5C135F221C47366700AA3A01 /* SwiftHTTP.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C135F141C47366700AA3A01 /* SwiftHTTP.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5C135F231C47366700AA3A01 /* SwiftHTTP.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C135F141C47366700AA3A01 /* SwiftHTTP.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5C135F241C47366700AA3A01 /* SwiftHTTP.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C135F141C47366700AA3A01 /* SwiftHTTP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C135F251C47366700AA3A01 /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F151C47366700AA3A01 /* Upload.swift */; };
-		5C135F261C47366700AA3A01 /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F151C47366700AA3A01 /* Upload.swift */; };
-		5C135F271C47366700AA3A01 /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F151C47366700AA3A01 /* Upload.swift */; };
-		5C135FB11C4737EE00AA3A01 /* HTTPSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F101C47366700AA3A01 /* HTTPSecurity.swift */; };
-		5C135FB21C4737EE00AA3A01 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F111C47366700AA3A01 /* Operation.swift */; };
-		5C135FB31C4737EE00AA3A01 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F121C47366700AA3A01 /* Request.swift */; };
-		5C135FB41C4737EE00AA3A01 /* StatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F131C47366700AA3A01 /* StatusCode.swift */; };
-		5C135FB51C4737EE00AA3A01 /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C135F151C47366700AA3A01 /* Upload.swift */; };
-		5C135FB61C47380300AA3A01 /* SwiftHTTP.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C135F141C47366700AA3A01 /* SwiftHTTP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6BFD904019C8D9A000DD99B6 /* SwiftHTTPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD903D19C8D98000DD99B6 /* SwiftHTTPTests.swift */; };
-		D958026419E6EEEB003C8218 /* SwiftHTTP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D958025919E6EEEB003C8218 /* SwiftHTTP.framework */; };
-		D958027219E6EF2B003C8218 /* SwiftHTTPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFD903D19C8D98000DD99B6 /* SwiftHTTPTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		5C135ECC1C4733CE00AA3A01 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6BFD900D19C8D8B500DD99B6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5C135EC01C4733CD00AA3A01;
-			remoteInfo = SwiftHTTPtvOS;
-		};
 		832C8E641B01064F0052A5D7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6BFD900D19C8D8B500DD99B6 /* Project object */;
@@ -53,18 +24,9 @@
 			remoteGlobalIDString = 6BFD901519C8D8B500DD99B6;
 			remoteInfo = SwiftHTTP;
 		};
-		D958026519E6EEEB003C8218 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6BFD900D19C8D8B500DD99B6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D958025819E6EEEB003C8218;
-			remoteInfo = SwiftHTTPOSX;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5C135EC11C4733CD00AA3A01 /* SwiftHTTP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftHTTP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5C135ECA1C4733CE00AA3A01 /* SwiftHTTPtvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftHTTPtvOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C135F101C47366700AA3A01 /* HTTPSecurity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HTTPSecurity.swift; path = Source/HTTPSecurity.swift; sourceTree = SOURCE_ROOT; };
 		5C135F111C47366700AA3A01 /* Operation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Operation.swift; path = Source/Operation.swift; sourceTree = SOURCE_ROOT; };
 		5C135F121C47366700AA3A01 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Request.swift; path = Source/Request.swift; sourceTree = SOURCE_ROOT; };
@@ -72,38 +34,13 @@
 		5C135F141C47366700AA3A01 /* SwiftHTTP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SwiftHTTP.h; path = Source/SwiftHTTP.h; sourceTree = SOURCE_ROOT; };
 		5C135F151C47366700AA3A01 /* Upload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Upload.swift; path = Source/Upload.swift; sourceTree = SOURCE_ROOT; };
 		5C135F281C47367400AA3A01 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Source/Info.plist; sourceTree = SOURCE_ROOT; };
-		5C135FA91C4737E200AA3A01 /* SwiftHTTP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftHTTP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BFD901619C8D8B500DD99B6 /* SwiftHTTP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftHTTP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BFD902119C8D8B500DD99B6 /* SwiftHTTPTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftHTTPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BFD903C19C8D98000DD99B6 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Tests/Info.plist; sourceTree = "<group>"; };
 		6BFD903D19C8D98000DD99B6 /* SwiftHTTPTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftHTTPTests.swift; path = Tests/SwiftHTTPTests.swift; sourceTree = "<group>"; };
-		D958025919E6EEEB003C8218 /* SwiftHTTP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftHTTP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D958026319E6EEEB003C8218 /* SwiftHTTPOSXTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftHTTPOSXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		5C135EBD1C4733CD00AA3A01 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5C135EC71C4733CE00AA3A01 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5C135ECB1C4733CE00AA3A01 /* SwiftHTTP.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5C135FA51C4737E200AA3A01 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6BFD901219C8D8B500DD99B6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,21 +52,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D958025519E6EEEB003C8218 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D958026019E6EEEB003C8218 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D958026419E6EEEB003C8218 /* SwiftHTTP.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,11 +72,6 @@
 			children = (
 				6BFD901619C8D8B500DD99B6 /* SwiftHTTP.framework */,
 				6BFD902119C8D8B500DD99B6 /* SwiftHTTPTests.xctest */,
-				D958025919E6EEEB003C8218 /* SwiftHTTP.framework */,
-				D958026319E6EEEB003C8218 /* SwiftHTTPOSXTests.xctest */,
-				5C135EC11C4733CD00AA3A01 /* SwiftHTTP.framework */,
-				5C135ECA1C4733CE00AA3A01 /* SwiftHTTPtvOSTests.xctest */,
-				5C135FA91C4737E200AA3A01 /* SwiftHTTP.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -193,22 +110,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		5C135EBE1C4733CD00AA3A01 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5C135F241C47366700AA3A01 /* SwiftHTTP.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5C135FA61C4737E200AA3A01 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5C135FB61C47380300AA3A01 /* SwiftHTTP.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6BFD901319C8D8B500DD99B6 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -217,71 +118,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D958025619E6EEEB003C8218 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5C135F231C47366700AA3A01 /* SwiftHTTP.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		5C135EC01C4733CD00AA3A01 /* SwiftHTTPtvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5C135ED21C4733CE00AA3A01 /* Build configuration list for PBXNativeTarget "SwiftHTTPtvOS" */;
-			buildPhases = (
-				5C135EBC1C4733CD00AA3A01 /* Sources */,
-				5C135EBD1C4733CD00AA3A01 /* Frameworks */,
-				5C135EBE1C4733CD00AA3A01 /* Headers */,
-				5C135EBF1C4733CD00AA3A01 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = SwiftHTTPtvOS;
-			productName = SwiftHTTPtvOS;
-			productReference = 5C135EC11C4733CD00AA3A01 /* SwiftHTTP.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		5C135EC91C4733CE00AA3A01 /* SwiftHTTPtvOSTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5C135ED51C4733CE00AA3A01 /* Build configuration list for PBXNativeTarget "SwiftHTTPtvOSTests" */;
-			buildPhases = (
-				5C135EC61C4733CE00AA3A01 /* Sources */,
-				5C135EC71C4733CE00AA3A01 /* Frameworks */,
-				5C135EC81C4733CE00AA3A01 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				5C135ECD1C4733CE00AA3A01 /* PBXTargetDependency */,
-			);
-			name = SwiftHTTPtvOSTests;
-			productName = SwiftHTTPtvOSTests;
-			productReference = 5C135ECA1C4733CE00AA3A01 /* SwiftHTTPtvOSTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		5C135FA81C4737E200AA3A01 /* SwiftHTTPWatchOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5C135FB01C4737E200AA3A01 /* Build configuration list for PBXNativeTarget "SwiftHTTPWatchOS" */;
-			buildPhases = (
-				5C135FA41C4737E200AA3A01 /* Sources */,
-				5C135FA51C4737E200AA3A01 /* Frameworks */,
-				5C135FA61C4737E200AA3A01 /* Headers */,
-				5C135FA71C4737E200AA3A01 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = SwiftHTTPWatchOS;
-			productName = SwiftHTTPWatchOS;
-			productReference = 5C135FA91C4737E200AA3A01 /* SwiftHTTP.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		6BFD901519C8D8B500DD99B6 /* SwiftHTTP */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6BFD902919C8D8B500DD99B6 /* Build configuration list for PBXNativeTarget "SwiftHTTP" */;
@@ -318,42 +157,6 @@
 			productReference = 6BFD902119C8D8B500DD99B6 /* SwiftHTTPTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		D958025819E6EEEB003C8218 /* SwiftHTTPOSX */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D958027019E6EEEB003C8218 /* Build configuration list for PBXNativeTarget "SwiftHTTPOSX" */;
-			buildPhases = (
-				D958025419E6EEEB003C8218 /* Sources */,
-				D958025519E6EEEB003C8218 /* Frameworks */,
-				D958025619E6EEEB003C8218 /* Headers */,
-				D958025719E6EEEB003C8218 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = SwiftHTTPOSX;
-			productName = SwiftHTTPOSX;
-			productReference = D958025919E6EEEB003C8218 /* SwiftHTTP.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		D958026219E6EEEB003C8218 /* SwiftHTTPOSXTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D958027119E6EEEB003C8218 /* Build configuration list for PBXNativeTarget "SwiftHTTPOSXTests" */;
-			buildPhases = (
-				D958025F19E6EEEB003C8218 /* Sources */,
-				D958026019E6EEEB003C8218 /* Frameworks */,
-				D958026119E6EEEB003C8218 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D958026619E6EEEB003C8218 /* PBXTargetDependency */,
-			);
-			name = SwiftHTTPOSXTests;
-			productName = SwiftHTTPOSXTests;
-			productReference = D958026319E6EEEB003C8218 /* SwiftHTTPOSXTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -365,32 +168,12 @@
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = Vluxe;
 				TargetAttributes = {
-					5C135EC01C4733CD00AA3A01 = {
-						CreatedOnToolsVersion = 7.2;
-						LastSwiftMigration = 0800;
-					};
-					5C135EC91C4733CE00AA3A01 = {
-						CreatedOnToolsVersion = 7.2;
-						LastSwiftMigration = 0800;
-					};
-					5C135FA81C4737E200AA3A01 = {
-						CreatedOnToolsVersion = 7.2;
-						LastSwiftMigration = 0800;
-					};
 					6BFD901519C8D8B500DD99B6 = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 0900;
 					};
 					6BFD902019C8D8B500DD99B6 = {
 						CreatedOnToolsVersion = 6.0;
-					};
-					D958025819E6EEEB003C8218 = {
-						CreatedOnToolsVersion = 6.1;
-						LastSwiftMigration = 0800;
-					};
-					D958026219E6EEEB003C8218 = {
-						CreatedOnToolsVersion = 6.1;
-						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -408,37 +191,11 @@
 			targets = (
 				6BFD901519C8D8B500DD99B6 /* SwiftHTTP */,
 				6BFD902019C8D8B500DD99B6 /* SwiftHTTPTests */,
-				D958025819E6EEEB003C8218 /* SwiftHTTPOSX */,
-				D958026219E6EEEB003C8218 /* SwiftHTTPOSXTests */,
-				5C135EC01C4733CD00AA3A01 /* SwiftHTTPtvOS */,
-				5C135EC91C4733CE00AA3A01 /* SwiftHTTPtvOSTests */,
-				5C135FA81C4737E200AA3A01 /* SwiftHTTPWatchOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		5C135EBF1C4733CD00AA3A01 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5C135EC81C4733CE00AA3A01 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5C135FA71C4737E200AA3A01 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6BFD901419C8D8B500DD99B6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -453,55 +210,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D958025719E6EEEB003C8218 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D958026119E6EEEB003C8218 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		5C135EBC1C4733CD00AA3A01 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5C135F1E1C47366700AA3A01 /* Request.swift in Sources */,
-				5C135F211C47366700AA3A01 /* StatusCode.swift in Sources */,
-				5C135F1B1C47366700AA3A01 /* Operation.swift in Sources */,
-				5C135F181C47366700AA3A01 /* HTTPSecurity.swift in Sources */,
-				5C135F271C47366700AA3A01 /* Upload.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5C135EC61C4733CE00AA3A01 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5C135EDE1C47341300AA3A01 /* SwiftHTTPTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5C135FA41C4737E200AA3A01 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5C135FB11C4737EE00AA3A01 /* HTTPSecurity.swift in Sources */,
-				5C135FB21C4737EE00AA3A01 /* Operation.swift in Sources */,
-				5C135FB31C4737EE00AA3A01 /* Request.swift in Sources */,
-				5C135FB41C4737EE00AA3A01 /* StatusCode.swift in Sources */,
-				5C135FB51C4737EE00AA3A01 /* Upload.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6BFD901119C8D8B500DD99B6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -522,174 +233,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D958025419E6EEEB003C8218 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5C135F1D1C47366700AA3A01 /* Request.swift in Sources */,
-				5C135F201C47366700AA3A01 /* StatusCode.swift in Sources */,
-				5C135F1A1C47366700AA3A01 /* Operation.swift in Sources */,
-				5C135F171C47366700AA3A01 /* HTTPSecurity.swift in Sources */,
-				5C135F261C47366700AA3A01 /* Upload.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D958025F19E6EEEB003C8218 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D958027219E6EF2B003C8218 /* SwiftHTTPTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		5C135ECD1C4733CE00AA3A01 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5C135EC01C4733CD00AA3A01 /* SwiftHTTPtvOS */;
-			targetProxy = 5C135ECC1C4733CE00AA3A01 /* PBXContainerItemProxy */;
-		};
 		832C8E651B01064F0052A5D7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6BFD901519C8D8B500DD99B6 /* SwiftHTTP */;
 			targetProxy = 832C8E641B01064F0052A5D7 /* PBXContainerItemProxy */;
 		};
-		D958026619E6EEEB003C8218 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D958025819E6EEEB003C8218 /* SwiftHTTPOSX */;
-			targetProxy = D958026519E6EEEB003C8218 /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		5C135ED31C4733CE00AA3A01 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.vluxe.SwiftHTTPtvOS;
-				PRODUCT_NAME = SwiftHTTP;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
-			};
-			name = Debug;
-		};
-		5C135ED41C4733CE00AA3A01 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.vluxe.SwiftHTTPtvOS;
-				PRODUCT_NAME = SwiftHTTP;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
-			};
-			name = Release;
-		};
-		5C135ED61C4733CE00AA3A01 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.vluxe.SwiftHTTPtvOSTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SWIFT_VERSION = 4.0;
-				TVOS_DEPLOYMENT_TARGET = 9.1;
-			};
-			name = Debug;
-		};
-		5C135ED71C4733CE00AA3A01 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.vluxe.SwiftHTTPtvOSTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SWIFT_VERSION = 4.0;
-				TVOS_DEPLOYMENT_TARGET = 9.1;
-			};
-			name = Release;
-		};
-		5C135FAE1C4737E200AA3A01 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.vluxe.SwiftHTTPWatchOS;
-				PRODUCT_NAME = SwiftHTTP;
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 2.1;
-			};
-			name = Debug;
-		};
-		5C135FAF1C4737E200AA3A01 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.vluxe.SwiftHTTPWatchOS;
-				PRODUCT_NAME = SwiftHTTP;
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 2.1;
-			};
-			name = Release;
-		};
 		6BFD902719C8D8B500DD99B6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -815,12 +369,19 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vluxe.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "macosx watchos appletvos appletvsimulator iphoneos iphonesimulator watchsimulator";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALID_ARCHS = "i386 x86_64 arm64 armv7s armv7";
+				WATCHOS_DEPLOYMENT_TARGET = 2.1;
 			};
 			name = Debug;
 		};
@@ -838,11 +399,18 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vluxe.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "macosx watchos appletvos appletvsimulator iphoneos iphonesimulator watchsimulator";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALID_ARCHS = "i386 x86_64 arm64 armv7s armv7";
+				WATCHOS_DEPLOYMENT_TARGET = 2.1;
 			};
 			name = Release;
 		};
@@ -861,7 +429,11 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vluxe.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos watchsimulator watchos appletvos appletvsimulator macosx";
 				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
 			name = Debug;
 		};
@@ -876,135 +448,17 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.vluxe.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos watchsimulator watchos appletvos appletvsimulator macosx";
 				SWIFT_VERSION = 4.0;
-			};
-			name = Release;
-		};
-		D958026C19E6EEEB003C8218 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				ARCHS = "$(ARCHS_STANDARD)";
-				CLANG_ENABLE_MODULES = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.vluxe.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = SwiftHTTP;
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
-			};
-			name = Debug;
-		};
-		D958026D19E6EEEB003C8218 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				ARCHS = "$(ARCHS_STANDARD)";
-				CLANG_ENABLE_MODULES = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.vluxe.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = SwiftHTTP;
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
-			};
-			name = Release;
-		};
-		D958026E19E6EEEB003C8218 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.vluxe.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 4.0;
-			};
-			name = Debug;
-		};
-		D958026F19E6EEEB003C8218 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.vluxe.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5C135ED21C4733CE00AA3A01 /* Build configuration list for PBXNativeTarget "SwiftHTTPtvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5C135ED31C4733CE00AA3A01 /* Debug */,
-				5C135ED41C4733CE00AA3A01 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		5C135ED51C4733CE00AA3A01 /* Build configuration list for PBXNativeTarget "SwiftHTTPtvOSTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5C135ED61C4733CE00AA3A01 /* Debug */,
-				5C135ED71C4733CE00AA3A01 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		5C135FB01C4737E200AA3A01 /* Build configuration list for PBXNativeTarget "SwiftHTTPWatchOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5C135FAE1C4737E200AA3A01 /* Debug */,
-				5C135FAF1C4737E200AA3A01 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		6BFD901019C8D8B500DD99B6 /* Build configuration list for PBXProject "SwiftHTTP" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1028,24 +482,6 @@
 			buildConfigurations = (
 				6BFD902D19C8D8B500DD99B6 /* Debug */,
 				6BFD902E19C8D8B500DD99B6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		D958027019E6EEEB003C8218 /* Build configuration list for PBXNativeTarget "SwiftHTTPOSX" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D958026C19E6EEEB003C8218 /* Debug */,
-				D958026D19E6EEEB003C8218 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		D958027119E6EEEB003C8218 /* Build configuration list for PBXNativeTarget "SwiftHTTPOSXTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D958026E19E6EEEB003C8218 /* Debug */,
-				D958026F19E6EEEB003C8218 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

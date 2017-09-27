@@ -13,12 +13,12 @@ import Foundation
 #endif
 
 /**
-Upload errors
-*/
+ Upload errors
+ */
 enum HTTPUploadError: Error {
     case noFileUrl
+    case noData
 }
-
 
 /**
 This is how to upload files in SwiftHTTP. The upload object represents a file to upload by either a data blob or a url (which it reads off disk).
@@ -49,16 +49,20 @@ open class Upload: NSObject, NSCoding {
     /**
     Reads the data from disk or from memory. Throws an error if no data or file is found.
     */
-    open func getData() throws -> Data {
+    open func getData() -> (data: Data?, error: Error?) {
         if let d = data {
-            return d
+            return (d, nil)
         }
-        guard let url = fileUrl else { throw HTTPUploadError.noFileUrl }
+        guard let url = fileUrl else { return (nil, HTTPUploadError.noFileUrl) }
         fileName = url.lastPathComponent
-        let d = try Data(contentsOf: url, options: NSData.ReadingOptions.mappedIfSafe)
-        data = d
-        getMimeType()
-        return d
+        do {
+            let d = try Data(contentsOf: url, options: .mappedIfSafe)
+            data = d
+            getMimeType()
+            return (d, nil)
+        } catch let error {
+            return (nil, error)
+        }
     }
     
     /**
