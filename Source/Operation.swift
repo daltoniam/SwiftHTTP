@@ -212,49 +212,50 @@ open class HTTP {
     Class method to run a GET request that handles the URLRequest and parameter encoding for you.
     */
     open class func GET(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil,
-        requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil)  {
-        Run(url, method: .GET, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
+        requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil)  -> HTTP? {
+        return Run(url, method: .GET, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
     Class method to run a HEAD request that handles the URLRequest and parameter encoding for you.
     */
-    open class func HEAD(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil)  {
-        Run(url, method: .HEAD, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
+    open class func HEAD(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil)  -> HTTP? {
+        return Run(url, method: .HEAD, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
     Class method to run a DELETE request that handles the URLRequest and parameter encoding for you.
     */
-    open class func DELETE(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) {
-        Run(url, method: .DELETE, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
+    open class func DELETE(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil)  -> HTTP?{
+        return Run(url, method: .DELETE, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
     Class method to run a POST request that handles the URLRequest and parameter encoding for you.
     */
-    open class func POST(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) {
-        Run(url, method: .POST, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
+    open class func POST(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil)  -> HTTP?{
+        return Run(url, method: .POST, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
     Class method to run a PUT request that handles the URLRequest and parameter encoding for you.
     */
     open class func PUT(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil,
-        requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) {
-        Run(url, method: .PUT, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
+        requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
+        return Run(url, method: .PUT, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
     Class method to run a PUT request that handles the URLRequest and parameter encoding for you.
     */
-    open class func PATCH(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) {
-        Run(url, method: .PATCH, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
+    open class func PATCH(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
+        return Run(url, method: .PATCH, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
-    class func Run(_ url: String, method: HTTPVerb, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil)  {
-        guard let task = HTTP.New(url, method: method, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler) else {return}
+    class func Run(_ url: String, method: HTTPVerb, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
+        guard let task = HTTP.New(url, method: method, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler) else {return nil}
         task.run()
+        return task
     }
     
     /**
