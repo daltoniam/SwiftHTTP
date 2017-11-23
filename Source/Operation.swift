@@ -279,7 +279,7 @@ open class HTTP {
             return nil
         }
         if let handler = DelegateManager.sharedInstance.requestHandler {
-            handler(req)
+            req = handler(req)
         }
         req.verb = method
         if let params = parameters {
@@ -313,7 +313,7 @@ open class HTTP {
     /**
     Set the global request handler
     */
-    open class func globalRequest(_ handler: ((URLRequest) -> Void)?) {
+    open class func globalRequest(_ handler: ((URLRequest) -> URLRequest)?) {
         DelegateManager.sharedInstance.requestHandler = handler
     }
 }
@@ -343,7 +343,7 @@ public class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownlo
     var security: HTTPSecurity?
     
     /// this is for global request handling
-    var requestHandler:((URLRequest) -> Void)?
+    var requestHandler:((URLRequest) -> URLRequest)?
     
     var taskMap = Dictionary<Int,Response>()
     //"install" a task by adding the task to the map and setting the completion handler
