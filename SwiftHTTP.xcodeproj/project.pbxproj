@@ -380,7 +380,7 @@
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 9.0;
-				VALID_ARCHS = "i386 x86_64 arm64 armv7s armv7";
+				VALID_ARCHS = "i386 x86_64 arm64 armv7s armv7 armv7k";
 				WATCHOS_DEPLOYMENT_TARGET = 2.1;
 			};
 			name = Debug;
@@ -409,7 +409,7 @@
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 9.0;
-				VALID_ARCHS = "i386 x86_64 arm64 armv7s armv7";
+				VALID_ARCHS = "i386 x86_64 arm64 armv7s armv7 armv7k";
 				WATCHOS_DEPLOYMENT_TARGET = 2.1;
 			};
 			name = Release;
