@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 `SwiftHTTP` adheres to [Semantic Versioning](http://semver.org/).
 
+#### [3.0.1](https://github.com/daltoniam/SwiftHTTP/tree/3.0.1)
+
+fixed:
+[#282](https://github.com/daltoniam/SwiftHTTP/pull/282)
+[#281](https://github.com/daltoniam/SwiftHTTP/pull/281)
+[#280](https://github.com/daltoniam/SwiftHTTP/issues/280)
+
+
+Small bug fixes.
+
 #### [3.0.0](https://github.com/daltoniam/SwiftHTTP/tree/3.0.0)
 
 Refactor that has a simpler design. Single framework (no more platform suffixes! e.g. SwiftHTTPOSX, SwiftHTTPTVOS, etc).

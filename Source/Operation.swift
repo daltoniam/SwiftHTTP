@@ -211,7 +211,7 @@ open class HTTP {
     /**
     Class method to run a GET request that handles the URLRequest and parameter encoding for you.
     */
-    open class func GET(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil,
+    @discardableResult open class func GET(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil,
         requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
         return Run(url, method: .GET, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
@@ -219,28 +219,28 @@ open class HTTP {
     /**
     Class method to run a HEAD request that handles the URLRequest and parameter encoding for you.
     */
-    open class func HEAD(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
+    @discardableResult open class func HEAD(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
         return Run(url, method: .HEAD, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
     Class method to run a DELETE request that handles the URLRequest and parameter encoding for you.
     */
-    open class func DELETE(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
+    @discardableResult open class func DELETE(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
         return Run(url, method: .DELETE, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
     Class method to run a POST request that handles the URLRequest and parameter encoding for you.
     */
-    open class func POST(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
+    @discardableResult open class func POST(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
         return Run(url, method: .POST, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     
     /**
     Class method to run a PUT request that handles the URLRequest and parameter encoding for you.
     */
-    open class func PUT(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil,
+    @discardableResult open class func PUT(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil,
         requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
         return Run(url, method: .PUT, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
@@ -248,7 +248,7 @@ open class HTTP {
     /**
     Class method to run a PUT request that handles the URLRequest and parameter encoding for you.
     */
-    open class func PATCH(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
+    @discardableResult open class func PATCH(_ url: String, parameters: HTTPParameterProtocol? = nil, headers: [String:String]? = nil, requestSerializer: HTTPSerializeProtocol = HTTPParameterSerializer(), completionHandler: ((Response) -> Void)? = nil) -> HTTP? {
         return Run(url, method: .PATCH, parameters: parameters, headers: headers, requestSerializer: requestSerializer, completionHandler: completionHandler)
     }
     

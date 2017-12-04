@@ -116,9 +116,9 @@ HTTP.GET("https://domain.com", parameters: ["hello": "there"], headers: ["header
 SSL Pinning is also supported in SwiftHTTP. 
 
 ```swift
-var req = URLRequest(urlString: "https://domain.com")
+var req = URLRequest(urlString: "https://domain.com")!
 req?.timeoutInterval = 5
-let task = HTTP(req!)
+let task = HTTP(req)
 task.security = HTTPSecurity(certs: [HTTPSSLCert(data: data)], usePublicKeys: true)
 //opt.security = HTTPSecurity() //uses the .cer files in your app's bundle
 task.run { (response) in
@@ -136,9 +136,9 @@ You load either a `Data` blob of your certificate or you can use a `SecKeyRef` i
 SwiftHTTP supports authentication through [NSURLCredential](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLCredential_Class/Reference/Reference.html). Currently only Basic Auth and Digest Auth have been tested.
 
 ```swift
-var req = URLRequest(urlString: "https://domain.com")
-req?.timeoutInterval = 5
-let task = HTTP(req!)
+var req = URLRequest(urlString: "https://domain.com")!
+req.timeoutInterval = 5
+let task = HTTP(req)
 //the auth closures will continually be called until a successful auth or rejection
 var attempted = false
 task.auth = { challenge in
@@ -156,9 +156,9 @@ task.run { (response) in
 Allow all certificates example:
 
 ```swift
-var req = URLRequest(urlString: "https://domain.com")
-req?.timeoutInterval = 5
-let task = HTTP(req!)
+var req = URLRequest(urlString: "https://domain.com")!
+req.timeoutInterval = 5
+let task = HTTP(req)
 //the auth closures will continually be called until a successful auth or rejection
 var attempted = false
 task.auth = { challenge in
@@ -179,18 +179,18 @@ SwiftHTTP also has a simple queue in it!
 
 ```swift
 let queue = HTTPQueue(maxSimultaneousRequest: 2)
-var req = URLRequest(urlString: "https://google.com")
+var req = URLRequest(urlString: "https://google.com")!
 req.timeoutInterval = 5
-let task = HTTP(req!)
+let task = HTTP(req)
 task.onFinish = { (response) in
     print("item in the queue finished: \(response.URL!)")
 }
 queue.add(http: task) //the request will start running once added to the queue
 
 
-var req2 = URLRequest(urlString: "https://apple.com")
+var req2 = URLRequest(urlString: "https://apple.com")!
 req2.timeoutInterval = 5
-let task2 = HTTP(req2!)
+let task2 = HTTP(req2)
 task2.onFinish = { (response) in
     print("item in the queue finished: \(response.URL!)")
 }
@@ -382,7 +382,7 @@ To use SwiftHTTP in your project add the following 'Podfile' to your project
 	platform :ios, '8.0'
 	use_frameworks!
 
-	pod 'SwiftHTTP', '~> 3.0.0'
+	pod 'SwiftHTTP', '~> 3.0.1'
 
 Then run:
 
@@ -404,7 +404,7 @@ $ brew install carthage
 To integrate SwiftHTTP into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```
-github "daltoniam/SwiftHTTP" >= 3.0.0
+github "daltoniam/SwiftHTTP" >= 3.0.1
 ```
 
 ### Rogue
