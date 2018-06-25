@@ -132,7 +132,7 @@ extension Dictionary: HTTPParameterProtocol {
 Support for the Array type as an HTTPParameter.
 */
 extension Array: HTTPParameterProtocol {
-    
+    /*
     public func createPairs(_ key: String?) -> [HTTPPair] {
         var collect = [HTTPPair]()
         for v in self {
@@ -147,6 +147,19 @@ extension Array: HTTPParameterProtocol {
             collect.append(HTTPPair(key: key, value: "[]" as AnyObject))
         }
         return collect
+    }
+    */
+    
+    public func createPairs(_ key: String?) -> [HTTPPair] {
+        let pair: HTTPPair = HTTPPair(key: (key != nil ? "\(key!)" : key), value: self.stringRepresentation)
+        return [pair]
+    }
+    
+    var stringRepresentation: String {
+        var str = "["
+        self.forEach { str += "\($0)," }
+        str = String(str.dropLast()) // drops last comma
+        return str + "]"
     }
 }
 
