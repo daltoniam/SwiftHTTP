@@ -135,8 +135,8 @@ extension Array: HTTPParameterProtocol {
     
     public func createPairs(_ key: String?) -> [HTTPPair] {
         var collect = [HTTPPair]()
-        for v in self {
-            let useKey = key != nil ? "\(key!)[]" : key
+        for (i, v) in self.enumerated() {
+            let useKey = key != nil ? "\(key!)[\(i)]" : key
             if let subParam = v as? HTTPParameterProtocol {
                 collect.append(contentsOf: subParam.createPairs(useKey))
             } else {
