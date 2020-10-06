@@ -1,3 +1,6 @@
+// swift-tools-version:5.3
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
 //
 //  Package.Swift
 //  SwiftHTTP
@@ -21,5 +24,22 @@
 import PackageDescription
 
 let package = Package(
-    name: "SwiftHTTP"
+    name: "SwiftHTTP",
+    products: [
+        .library(
+            name: "SwiftHTTP",
+            targets: ["SwiftHTTP"]),
+    ],
+    targets: [
+        .target(
+            name: "SwiftHTTP",
+            dependencies: [],
+            path: "Source",
+            exclude: ["Info.plist"]),
+        .testTarget(
+            name: "SwiftHTTPTests",
+            dependencies: ["SwiftHTTP"],
+            path: "Tests",
+            exclude: ["Info.plist"]),
+    ]
 )
