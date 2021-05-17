@@ -346,6 +346,9 @@ public class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownlo
     /// this is for global request handling
     var requestHandler:((inout URLRequest) -> Void)?
     
+    /// This is for handling unsafe thread operations on taskMap
+    private let concurrentTaskMapQueue = DispatchQueue(label: "TaskMapThreadSafeQueue",  attributes: .concurrent)
+    
     var taskMap = Dictionary<Int,Response>()
     //"install" a task by adding the task to the map and setting the completion handler
     func addTask(_ task: URLSessionTask, completionHandler:@escaping ((Response) -> Void)) {
@@ -357,18 +360,31 @@ public class DelegateManager: NSObject, URLSessionDataDelegate, URLSessionDownlo
     
     //"remove" a task by removing the task from the map
     func removeTask(_ task: URLSessionTask) {
-        taskMap.removeValue(forKey: task.taskIdentifier)
+        concurrentTaskMapQueue.async(flags: .barrier) { [weak self] in
+            self?.taskMap.removeValue(forKey: task.taskIdentifier)
+        }
+        // MARK: removeTask(_:) stays in stack until
+        // responseForTask(_:) returns
+        let _ = responseForTask(task)
     }
     
     //add the response task
     func addResponseForTask(_ task: URLSessionTask) {
-        if taskMap[task.taskIdentifier] == nil {
-            taskMap[task.taskIdentifier] = Response()
+        concurrentTaskMapQueue.sync {
+            if taskMap[task.taskIdentifier] == nil {
+                concurrentTaskMapQueue.async(flags: .barrier) { [weak self] in
+                    self?.taskMap[task.taskIdentifier] = Response()
+                }
+            }
         }
     }
     //get the response object for the task
     func responseForTask(_ task: URLSessionTask) -> Response? {
-        return taskMap[task.taskIdentifier]
+        var response: Response?
+        concurrentTaskMapQueue.sync {
+            response = self.taskMap[task.taskIdentifier]
+        }
+        return response
     }
     
     //handle getting data
